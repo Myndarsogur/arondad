@@ -3,13 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Aron Daði</title>
-    <meta name="description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
-    <link rel="canonical" href="https://aron.dad/" />
+    <title>Aron Daði | Um mig</title>
+    <meta
+      name="description"
+      content="Stutt kynning á Aron Daða (Aron) og leið til að hafa samband."
+    />
+    <link rel="canonical" href="https://aron.dad/about.html" />
     <meta property="og:title" content="Aron Daði" />
-    <meta property="og:description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
+    <meta
+      property="og:description"
+      content="Stutt kynning á Aron Daða (Aron) og leið til að hafa samband."
+    />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://aron.dad/" />
+    <meta property="og:url" content="https://aron.dad/about.html" />
     <meta property="og:image" content="https://aron.dad/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -17,7 +23,10 @@
     <meta property="og:locale" content="is_IS" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Aron Daði" />
-    <meta name="twitter:description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
+    <meta
+      name="twitter:description"
+      content="Stutt kynning á Aron Daða (Aron) og leið til að hafa samband."
+    />
     <meta name="twitter:image" content="https://aron.dad/og-image.png" />
     <meta name="twitter:image:alt" content="Aron Daði" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -35,15 +44,15 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Aron Daði",
+        "alternateName": "Aron",
         "url": "https://aron.dad/",
         "email": "mailto:i@aron.dad",
         "image": "https://aron.dad/og-image.png",
-        "description": "Persónuleg síða Arons Daða. Sendu mér tölvupóst."
+        "description": "Stutt kynning á Aron Daða (Aron) og leið til að hafa samband."
       }
     </script>
     <style>
       :root {
-       
         --ink: #1b1f24;
         --link: #1a5a7a;
         --link-hover: #0b3d52;
@@ -63,7 +72,7 @@
         font-family: "Iowan Old Style", "Palatino Linotype", "Bookman Old Style", serif;
         text-rendering: optimizeLegibility;
         -webkit-font-smoothing: antialiased;
-        padding: 32px 20px 40px;
+        padding: 40px 20px 60px;
       }
 
       html,
@@ -72,38 +81,39 @@
       }
 
       main {
-        width: min(560px, 100%);
+        width: min(720px, 100%);
         display: grid;
-        justify-items: center;
-        gap: 20px;
-        text-align: center;
+        gap: 18px;
+        text-align: left;
       }
 
-      img {
-        width: min(88vw, 520px);
-        max-height: 60svh;
-        height: auto;
-        object-fit: contain;
-        display: block;
-        border-radius: 20px;
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4vw, 2.6rem);
+        letter-spacing: 0.02em;
+      }
+
+      p {
+        margin: 0;
+        font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+        line-height: 1.6;
+        color: #2f3439;
+      }
+
+      .links {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        align-items: center;
       }
 
       a {
-        font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+        font-size: clamp(1.05rem, 2.2vw, 1.25rem);
         letter-spacing: 0.02em;
         color: var(--link);
         text-decoration: none;
         position: relative;
         padding-bottom: 2px;
-      }
-
-      a.photo-link {
-        display: inline-block;
-        padding-bottom: 0;
-      }
-
-      a.photo-link::after {
-        content: none;
       }
 
       a::after {
@@ -124,27 +134,6 @@
         transform: scaleX(1);
       }
 
-      .seo {
-        position: fixed;
-        inset-inline: 0;
-        top: 100%;
-        transform: translateY(12px);
-        display: grid;
-        gap: 2px;
-        justify-items: center;
-        font-size: 10px;
-        line-height: 1.2;
-        color: #ffffff;
-        text-align: center;
-        pointer-events: none;
-      }
-
-      .seo h1,
-      .seo p {
-        margin: 0;
-        font-weight: 400;
-      }
-
       @media (prefers-reduced-motion: reduce) {
         a::after {
           transition: none;
@@ -154,24 +143,19 @@
   </head>
   <body>
     <main>
-      <a class="photo-link" href="/about.html" aria-label="Lesa meira um Aron Daða">
-        <picture>
-          <source srcset="mynd.avif" type="image/avif" />
-          <img
-            src="mynd.PNG"
-            alt="Aron Daði"
-            width="726"
-            height="2245"
-            decoding="async"
-            fetchpriority="high"
-          />
-        </picture>
-      </a>
-      <a href="mailto:i@aron.dad">Sendu mér tölvupóst</a>
-    </main>
-    <footer class="seo">
       <h1>Aron Daði</h1>
-      <p>Persónuleg síða Arons Daða. Sendu mér tölvupóst.</p>
-    </footer>
+      <p>
+        Aron Daði (Aron) er á bak við þessa síðu. Hér finnur þú stutta kynningu
+        og leið til að hafa samband.
+      </p>
+      <p>
+        Ef þú vilt ná sambandi við Aron Daða, sendu endilega tölvupóst og svar
+        kemur fljótt til baka.
+      </p>
+      <div class="links">
+        <a href="mailto:i@aron.dad">Sendu mér tölvupóst</a>
+        <a href="/">Til baka á forsíðu</a>
+      </div>
+    </main>
   </body>
 </html>
