@@ -35,10 +35,12 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Aron Daði",
+        "jobTitle": "Verkefnastjóri, listamaður og kennari",
         "url": "https://aron.dad/",
         "email": "mailto:i@aron.dad",
         "image": "https://aron.dad/og-image.png",
-        "description": "Persónuleg síða Arons Daða. Sendu mér tölvupóst."
+        "description": "Persónuleg síða Arons Daða. Sendu mér tölvupóst.",
+        "sameAs": ["https://www.linkedin.com/in/arondad"]
       }
     </script>
     <style>
@@ -156,9 +158,23 @@
     <main>
       <a class="photo-link" href="/about.html" aria-label="Lesa meira um Aron Daða">
         <picture>
-          <source srcset="mynd.avif" type="image/avif" />
+          <source
+            type="image/avif"
+            srcset="
+              mynd-360.avif 360w,
+              mynd-520.avif 520w,
+              mynd.avif 726w
+            "
+            sizes="(max-width: 600px) 88vw, 520px"
+          />
           <img
             src="mynd.PNG"
+            srcset="
+              mynd-360.png 360w,
+              mynd-520.png 520w,
+              mynd.PNG 726w
+            "
+            sizes="(max-width: 600px) 88vw, 520px"
             alt="Aron Daði"
             width="726"
             height="2245"
