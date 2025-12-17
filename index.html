@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Aron Daði</title>
-    <meta name="description" content="Persónuleg síða Arons. Sendu mér tölvupóst." />
+    <meta name="description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
     <link rel="canonical" href="https://aron.dad/" />
     <meta property="og:title" content="Aron Daði" />
     <meta property="og:description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
@@ -13,11 +13,13 @@
     <meta property="og:image" content="https://aron.dad/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Aron Daði" />
     <meta property="og:locale" content="is_IS" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Aron Daði" />
     <meta name="twitter:description" content="Persónuleg síða Arons Daða. Sendu mér tölvupóst." />
     <meta name="twitter:image" content="https://aron.dad/og-image.png" />
+    <meta name="twitter:image:alt" content="Aron Daði" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -28,6 +30,17 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#ffffff" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Aron Daði",
+        "url": "https://aron.dad/",
+        "email": "mailto:i@aron.dad",
+        "image": "https://aron.dad/og-image.png",
+        "description": "Persónuleg síða Arons Daða. Sendu mér tölvupóst."
+      }
+    </script>
     <style>
       :root {
        
@@ -102,6 +115,27 @@
         transform: scaleX(1);
       }
 
+      .seo {
+        position: fixed;
+        inset-inline: 0;
+        top: 100%;
+        transform: translateY(12px);
+        display: grid;
+        gap: 2px;
+        justify-items: center;
+        font-size: 10px;
+        line-height: 1.2;
+        color: #ffffff;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .seo h1,
+      .seo p {
+        margin: 0;
+        font-weight: 400;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         a::after {
           transition: none;
@@ -111,8 +145,12 @@
   </head>
   <body>
     <main>
-      <img src="mynd.PNG" alt="Mynd" />
+      <img src="mynd.PNG" alt="Aron Daði" />
       <a href="mailto:i@aron.dad">Sendu mér tölvupóst</a>
     </main>
+    <footer class="seo">
+      <h1>Aron Daði</h1>
+      <p>Persónuleg síða Arons Daða. Sendu mér tölvupóst.</p>
+    </footer>
   </body>
 </html>
