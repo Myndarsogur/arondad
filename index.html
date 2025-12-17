@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aron</title>
+    <style>
+      :root {
+       
+        --ink: #1b1f24;
+        --link: #1a5a7a;
+        --link-hover: #0b3d52;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        background: transparent;
+        color: var(--ink);
+        font-family: "Iowan Old Style", "Palatino Linotype", "Bookman Old Style", serif;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        padding: 32px 20px 40px;
+      }
+
+      html,
+      body {
+        background: transparent;
+      }
+
+      main {
+        width: min(560px, 100%);
+        display: grid;
+        justify-items: center;
+        gap: 20px;
+        text-align: center;
+      }
+
+      img {
+        width: min(88vw, 520px);
+        max-height: 60svh;
+        height: auto;
+        object-fit: contain;
+        display: block;
+        border-radius: 20px;
+      }
+
+      a {
+        font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+        letter-spacing: 0.02em;
+        color: var(--link);
+        text-decoration: none;
+        position: relative;
+        padding-bottom: 2px;
+      }
+
+      a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 200ms ease;
+      }
+
+      a:hover::after,
+      a:focus-visible::after {
+        transform: scaleX(1);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        a::after {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <img src="mynd.PNG" alt="Mynd" />
+      <a href="mailto:i@aron.dad">Sendu mér tölvupóst</a>
+    </main>
+  </body>
+</html>
