@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="is">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Garður</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background: #fff;
+      color: #0f1720;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 28px;
+      font-size: 32px;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 20px 72px;
+    }
+
+    .section {
+      display: grid;
+      gap: 18px;
+    }
+
+    .top-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .family-row {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .family-card {
+      border: 1px solid #e6e8eb;
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(15, 23, 32, 0.05);
+    }
+
+    .parents {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .children {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      align-items: start;
+    }
+
+    figure {
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .photo {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #e6e8eb;
+      background: #f7f9fb;
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    .photo:hover,
+    .photo:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(15, 23, 32, 0.12);
+      outline: none;
+    }
+
+    figcaption {
+      font-weight: 600;
+      text-align: center;
+      font-size: 15px;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .grandchild {
+      margin-left: 18px;
+    }
+
+    .pair {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1000;
+    }
+
+    .lightbox.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      width: min(960px, 92vw);
+      max-height: 92vh;
+      display: grid;
+      gap: 12px;
+      position: relative;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+    }
+
+    .lightbox img {
+      width: 100%;
+      max-height: 72vh;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid #e6e8eb;
+      background: #f7f9fb;
+    }
+
+    .lightbox-name {
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .lightbox-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button,
+    .link-button {
+      border: 1px solid #0f1720;
+      background: #0f1720;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+    }
+
+    button:hover,
+    .link-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(15, 23, 32, 0.22);
+    }
+
+    button:focus-visible,
+    .link-button:focus-visible {
+      outline: 2px solid #0f1720;
+      outline-offset: 2px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: none;
+      background: rgba(15, 23, 32, 0.85);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1100;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 160ms ease, visibility 160ms ease;
+    }
+
+    .modal.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: 12px;
+      padding: 18px 16px;
+      max-width: 720px;
+      width: 100%;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-title {
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .modal p {
+      margin: 0 0 16px;
+      line-height: 1.5;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    @page {
+      margin: 0;
+      size: auto;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+      }
+
+      main,
+      .modal {
+        display: none !important;
+      }
+
+      .lightbox {
+        display: block !important;
+        position: static;
+        background: transparent !important;
+        padding: 0;
+      }
+
+      .lightbox-content {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        width: 100%;
+        max-height: none;
+      }
+
+      .lightbox-actions,
+      .lightbox-name,
+      .close-btn {
+        display: none !important;
+      }
+
+      .lightbox img {
+        width: 100%;
+        max-height: none;
+        height: auto;
+        object-fit: contain;
+        border: none;
+        background: transparent;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Fjölskyldan frá Garði</h1>
+
+    <section class="section top-row">
+      <figure>
+        <img class="photo" src="Amma_Í_Garði.avif" alt="Amma í Garði" data-name="Amma í Garði">
+        <figcaption>Amma í Garði</figcaption>
+      </figure>
+      <figure>
+        <img class="photo" src="Afi_Í_Garði.avif" alt="Afi í Garði" data-name="Afi í Garði">
+        <figcaption>Afi í Garði</figcaption>
+      </figure>
+    </section>
+
+
+
+    <div class="family-card">
+      <div class="parents">
+        <figure>
+          <img class="photo" src="Eydís.avif" alt="Eydís" data-name="Eydís">
+          <figcaption>Eydís</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Pétur.avif" alt="Pétur" data-name="Pétur">
+          <figcaption>Pétur</figcaption>
+        </figure>
+      </div>
+      <div class="children">
+        <figure>
+          <img class="photo" src="Einar_Karl.avif" alt="Einar Karl" data-name="Einar Karl">
+          <figcaption>Einar Karl</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Björk.avif" alt="Björk" data-name="Björk">
+          <figcaption>Björk</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Líney_Ósk.avif" alt="Líney Ósk" data-name="Líney Ósk">
+          <figcaption>Líney Ósk</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Andri_Dór.avif" alt="Andri Dór" data-name="Andri Dór">
+          <figcaption>Andri Dór</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="family-card">
+      <div class="parents">
+        <figure>
+          <img class="photo" src="Þórir_.avif" alt="Þórir" data-name="Þórir">
+          <figcaption>Þórir</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Guðrún_Anna.avif" alt="Guðrún Anna" data-name="Guðrún Anna">
+          <figcaption>Guðrún Anna</figcaption>
+        </figure>
+      </div>
+
+      <div class="children">
+        <figure>
+          <img class="photo" src="Henrý_Daði.avif" alt="Henrý Daði" data-name="Henrý Daði">
+          <figcaption>Henrý Daði</figcaption>
+        </figure>
+        <figure>
+          <img class="photo" src="Ellý.avif" alt="Ellý" data-name="Ellý">
+          <figcaption>Ellý</figcaption>
+        </figure>
+        <div class="stack">
+          <figure>
+            <img class="photo" src="Aron_Daði.avif" alt="Aron Daði" data-name="Aron Daði">
+            <figcaption>Aron Daði</figcaption>
+          </figure>
+          <figure class="grandchild">
+            <img class="photo" src="María_Erla.avif" alt="María Erla" data-name="María Erla">
+            <figcaption>María Erla</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+   
+
+      <div class="family-card">
+        <div class="parents">
+          <figure>
+            <img class="photo" src="Oddný_Dóra.avif" alt="Oddný" data-name="Oddný">
+            <figcaption>Oddný</figcaption>
+          </figure>
+          <figure>
+            <img class="photo" src="Gummi.avif" alt="Gummi" data-name="Gummi">
+            <figcaption>Gummi</figcaption>
+          </figure>
+        </div>
+        <div class="children">
+          <div class="stack">
+            <div class="pair">
+              <figure>
+                <img class="photo" src="Sigurður_Már.avif" alt="Sigurður Már" data-name="Sigurður Már">
+                <figcaption>Sigurður Már</figcaption>
+              </figure>
+              <figure>
+                <img class="photo" src="Ingunn.avif" alt="Ingunn" data-name="Ingunn">
+                <figcaption>Ingunn</figcaption>
+              </figure>
+            </div>
+            <figure class="grandchild">
+              <img class="photo" src="Emma.avif" alt="Emma" data-name="Emma">
+              <figcaption>Emma</figcaption>
+            </figure>
+          </div>
+          <div class="stack">
+            <div class="pair">
+              <figure>
+                <img class="photo" src="Ágústa_Mekkín.avif" alt="Ágústa Mekkin" data-name="Ágústa Mekkin">
+                <figcaption>Ágústa Mekkin</figcaption>
+              </figure>
+              <figure>
+                <img class="photo" src="Atli.avif" alt="Atli" data-name="Atli">
+                <figcaption>Atli</figcaption>
+              </figure>
+            </div>
+            <figure class="grandchild">
+              <img class="photo" src="Darri.avif" alt="Darri" data-name="Darri">
+              <figcaption>Darri</figcaption>
+            </figure>
+          </div>
+          <figure>
+            <img class="photo" src="Díana_Sif.avif" alt="Díana Sif" data-name="Díana Sif">
+            <figcaption>Díana Sif</figcaption>
+          </figure>
+        </div>
+      </div>
+
+  
+      <section class="section family-row">
+        <div class="family-card">
+          <div class="parents">
+            <figure>
+              <img class="photo" src="Arnór.avif" alt="Arnór" data-name="Arnór">
+              <figcaption>Arnór</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Lillian.avif" alt="Lillian" data-name="Lillian">
+              <figcaption>Lillian</figcaption>
+            </figure>
+          </div>
+          <div class="children">
+            <figure>
+              <img class="photo" src="Daníela.avif" alt="Daníela" data-name="Daníela">
+              <figcaption>Daníela</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Stefán.avif" alt="Stefán" data-name="Stefán">
+              <figcaption>Stefán</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Adrian.avif" alt="Adrian" data-name="Adrian">
+              <figcaption>Adrian</figcaption>
+            </figure>
+          </div>
+        </div>
+  
+        <div class="family-card">
+          <div class="parents">
+            <figure>
+              <img class="photo" src="Justin_Sr..avif" alt="Justin Sr." data-name="Justin Sr.">
+              <figcaption>Justin Sr.</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Karla.avif" alt="Karla" data-name="Karla">
+              <figcaption>Karla</figcaption>
+            </figure>
+          </div>
+          <div class="children">
+            <figure>
+              <img class="photo" src="Justin_Jr..avif" alt="Justin Jr." data-name="Justin Jr.">
+              <figcaption>Justin Jr.</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Zoey.avif" alt="Zoey" data-name="Zoey">
+              <figcaption>Zoey</figcaption>
+            </figure>
+          </div>
+        </div>
+  
+        <div class="family-card">
+          <div class="parents">
+            <figure>
+              <img class="photo" src="Snjófríður.avif" alt="Snjófríður" data-name="Snjófríður">
+              <figcaption>Snjófríður</figcaption>
+            </figure>
+          </div>
+          <div class="children">
+            <figure>
+              <img class="photo" src="Æfi.avif" alt="Æfi" data-name="Æfi">
+              <figcaption>Æfi</figcaption>
+            </figure>
+            <figure>
+              <img class="photo" src="Óri.avif" alt="Óri" data-name="Óri">
+              <figcaption>Óri</figcaption>
+            </figure>
+          </div>
+        </div>
+   
+    </section>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Stækkað mynd">
+    <div class="lightbox-content">
+      <button class="close-btn" id="lightbox-close" aria-label="Loka">×</button>
+      <img id="lightbox-image" alt="">
+      <div class="lightbox-name" id="lightbox-name"></div>
+      <div class="lightbox-actions">
+        <button type="button" id="print-btn">Prenta</button>
+        <a class="link-button" id="request-btn" href="mailto:i@aron.dad?subject=Beiðni%20um%20endurteikningu" target="_blank" rel="noreferrer">Beiðni um endurteikningu</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal show" id="warning-modal" role="dialog" aria-modal="true" aria-label="Aðvörun">
+    <div class="modal-box">
+      <h2 class="modal-title">Aðvörun</h2>
+      <p>
+        Myndirnar sem þú ert að fara að sjá voru allar teiknaðar af mér. Ég kann ekki að teikna, lærði aldrei að teikna og hef aldrei teiknað. <br><br>
+        Hugmyndin að gefa öllum mynd af sér sem jólagjöf er líklega jafn varhugaverð og myndirnar sjálfar. Afhverju mér datt það í hug, hver veit. Þær eiga
+        fyrst og fremst að vera ykkur til gamans og yndisauka og ég vona að þær veiti ykkur jafn mikla gleði á jólunum og það var fyrir mig að búa
+        þær til.<br><br> Ef að myndirnar eru ykkur ekki boðlegar, og þið viljið að ég endurteikni þær, þá er ykkur frjálst að senda inn beiðni á i@aron.dad,
+        beiðninni verður þá svarað við fyrsta tækifæri og myndin uppfærð í samræmi við óskir sendanda. <br><br>Gleðileg Jól.
+      </p>
+      <div class="modal-actions">
+        <button type="button" id="warning-close">Loka</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.getElementById("lightbox-image");
+    const lightboxName = document.getElementById("lightbox-name");
+    const requestBtn = document.getElementById("request-btn");
+    const lightboxClose = document.getElementById("lightbox-close");
+    const printBtn = document.getElementById("print-btn");
+    const warningModal = document.getElementById("warning-modal");
+    const warningClose = document.getElementById("warning-close");
+
+    function openLightbox(img) {
+      const name = img.dataset.name || img.alt || "";
+      lightboxImage.src = img.src;
+      lightboxImage.alt = name;
+      lightboxName.textContent = name;
+      requestBtn.href = "mailto:i@aron.dad?subject=" + encodeURIComponent("Beiðni um endurteikningu") +
+        "&body=" + encodeURIComponent("Vinsamlegast endurteikna mynd: " + name);
+      lightbox.classList.add("active");
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove("active");
+      lightboxImage.src = "";
+    }
+
+    document.querySelectorAll(".photo").forEach((img) => {
+      img.addEventListener("click", () => openLightbox(img));
+      img.addEventListener("keypress", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openLightbox(img);
+        }
+      });
+      img.tabIndex = 0;
+    });
+
+    lightboxClose.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    printBtn.addEventListener("click", () => {
+      window.print();
+    });
+
+    warningClose.addEventListener("click", () => {
+      warningModal.classList.remove("show");
+    });
+  </script>
+</body>
+</html>
