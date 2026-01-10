@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get on the dag</title>
+  <meta name="description" content="And you get on the dag and you get on the dag and you, get on the dag and you get on the dag and you get on the dag and you.">
+  <meta property="og:title" content="Get on the dag" />
+  <meta property="og:description" content="And you get on the dag and you get on the dag and you, get on the dag and you get on the dag and you get on the dag and you." />
+  <meta property="og:image" content="https://aron.dad/i/leikurinn/og/geton.png" />
+  <meta property="og:url" content="https://aron.dad/i/leikurinn/geton/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="is_IS" />
+  <link rel="canonical" href="https://aron.dad/i/leikurinn/geton/" />
+  <meta name="robots" content="index, follow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Get on the dag">
+  <meta name="twitter:description" content="And you get on the dag and you get on the dag and you, get on the dag and you get on the dag and you get on the dag and you.">
+  <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/geton.png">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Get on the dag",
+    "description": "And you get on the dag and you get on the dag and you, get on the dag and you get on the dag and you get on the dag and you.",
+    "url": "https://aron.dad/i/leikurinn/geton/",
+    "image": "https://aron.dad/i/leikurinn/og/geton.png",
+    "inLanguage": "is",
+    "isFamilyFriendly": true
+  }
+  </script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: black;
+    }
+
+    .background-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    #preview {
+      position: fixed;
+      bottom: 150px;
+      right: 200px;
+      z-index: 2;
+      background: transparent;
+    }
+
+    #preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    #leftClickArea, #rightClickArea {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      z-index: 3;
+    }
+
+    #leftClickArea { left: 0; }
+    #rightClickArea { right: 0; }
+  </style>
+</head>
+<body>
+  <img id="bg1" class="background-img" src="">
+  <img id="bg2" class="background-img" src="">
+
+  <div id="preview"></div>
+  <div id="leftClickArea"></div>
+  <div id="rightClickArea"></div>
+  <audio id="music" src="geton.mp3" autoplay loop></audio>
+
+  <script>
+    const music = document.getElementById('music');
+    const totalImages = 8;
+    const imagePaths = Array.from({ length: totalImages }, (_, i) => `thu2/mynd${i + 1}.gif`);
+
+    // Preload myndir
+    imagePaths.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    // Bakgrunnur – no fade
+    const bg1 = document.getElementById('bg1');
+    const bg2 = document.getElementById('bg2');
+    let useBg1 = true;
+    let currentBgIndex = 0;
+
+    function switchBackground(index) {
+      const nextSrc = imagePaths[index] + '?t=' + Date.now();
+      const topImg = useBg1 ? bg2 : bg1;
+      const bottomImg = useBg1 ? bg1 : bg2;
+
+      const loader = new Image();
+      loader.src = nextSrc;
+      loader.onload = () => {
+        topImg.src = nextSrc;
+        topImg.style.zIndex = 1;
+        bottomImg.style.zIndex = 0;
+        useBg1 = !useBg1;
+      };
+    }
+
+    switchBackground(currentBgIndex);
+    setInterval(() => {
+      currentBgIndex = (currentBgIndex + 1) % totalImages;
+      switchBackground(currentBgIndex);
+    }, 5000);
+
+  // Hámarksrammi fyrir smámynd
+const PREVIEW_MAX_W = 300;
+const PREVIEW_MAX_H = 200;
+
+// Preview
+const preview = document.getElementById('preview');
+const visited = [];
+let historyIndex = -1;
+
+function showPreviewImage(index) {
+  const nextSrc = imagePaths[index] + '?t=' + Date.now();
+  const loader = new Image();
+  loader.src = nextSrc;
+  loader.onload = () => {
+    const iw = loader.naturalWidth;
+    const ih = loader.naturalHeight;
+
+    // Skala myndina til að passa INNAN 300×200 án crop
+    const scale = Math.min(PREVIEW_MAX_W / iw, PREVIEW_MAX_H / ih);
+    const w = Math.round(iw * scale);
+    const h = Math.round(ih * scale);
+
+    // Látum kassann taka nákvæmlega þessa stærð (engin „svört borði“)
+    preview.style.width = w + 'px';
+    preview.style.height = h + 'px';
+
+    // Setjum myndina inn
+    const newImg = document.createElement('img');
+    newImg.src = nextSrc;
+    newImg.alt = 'forskoðun';
+    newImg.style.objectFit = 'contain';
+    newImg.style.width = '100%';
+    newImg.style.height = '100%';
+
+    preview.innerHTML = '';
+    preview.appendChild(newImg);
+  };
+}
+
+    function goForward() {
+      if (historyIndex < visited.length - 1) {
+        historyIndex++;
+        showPreviewImage(visited[historyIndex]);
+      } else {
+        if (visited.length >= totalImages) {
+          const current = visited[historyIndex];
+          visited.length = 0;
+          visited.push(current);
+          historyIndex = 0;
+        }
+
+        let next;
+        do {
+          next = Math.floor(Math.random() * totalImages);
+        } while (visited.includes(next));
+
+        visited.push(next);
+        historyIndex++;
+        showPreviewImage(next);
+      }
+      resetInactivityTimer();
+    }
+
+    function goBack() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        showPreviewImage(visited[historyIndex]);
+      }
+      resetInactivityTimer();
+    }
+
+    document.getElementById('rightClickArea').addEventListener('click', goForward);
+    document.getElementById('leftClickArea').addEventListener('click', goBack);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        goForward();
+      } else if (e.key === 'ArrowLeft') {
+        goBack();
+      }
+    });
+
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        goForward();
+      }, 5000);
+    }
+
+    goForward();
+
+    // Try to start strax (popup opnun getur talist "user gesture" í sumum vöfrum)
+    music.play().catch((e) => console.log('Ekki tókst að hefja lag við ræsingu:', e));
+
+    function startMusicOnce() {
+      if (music.paused) {
+        music.play().catch((e) => console.log('Ekki tókst að spila lagið:', e));
+      }
+    }
+
+    ['click', 'keydown', 'keypress', 'keyup', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach((evt) => {
+      document.addEventListener(evt, startMusicOnce, { once: true, capture: true });
+      window.addEventListener(evt, startMusicOnce, { once: true, capture: true });
+    });
+
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'start-music') {
+        startMusicOnce();
+      }
+    });
+  </script>
+</body>
+</html>

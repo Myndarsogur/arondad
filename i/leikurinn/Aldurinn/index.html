@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <title>Blómið sem ég er</title>
+  <meta name="description" content="Viðkvæmt en samt svo ruddalegt þegar það kemur að taka á móti veröldinni. Eins og sólargeisli innum gluggann alltof snemma morguns.">
+  <meta property="og:title" content="Blómið sem ég er" />
+  <meta property="og:description" content="Viðkvæmt en samt svo ruddalegt þegar það kemur að taka á móti veröldinni. Eins og sólargeisli innum gluggann alltof snemma morguns." />
+  <meta property="og:image" content="https://aron.dad/i/leikurinn/og/aldurinn.png" />
+  <meta property="og:url" content="https://aron.dad/i/leikurinn/Aldurinn/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="is_IS" />
+  <link rel="canonical" href="https://aron.dad/i/leikurinn/Aldurinn/" />
+  <meta name="robots" content="index, follow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blómið sem ég er">
+  <meta name="twitter:description" content="Viðkvæmt en samt svo ruddalegt þegar það kemur að taka á móti veröldinni. Eins og sólargeisli innum gluggann alltof snemma morguns.">
+  <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/aldurinn.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Blómið sem ég er",
+    "description": "Viðkvæmt en samt svo ruddalegt þegar það kemur að taka á móti veröldinni. Eins og sólargeisli innum gluggann alltof snemma morguns.",
+    "url": "https://aron.dad/i/leikurinn/Aldurinn/",
+    "image": "https://aron.dad/i/leikurinn/og/aldurinn.png",
+    "inLanguage": "is",
+    "isFamilyFriendly": true
+  }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    #background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 1s ease-in-out; /* Fade effect */
+      opacity: 1; /* Start hidden */
+    }
+    #background.loaded {
+      opacity: 1; /* Show when loaded */
+    }
+    #floating-frame {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      z-index: 15;
+      border: 2px solid white;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+    }
+    #fixed-frame {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 150px;
+      height: 150px;
+      z-index: 15;
+      border: 2px solid white;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+    }
+    img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      display: block;
+      z-index: 5;
+      background: transparent;
+    }
+    .click-zone {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 50%;
+      z-index: 10;
+    }
+    .left-zone {
+      left: 0;
+    }
+    .right-zone {
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="background"></div>
+  <div id="floating-frame"></div>
+  <div id="fixed-frame"></div>
+  <audio id="player" autoplay loop></audio>
+  <img id="image" src="Bakgrunnsmyndir/mynd1.avif" alt="mynd">
+
+  <div class="click-zone left-zone" onclick="previousImage()"></div>
+  <div class="click-zone right-zone" onclick="nextImage()"></div>
+
+  <script>
+    const totalImages = 75;
+    let currentImage = 1;
+
+    // Skilgreindu hópana og lögin
+    const songGroups = [
+      { start: 1, end: 10, song: "Login/My Song 11 - er thett_01.mp3" },
+      { start: 11, end: 20, song: "Login/My Song 11_01.mp3" },
+      { start: 21, end: 30, song: "Login/My Song 16_01.mp3" },
+      { start: 31, end: 40, song: "Login/My Song 23_01.mp3" },
+      { start: 41, end: 50, song: "Login/My Song 26_01.mp3" },
+      { start: 51, end: 60, song: "Login/My Song 27_01.mp3" },
+      { start: 61, end: 75, song: "Login/My Song 34_01.mp3" }
+    ];
+
+    const player = document.getElementById('player');
+    const image = document.getElementById('image');
+    const background = document.getElementById('background');
+    const floatingFrame = document.getElementById('floating-frame');
+    const fixedFrame = document.getElementById('fixed-frame');
+    let currentGroup = null;
+
+    function updateImage() {
+      image.src = `Bakgrunnsmyndir/mynd${currentImage}.avif`;
+      updateAudio();
+    }
+
+    function updateAudio() {
+      const group = songGroups.find(g => currentImage >= g.start && currentImage <= g.end);
+      if (group !== currentGroup) {
+        currentGroup = group;
+        player.src = group.song;
+        player.play();
+      }
+    }
+
+    function nextImage() {
+      if (currentImage < totalImages) {
+        currentImage++;
+        updateImage();
+      }
+    }
+
+    function previousImage() {
+      if (currentImage > 1) {
+        currentImage--;
+        updateImage();
+      }
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'Enter') {
+        nextImage();
+      } else if (event.key === 'ArrowLeft' || event.key === 'Backspace') {
+        previousImage();
+      }
+    });
+
+    // Cycle background images every 3 seconds
+    const totalBackgrounds = 75; // Assume Bakgrunnsmyndir group has 75 images
+    let currentBackground = 1;
+
+    function preloadImage(src, callback) {
+      const img = new Image();
+      img.onload = callback;
+      img.src = src;
+    }
+
+    function updateBackground() {
+      const nextBackgroundSrc = `Bakgrunnsmyndir/mynd${currentBackground}.avif`;
+      preloadImage(nextBackgroundSrc, () => {
+        background.style.backgroundImage = `url('${nextBackgroundSrc}')`;
+        background.classList.add('loaded'); // Apply fade-in effect
+      });
+      background.classList.remove('loaded'); // Prepare for next fade
+      currentBackground = currentBackground < totalBackgrounds ? currentBackground + 1 : 1;
+    }
+
+    setInterval(updateBackground, 3000);
+
+    // Initialize the first background
+    updateBackground();
+
+    // Floating frame logic
+    let currentFloatingImage = 1;
+
+    function updateFloatingFrame() {
+      floatingFrame.style.backgroundImage = `url('Bakgrunnsmyndir/mynd${currentFloatingImage}.avif')`;
+      currentFloatingImage = currentFloatingImage < totalBackgrounds ? currentFloatingImage + 1 : 1;
+
+      // Randomize position
+      const x = Math.random() * (window.innerWidth - 150);
+      const y = Math.random() * (window.innerHeight - 150);
+      floatingFrame.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    setInterval(updateFloatingFrame, 3000);
+
+    // Initialize the floating frame
+    updateFloatingFrame();
+
+    // Fixed frame logic
+    let currentFixedImage = 1;
+
+    function updateFixedFrame() {
+      fixedFrame.style.backgroundImage = `url('Bakgrunnsmyndir/mynd${currentFixedImage}.avif')`;
+      currentFixedImage = currentFixedImage < totalBackgrounds ? currentFixedImage + 1 : 1;
+    }
+
+    // Cycle images in the fixed frame every 3 seconds
+    setInterval(updateFixedFrame, 3000);
+
+    // Initialize the fixed frame
+    updateFixedFrame();
+
+    // Byrja með fyrstu mynd og lag
+    updateImage();
+
+    // Add user interaction to start audio
+    document.addEventListener('click', () => {
+      if (player.tagName === 'AUDIO') {
+        player.play();
+      }
+    }, { once: true }); // Ensure this runs only once
+  </script>
+
+</body>
+</html>

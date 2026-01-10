@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="utf-8" />
+  <title>Embed síða</title>
+  <style>
+    /* Lágmarksstílar til að raða efninu hreinlega og fallega upp */
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      font-family: sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .embed-item {
+      margin-bottom: 2rem;
+      border: 1px solid #ccc;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .embed-item iframe, 
+    .embed-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: none;
+    }
+
+    /* Eyða sem mestu af "skrauti" */
+    iframe::-webkit-media-controls,
+    iframe::-webkit-media-controls-play-button,
+    iframe::-webkit-media-controls-timeline,
+    iframe::-webkit-media-controls-current-time-display,
+    iframe::-webkit-media-controls-time-remaining-display,
+    iframe::-webkit-media-controls-seek-back-button,
+    iframe::-webkit-media-controls-seek-forward-button,
+    iframe::-webkit-media-controls-fullscreen-button {
+      display: none !important;
+      -webkit-appearance: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="content"></div>
+
+  <script>
+    /*
+     * Hér er dæmi um gögn (array). Hver hlutur (item) inniheldur:
+     * - type: "imgur", "youtube", "vimeo" eða "soundcloud"
+     * - url: slóð á mynd eða embed slóð á viðkomandi þjónustu
+     */
+    const embedData = [
+      {
+        type: "imgur",
+        url: "https://i.imgur.com/12345abc.jpg"  // Dæmi um Imgur-mynd
+      },
+      {
+        type: "youtube",
+        url: "https://www.youtube.com/embed/dQw4w9WgXcQ"  // YouTube embed-lína
+      },
+      {
+        type: "vimeo",
+        url: "https://player.vimeo.com/video/76979871"     // Vimeo embed-lína
+      },
+      {
+        type: "soundcloud",
+        url: "https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/123456789"  // SoundCloud embed-lína
+      }
+    ];
+
+    /*
+     * Fall sem býr til rétta HTML-smíð fyrir hvern item.
+     * - Imgur => <img>
+     * - YouTube/Vimeo/SoundCloud => <iframe>
+     */
+    function createEmbedElement(item) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "embed-item";
+
+      if (item.type === "imgur") {
+        const image = document.createElement("img");
+        image.src = item.url;
+        wrapper.appendChild(image);
+      } else if (item.type === "youtube" || item.type === "vimeo" || item.type === "soundcloud") {
+        const iframe = document.createElement("iframe");
+        iframe.src = item.url;
+        // Passaðu upp á rétt hlutföll: 
+        // T.d. 16:9 fyrir myndbönd og autóhæð fyrir SoundCloud
+        iframe.allowFullscreen = true; 
+        wrapper.appendChild(iframe);
+      }
+
+      return wrapper;
+    }
+
+    /*
+     * Þegar síðan hleðst byrjum við á að búa til allt efnið
+     */
+    document.addEventListener("DOMContentLoaded", () => {
+      const contentContainer = document.getElementById("content");
+      embedData.forEach(item => {
+        const el = createEmbedElement(item);
+        contentContainer.appendChild(el);
+      });
+    });
+  </script>
+</body>
+</html>

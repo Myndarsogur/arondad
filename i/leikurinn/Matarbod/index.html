@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Matarboð fyrir mömmu</title>
+  <meta name="description" content="300 lög sem öll koma saman og segja einhverja sögu um sögu af sögu um sögu sem er sagan af einhverju öðru.">
+  <meta property="og:title" content="Matarboð fyrir mömmu" />
+  <meta property="og:description" content="300 lög sem öll koma saman og segja einhverja sögu um sögu af sögu um sögu sem er sagan af einhverju öðru." />
+  <meta property="og:image" content="https://aron.dad/i/leikurinn/og/matarbod.png" />
+  <meta property="og:url" content="https://aron.dad/i/leikurinn/Matarbod/" />
+  <meta property="og:type" content="music.playlist" />
+  <meta property="og:locale" content="is_IS" />
+  <link rel="canonical" href="https://aron.dad/i/leikurinn/Matarbod/" />
+  <meta name="robots" content="index, follow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Matarboð fyrir mömmu">
+  <meta name="twitter:description" content="300 lög sem öll koma saman og segja einhverja sögu um sögu af sögu um sögu sem er sagan af einhverju öðru.">
+  <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/matarbod.png">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MusicPlaylist",
+    "name": "Matarboð fyrir mömmu",
+    "description": "300 lög sem öll koma saman og segja einhverja sögu um sögu af sögu um sögu sem er sagan af einhverju öðru.",
+    "url": "https://aron.dad/i/leikurinn/Matarbod/",
+    "image": "https://aron.dad/i/leikurinn/og/matarbod.png",
+    "inLanguage": "is",
+    "numTracks": 300
+  }
+  </script>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      font-size: 2rem;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      user-select: none;
+      position: relative;
+    }
+
+    #text-display {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.2;
+      max-width: 80%;
+      word-wrap: break-word;
+      padding: 10px 10px;
+      box-sizing: border-box;
+      z-index: 1;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15%; /* Hæð pseudo-elementið */
+      background-image: url('matarbod.jpg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      z-index: 0; /* Venjulegt ástand */
+      opacity: 0.8;
+      transition: all 0.3s ease;
+      pointer-events: auto; /* Leyfir smelli á pseudo-element */
+    }
+
+    body.fullscreen::before {
+      position: fixed; /* Tryggir að myndin fylli skjáinn og fer yfir allt */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%; /* Myndin fyllir skjáinn */
+      background-size: cover; /* Myndin fyllir svæðið */
+      z-index: 9999; /* Setur pseudo-elementið efst í lagaskiptingunni */
+      opacity: 1; /* Myndin verður ógegnsæ */
+    }
+
+    #audio-player {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="text-display">Matarboð fyrir mömmu</div>
+  <audio id="audio-player" preload="auto" playsinline></audio>
+
+  <script>
+    const audioFolder = "converted";
+    const totalSongs = 104;
+    let songs = Array.from({ length: totalSongs }, (_, i) => `${audioFolder}/song${i + 1}.mp3`);
+    let texts = Array.from({ length: totalSongs }, (_, i) => `Texti fyrir lag ${i + 1}`);
+    const textDisplay = document.getElementById("text-display");
+    const audioElement = document.getElementById("audio-player");
+    audioElement.loop = true;
+    audioElement.muted = false; // Tryggir að hljóðið sé í gegnum playback channel
+    let playOrder = [];
+    let orderPosition = 0;
+    let currentSongIndex = 0;
+    let started = false;
+
+    function playSong(index) {
+      const songUrl = songs[index];
+      currentSongIndex = index;
+      console.log("Hleð lag:", songUrl);
+      // Stöðva fyrra lag algjörlega áður en nýtt er spilað
+      audioElement.pause();
+      audioElement.currentTime = 0;
+      audioElement.src = songUrl;
+      textDisplay.textContent = texts[index] || "Enginn texti";
+
+      audioElement.play().catch(err => {
+        console.error("Gat ekki spilað lag:", err);
+        textDisplay.textContent = "";
+      });
+    }
+
+    function nextSong() {
+      orderPosition = (orderPosition + 1) % playOrder.length;
+      if (orderPosition === 0) {
+        shuffleArray(playOrder); // ný röð þegar búið er að fara í gegn
+      }
+      playSong(playOrder[orderPosition]);
+    }
+
+    function previousSong() {
+      orderPosition = (orderPosition - 1 + playOrder.length) % playOrder.length;
+      playSong(playOrder[orderPosition]);
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function initializeSongsAndTexts() {
+      const combined = songs.map((song, index) => ({ song, text: texts[index] }));
+      shuffleArray(combined);
+      songs = combined.map(item => item.song);
+      texts = combined.map(item => item.text);
+      playOrder = Array.from({ length: totalSongs }, (_, i) => i);
+      shuffleArray(playOrder);
+      orderPosition = 0;
+      currentSongIndex = playOrder[orderPosition];
+    }
+
+    function cacheTexts(lines) {
+      try {
+        localStorage.setItem("cachedTexts", JSON.stringify(lines));
+      } catch (e) {
+        console.warn("Gat ekki vistað texta í cache:", e);
+      }
+    }
+
+    function loadCachedTexts() {
+      try {
+        const cached = localStorage.getItem("cachedTexts");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            texts = parsed;
+            return true;
+          }
+        }
+      } catch (e) {
+        console.warn("Gat ekki lesið cached texta:", e);
+      }
+      return false;
+    }
+
+    function ensureTextsLength() {
+      if (!texts || texts.length === 0) {
+        texts = Array.from({ length: totalSongs }, (_, i) => `Texti fyrir lag ${i + 1}`);
+      }
+      if (texts.length < totalSongs) {
+        const extra = totalSongs - texts.length;
+        for (let i = 0; i < extra; i++) {
+          texts.push(texts[i % texts.length]);
+        }
+      }
+    }
+
+    function loadTexts() {
+      return fetch("kannski.htm", { cache: "no-store" })
+        .then(res => res.ok ? res.text() : Promise.reject("fann ekki kannski.htm"))
+        .then(txt => {
+          const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+          if (lines.length > 0) {
+            texts = lines;
+            cacheTexts(lines);
+          } else {
+            throw new Error("tóm skrá");
+          }
+        })
+        .catch(err => {
+          console.log("Gat ekki hlaðið texta af neti:", err);
+          if (!loadCachedTexts()) {
+            throw err;
+          }
+        });
+    }
+
+    function startPlayback() {
+      if (started) return;
+      started = true;
+
+      loadTexts()
+        .catch(err => {
+          console.log("Nota sjálfgefin texta:", err);
+        })
+        .finally(() => {
+          ensureTextsLength();
+          initializeSongsAndTexts();
+          playSong(playOrder[orderPosition]);
+        });
+    }
+
+    // Byrja eða skipta um lag við smell (nema ef smellt er á myndasvæðið efst eða í fullscreen)
+    document.body.addEventListener("click", (e) => {
+      // Ef myndin er í fullscreen er smellt bara til að loka henni, ekki skipta um lag
+      if (document.body.classList.contains("fullscreen")) {
+        document.body.classList.remove("fullscreen");
+        return;
+      }
+
+      const rect = document.body.getBoundingClientRect();
+      const clickY = e.clientY;
+      const clickedImageArea = clickY <= rect.top + (window.innerHeight * 0.15);
+
+      if (clickedImageArea) {
+        // Bara stækka / minnka mynd án þess að skipta um lag
+        document.body.classList.toggle("fullscreen");
+        return;
+      }
+
+      if (!started) {
+        startPlayback();
+      } else {
+        nextSong();
+      }
+    });
+
+    // Sveifla til vinstri eða hægri
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.body.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+
+    document.body.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) {
+        nextSong(); // Svæp til hægri -> næsta lag
+      } else if (touchEndX > touchStartX + 50) {
+        previousSong(); // Svæp til vinstri -> fyrra lag
+      }
+    });
+
+    // Örvatakkar til að skipta um lög
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight") {
+        nextSong(); // Hægri ör -> næsta lag
+      } else if (e.key === "ArrowLeft") {
+        previousSong(); // Vinstri ör -> fyrra lag
+      }
+    });
+
+  </script>
+</body>
+</html>

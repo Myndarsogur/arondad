@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ást & bylting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    /* Þetta er fyrir matseðilinn sem við sækjum */
+    #menu {
+      margin: 0;
+      padding: 0;
+    }
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #000;
+      margin: 0 5px;
+    }
+    a:hover {
+      text-decoration: none;
+      font-weight: bolder;
+    }
+    .menu-container {
+      margin-top: 20px;
+    }
+    .main-content {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hér mun matseðillinn birtast -->
+  <div id="menu"></div>
+
+  
+
+
+
+  <!-- Aðalefni síðunnar (hér getur þú sett hvað sem er) -->
+  <div class="main-content">
+    <h2>Fara yfir verkefnið</h2>
+    <p>
+        Fara yfir verkefnið. Horfa á það og byrja aftur. Sjá hvað það er sem er að halda því aftur. Þegar allt er komið saman, laga það til, gera það betra, gera það meira af því sem það á skilið að vera.
+    </p>
+    <p>
+        Aftur og aftur. Innan eðlilegra marka. Flest forvinnan á sér stað ómeðvitað þónokkrum sinnum. Það er mikilvægt að leyfa sér að fara í gegnum allt ferlið til þess að kanna það og kynna sér aðstæður hverju sinni.
+    </p>
+    <p>
+        Svo þegar það er komin einhver tilfinning, jafnvel eftir að búið er að reyna að ná einhverjum stíl í gegn, einhverri tegund af flæði. Þá er að taka allt sem að gekk vel, það sem hefur verið að byggjast vel og þróa það, leyfa því að vera meira af því. Opna það inn í söguna og gera það hluta af henni.
+    </p>
+    <p>
+        Þarna snýst það um að taka öll táknin og leysa þau, eins og þrautir, eða leggja þau og leyfa þeim að leysast í huga fólks, bæði er einhvers virði.
+    </p>
+
+
+
+  </div>
+    <!-- JavaScript kóði til að sækja menu.html og stinga honum inn í #menu -->
+    <script>
+      // Sækir 'menu.html' (verður að vera í sömu möppu eða réttum stíg)
+      fetch('menu.html')
+        .then(response => response.text())
+        .then(data => {
+          // Setur textainnihaldið (HTML) inn í #menu
+          document.getElementById('menu').innerHTML = data;
+        })
+        .catch(error => console.error('Villa við að sækja menu.html:', error));
+    </script>
+  
+  </body>
+  </html>
+</body>
+</html>

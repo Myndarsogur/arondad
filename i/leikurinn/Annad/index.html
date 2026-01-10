@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Safn af gölluðum gögnum</title>
+  <meta name="description" content="Það getur verið erfitt að geyma þetta allt saman, sérstaklega eftir langan tíma.  Það fer að hverfa, á einn eða annan hátt.">
+  <meta property="og:title" content="Safn af gölluðum gögnum" />
+  <meta property="og:description" content="Það getur verið erfitt að geyma þetta allt saman, sérstaklega eftir langan tíma.  Það fer að hverfa, á einn eða annan hátt." />
+  <meta property="og:image" content="https://aron.dad/i/leikurinn/og/annad.png" />
+  <meta property="og:url" content="https://aron.dad/i/leikurinn/Annad/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="is_IS" />
+  <link rel="canonical" href="https://aron.dad/i/leikurinn/Annad/" />
+  <meta name="robots" content="index, follow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Safn af gölluðum gögnum">
+  <meta name="twitter:description" content="Það getur verið erfitt að geyma þetta allt saman, sérstaklega eftir langan tíma.  Það fer að hverfa, á einn eða annan hátt.">
+  <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/annad.png">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "name": "Safn af gölluðum gögnum",
+    "description": "Það getur verið erfitt að geyma þetta allt saman, sérstaklega eftir langan tíma.  Það fer að hverfa, á einn eða annan hátt.",
+    "url": "https://aron.dad/i/leikurinn/Annad/",
+    "image": "https://aron.dad/i/leikurinn/og/annad.png",
+    "inLanguage": "is",
+    "isFamilyFriendly": true
+  }
+  </script>
+  <style>
+    html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+    canvas { width:100%; height:100%; display:block; touch-action:none; }
+    #thu-wall{
+      position:fixed;
+      z-index:30;
+      overflow:hidden;
+      border-radius:6px;
+      width: 820px;
+      height: 480px;
+      right: 80px;
+      bottom: 90px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      border: 3px solid rgba(150,160,180,0.35);
+      background:#000;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .2s ease;
+    }
+    #thu-wall.visible{
+      opacity:1;
+      pointer-events:auto;
+    }
+    #thu-wall iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      background:#000;
+    }
+    #myndband-wall{
+      position:fixed;
+      z-index:30;
+      overflow:hidden;
+      border-radius:6px;
+      width: min(92vw, 1100px);
+      aspect-ratio: 2 / 1; /* match 1280x640 content */
+      left: 30px;
+      bottom: 60px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      border: 3px solid rgba(150,160,180,0.35);
+      background:#000;
+      pointer-events:none;
+      opacity:0;
+      transition:opacity .2s ease;
+    }
+    #myndband-wall.visible{
+      opacity:1;
+      pointer-events:auto;
+    }
+    #myndband-wall iframe{
+      width:100%;
+      height:100%;
+      border:0;
+      background:#000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="application-canvas"></canvas>
+  <div id="thu-wall">
+    <iframe id="thu-iframe" src="thu/index.html" title="Thu" allow="autoplay"></iframe>
+  </div>
+  <div id="myndband-wall">
+    <iframe id="myndband-iframe" src="Myndband2/index.html" title="Myndband" allow="autoplay"></iframe>
+  </div>
+
+  <script>
+    const thuWall = document.getElementById('thu-wall');
+    const thuIframe = document.getElementById('thu-iframe');
+    const myndWall = document.getElementById('myndband-wall');
+    const myndIframe = document.getElementById('myndband-iframe');
+    const showThu = () => thuWall.classList.add('visible');
+    const hideThu = () => thuWall.classList.remove('visible');
+    const showMynd = () => myndWall.classList.add('visible');
+    const hideMynd = () => myndWall.classList.remove('visible');
+    const notifyIframe = (iframe, type) => {
+      try {
+        iframe.contentWindow?.postMessage({ type }, '*');
+      } catch (_) {}
+    };
+    const notifyThuIframe = (type) => notifyIframe(thuIframe, type);
+    const notifyMyndIframe = (type) => notifyIframe(myndIframe, type);
+
+    const statusEl = document.getElementById("status");
+    const setStatus = (msg, cls="") => {
+      if (statusEl) {
+        statusEl.className = cls;
+        statusEl.textContent = msg;
+      }
+      console.log(msg);
+    };
+
+    const scriptCandidates = [
+      "./playcanvas-stable.min.js",            // local copy if present
+      "https://cdn.playcanvas.com/playcanvas-stable.min.js",
+      "https://code.playcanvas.com/playcanvas-stable.min.js"
+    ];
+
+    function startApp() {
+      // 1) Staðfestu að PlayCanvas hlaðist
+      if (!window.pc) {
+        setStatus(
+          "ERROR: PlayCanvas (pc) hlaðst ekki.\n" +
+          "Sækja playcanvas-stable.min.js og setja við hlið index.html.",
+          "bad"
+        );
+        throw new Error("PlayCanvas not loaded (pc undefined)");
+      }
+
+      // 2) Reyndu að ræsa app / WebGL
+      const canvas = document.getElementById('application-canvas');
+      let app;
+      try {
+        app = new pc.Application(canvas, {
+          mouse: new pc.Mouse(canvas),
+          keyboard: new pc.Keyboard(window),
+          touch: new pc.TouchDevice(canvas)
+        });
+      } catch (e) {
+        setStatus("ERROR: Gat ekki búið til pc.Application.\n" + String(e), "bad");
+        throw e;
+      }
+
+      app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+      app.setCanvasResolution(pc.RESOLUTION_AUTO);
+      app.start();
+
+      setStatus("PlayCanvas OK. WebGL ræsir…", "ok");
+
+      // Scene defaults
+      app.scene.exposure = 1.0;
+      app.scene.toneMapping = pc.TONEMAP_ACES;
+      app.scene.gammaCorrection = pc.GAMMA_SRGB;
+      app.scene.ambientLight = new pc.Color(0.02, 0.03, 0.05);
+
+      // Camera
+      const camera = new pc.Entity('camera');
+      camera.addComponent('camera', {
+        clearColor: new pc.Color(0, 0, 0), // svartur himinn
+        farClip: 1000,
+        nearClip: 0.1,
+        fov: 70
+      });
+      camera.setLocalPosition(0, 1.8, 8);
+      app.root.addChild(camera);
+
+      // Light
+      const sun = new pc.Entity('sun');
+      sun.addComponent('light', {
+        type: 'directional',
+        color: new pc.Color(1, 1, 1),
+        intensity: 0.15,
+        castShadows: false
+      });
+      sun.setLocalEulerAngles(45, 35, 0);
+      app.root.addChild(sun);
+
+      // Materials
+      const wallMat = new pc.StandardMaterial();
+      wallMat.diffuse = new pc.Color(0.95, 0.95, 0.95); // bright white walls
+      wallMat.update();
+
+      // Starfield + aurora textures
+      function createStarTexture(app) {
+        const size = 256;
+        const c = document.createElement('canvas');
+        c.width = c.height = size;
+        const g = c.getContext('2d');
+        g.fillStyle = '#000';
+        g.fillRect(0,0,size,size);
+        for(let i=0;i<350;i++){
+          const x = Math.random()*size;
+          const y = Math.random()*size;
+          const r = Math.random()*1.5+0.2;
+          const a = Math.random()*0.8+0.2;
+          g.fillStyle = `rgba(255,255,255,${a})`;
+          g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill();
+        }
+        const tex = new pc.Texture(app.graphicsDevice, {
+          width: size, height: size, format: pc.PIXELFORMAT_R8_G8_B8_A8,
+          mipmaps: true,
+          minFilter: pc.FILTER_LINEAR_MIPMAP_LINEAR,
+          magFilter: pc.FILTER_LINEAR,
+          addressU: pc.ADDRESS_REPEAT,
+          addressV: pc.ADDRESS_REPEAT
+        });
+        tex.setSource(c);
+        return tex;
+      }
+
+      function createAuroraTexture(app) {
+        const w = 512, h = 128;
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const g = c.getContext('2d');
+
+        g.clearRect(0,0,w,h);
+
+        // Mjúkt grænt band
+        const gradY = g.createLinearGradient(0,0,0,h);
+        gradY.addColorStop(0.00, 'rgba(0,255,120,0.00)');
+        gradY.addColorStop(0.35, 'rgba(0,255,120,0.10)');
+        gradY.addColorStop(0.50, 'rgba(0,255,120,0.55)');
+        gradY.addColorStop(0.65, 'rgba(0,255,120,0.10)');
+        gradY.addColorStop(1.00, 'rgba(0,255,120,0.00)');
+        g.fillStyle = gradY;
+        g.fillRect(0,0,w,h);
+
+        // Strengir til áferðar
+        for (let i=0; i<10; i++){
+          const x = Math.random()*w;
+          const ww = 40 + Math.random()*120;
+          const a = 0.06 + Math.random()*0.10;
+          g.fillStyle = `rgba(0,255,140,${a})`;
+          g.fillRect(x, 0, ww, h);
+        }
+
+        const tex = new pc.Texture(app.graphicsDevice, {
+          width: w, height: h, format: pc.PIXELFORMAT_R8_G8_B8_A8,
+          mipmaps: true,
+          minFilter: pc.FILTER_LINEAR_MIPMAP_LINEAR,
+          magFilter: pc.FILTER_LINEAR,
+          addressU: pc.ADDRESS_REPEAT,
+          addressV: pc.ADDRESS_CLAMP_TO_EDGE
+        });
+        tex.setSource(c);
+        return tex;
+      }
+
+      // Parquet-like procedural texture for the floor
+      function createParquetTexture(app) {
+        const size = 256;
+        const tile = document.createElement('canvas');
+        tile.width = size;
+        tile.height = size;
+        const g = tile.getContext('2d');
+        g.fillStyle = '#c79b58';
+        g.fillRect(0,0,size,size);
+        g.fillStyle = '#b58445';
+        const stripeH = size / 6;
+        for(let i=0;i<6;i++){
+          const y = i*stripeH;
+          if(i%2===0){
+            g.fillRect(0,y,size,stripeH);
+            g.fillStyle = g.fillStyle === '#b58445' ? '#d4a96a' : '#b58445';
+          }
+        }
+        // subtle seams
+        g.strokeStyle = 'rgba(0,0,0,0.08)';
+        for(let i=0;i<=6;i++){
+          const y=i*stripeH;
+          g.beginPath(); g.moveTo(0,y); g.lineTo(size,y); g.stroke();
+        }
+        g.strokeStyle = 'rgba(0,0,0,0.05)';
+        for(let x=0;x<=size;x+=size/4){
+          g.beginPath(); g.moveTo(x,0); g.lineTo(x,size); g.stroke();
+        }
+        const tex = new pc.Texture(app.graphicsDevice, {
+          width: size, height: size, format: pc.PIXELFORMAT_R8_G8_B8_A8,
+          mipmaps: true,
+          minFilter: pc.FILTER_LINEAR_MIPMAP_LINEAR,
+          magFilter: pc.FILTER_LINEAR,
+          addressU: pc.ADDRESS_REPEAT,
+          addressV: pc.ADDRESS_REPEAT
+        });
+        tex.setSource(tile);
+        return tex;
+      }
+
+      const floorMat = new pc.StandardMaterial();
+      floorMat.diffuse = new pc.Color(1,1,1);
+      const parquetTex = createParquetTexture(app);
+      floorMat.diffuseMap = parquetTex;
+      floorMat.emissiveMap = parquetTex;
+      floorMat.emissive.set(0.6,0.55,0.45);
+      floorMat.diffuseMapTiling = new pc.Vec2(8,8); // repeat many times
+      floorMat.emissiveMapTiling = new pc.Vec2(8,8);
+      floorMat.update();
+
+      const ceilMat = new pc.StandardMaterial();
+      ceilMat.diffuse = new pc.Color(0.9, 0.92, 0.95); // light ceiling
+      ceilMat.update();
+
+      const plinthMat = new pc.StandardMaterial();
+      plinthMat.diffuse = new pc.Color(0.9, 0.9, 0.9);
+      plinthMat.update();
+
+      // Sky elements (stars + aurora)
+      const starMat = new pc.StandardMaterial();
+      starMat.diffuse.set(0,0,0);
+      starMat.emissiveMap = createStarTexture(app);
+      starMat.emissiveMapTiling = new pc.Vec2(6,6);
+      starMat.emissive.set(1,1,1);
+      starMat.cull = pc.CULLFACE_FRONT; // render inside of sphere
+      starMat.depthWrite = false;
+      starMat.depthTest = true;
+      starMat.useGammaTonemap = true;
+      starMat.update();
+
+      const auroraMat = new pc.StandardMaterial();
+      auroraMat.diffuse.set(0,0,0);
+      auroraMat.blendType = pc.BLEND_NORMAL;
+      auroraMat.emissiveMap = createAuroraTexture(app);
+      auroraMat.emissiveMapTiling = new pc.Vec2(2.5, 4.5);
+      auroraMat.emissive.set(0.0, 0.55, 0.18);
+      auroraMat.opacity = 0.18;
+      auroraMat.cull = pc.CULLFACE_FRONT;
+      auroraMat.depthWrite = false;
+      auroraMat.depthTest = true;
+      auroraMat.update();
+
+      // Room
+      const roomSize = 60;
+      const wallHeight = 8;
+
+      // Solid floor as a thin box to avoid odd rotations
+      const floor = new pc.Entity('floor');
+      floor.addComponent('render', { type: 'box', material: floorMat });
+      floor.setLocalScale(roomSize, 0.2, roomSize);
+      floor.setLocalPosition(0, -0.1, 0);
+      app.root.addChild(floor);
+
+      // Walls so they align cleanly with the floor (open roof for sky)
+
+      // Room spot lights to keep art visible
+      const roomLight = new pc.Entity('roomLight');
+      roomLight.addComponent('light', {
+        type: 'spot',
+        intensity: 0.9,
+        range: 110,
+        innerConeAngle: 40,
+        outerConeAngle: 85,
+        castShadows: false
+      });
+      roomLight.setLocalPosition(0, 7.5, 0);
+      roomLight.setLocalEulerAngles(90, 0, 0);
+      app.root.addChild(roomLight);
+
+      function addSpot(x, z) {
+        const l = new pc.Entity('spot');
+        l.addComponent('light', {
+          type: 'spot',
+          intensity: 0.9,
+          range: 70,
+          innerConeAngle: 30,
+          outerConeAngle: 75,
+          castShadows: false
+        });
+        l.setLocalPosition(x, 7.0, z);
+        l.setLocalEulerAngles(90, 0, 0);
+        app.root.addChild(l);
+      }
+      addSpot(15, 15);
+      addSpot(-15, -15);
+      addSpot(15, -15);
+      addSpot(-15, 15);
+      // Mid-wall helpers for even coverage
+      addSpot(0, 20);
+      addSpot(0, -20);
+
+      function addPoint(x, y, z, intensity = 0.9, range = 55) {
+        const p = new pc.Entity('point');
+        p.addComponent('light', {
+          type: 'omni',
+          intensity,
+          range,
+          castShadows: false
+        });
+        p.setLocalPosition(x, y, z);
+        app.root.addChild(p);
+      }
+      // Fill for darker corners/edges
+      addPoint(24, 6.5, 24, 1.0, 70);
+      addPoint(-24, 6.5, 24, 1.0, 70);
+      addPoint(0, 6.5, 26, 0.9, 70);
+
+      const skyStars = new pc.Entity('skyStars');
+      skyStars.addComponent('render', { type:'sphere', material: starMat });
+      const skyRadius = 250;
+      skyStars.setLocalScale(skyRadius, skyRadius, skyRadius);
+      skyStars.setLocalPosition(0, 0, 0);
+      app.root.addChild(skyStars);
+
+      const skyAurora = new pc.Entity('skyAurora');
+      skyAurora.addComponent('render', { type:'sphere', material: auroraMat });
+      const auroraRadius = 240;
+      skyAurora.setLocalScale(auroraRadius, auroraRadius, auroraRadius);
+      skyAurora.setLocalPosition(0, 0, 0);
+      skyAurora.setLocalEulerAngles(35, 0, 0);
+      skyAurora.enabled = false; // disable aurora layer for now
+      app.root.addChild(skyAurora);
+
+      const back = new pc.Entity('back');
+      back.addComponent('render', { type: 'box', material: wallMat });
+      back.setLocalScale(roomSize, wallHeight, 0.2);
+      back.setLocalPosition(0, wallHeight / 2, roomSize / 2);
+      app.root.addChild(back);
+
+      const front = new pc.Entity('front');
+      front.addComponent('render', { type: 'box', material: wallMat });
+      front.setLocalScale(roomSize, wallHeight, 0.2);
+      front.setLocalPosition(0, wallHeight / 2, -roomSize / 2);
+      app.root.addChild(front);
+
+      const leftWall = new pc.Entity('left');
+      leftWall.addComponent('render', { type: 'box', material: wallMat });
+      leftWall.setLocalScale(0.2, wallHeight, roomSize);
+      leftWall.setLocalPosition(-roomSize / 2, wallHeight / 2, 0);
+      app.root.addChild(leftWall);
+
+      const rightWall = new pc.Entity('right');
+      rightWall.addComponent('render', { type: 'box', material: wallMat });
+      rightWall.setLocalScale(0.2, wallHeight, roomSize);
+      rightWall.setLocalPosition(roomSize / 2, wallHeight / 2, 0);
+      app.root.addChild(rightWall);
+
+      // Photo frames on the walls
+      const photos = [
+        "mynd1.avif","mynd2.avif","mynd3.avif","mynd4.avif","mynd5.avif","mynd6.avif",
+        "mynd62.avif","mynd63.avif","mynd64.avif","mynd65.avif","mynd66.avif",
+        "mynd67.avif","mynd68.avif","mynd69.avif","mynd70.avif","mynd71.avif"
+      ];
+      // Remove all art from the front wall; we'll only show the special frames there (bigger).
+      const thuSpot = { pos:new pc.Vec3(5, 3.5, -roomSize/2 + 0.16), yaw: 0 };
+      const myndSpot = { pos:new pc.Vec3(-10, 3.5, -roomSize/2 + 0.16), yaw: 0 };
+      const photoSpots = [
+        // Back wall
+        { pos:new pc.Vec3(-15, 3.5, roomSize/2 - 0.16),  yaw: 180 },
+        { pos:new pc.Vec3(  0, 3.5, roomSize/2 - 0.16),  yaw: 180 },
+        { pos:new pc.Vec3( 15, 3.5, roomSize/2 - 0.16),  yaw: 180 },
+        // Left wall
+        { pos:new pc.Vec3(-roomSize/2 + 0.16, 3.5, -15), yaw: 90 },
+        { pos:new pc.Vec3(-roomSize/2 + 0.16, 3.5,   0), yaw: 90 },
+        { pos:new pc.Vec3(-roomSize/2 + 0.16, 3.5,  15), yaw: 90 },
+        // Right wall
+        { pos:new pc.Vec3(roomSize/2 - 0.16, 3.5, -15),  yaw:-90 },
+        { pos:new pc.Vec3(roomSize/2 - 0.16, 3.5,   0),  yaw:-90 },
+        { pos:new pc.Vec3(roomSize/2 - 0.16, 3.5,  15),  yaw:-90 }
+      ];
+
+      let thuFramePos = null;
+      let thuInRange = false;
+
+      function startThuAudio() {
+        if (thuInRange) return;
+        thuInRange = true;
+        notifyThuIframe('start-music');
+      }
+
+      function stopThuAudio() {
+        if (!thuInRange) return;
+        thuInRange = false;
+        notifyThuIframe('stop-music');
+      }
+
+      // Add the big Thu frame on the front wall with cycling GIFs (no bland placeholder)
+      const thuGifFiles = Array.from({ length: 49 }, (_, i) => `thu/myndir/mynd${i + 1}.gif`);
+      const thuMat = new pc.StandardMaterial();
+      thuMat.cull = pc.CULLFACE_NONE;
+      const frame = new pc.Entity("thuFrame");
+      frame.addComponent("render", { type:"plane", material: thuMat });
+      const targetH = 4.5;
+      let height = Math.min(targetH, wallHeight - 0.8);
+      let width = 8.0;
+      frame.setLocalScale(width, 1, height);
+      const pos = thuSpot.pos.clone();
+      pos.y = 1.0 + (height / 2);
+      frame.setLocalPosition(pos);
+      frame.setLocalEulerAngles(-90, thuSpot.yaw, 180);
+      app.root.addChild(frame);
+      thuFramePos = frame.getLocalPosition().clone();
+
+      let thuGifIndex = 0;
+      function setThuGif(idx) {
+        const file = thuGifFiles[idx % thuGifFiles.length];
+        app.assets.loadFromUrl(file, "texture", (err, asset) => {
+          if (!err && asset && asset.resource) {
+            thuMat.diffuseMap = asset.resource;
+            thuMat.emissiveMap = asset.resource;
+            thuMat.emissive.set(1,1,1);
+          } else {
+            thuMat.diffuse.set(0.08, 0.12, 0.22);
+            thuMat.emissive.set(0.18, 0.32, 0.65);
+          }
+          thuMat.update();
+        });
+      }
+      setThuGif(thuGifIndex);
+      setInterval(() => {
+        thuGifIndex = (thuGifIndex + 1) % thuGifFiles.length;
+        setThuGif(thuGifIndex);
+      }, 6000);
+
+      // Add the Myndband frame on the front wall with cycling stills
+      const myndFiles = Array.from({ length: 20 }, (_, i) => `Myndband2/Bakgrunnsmyndir/mynd${i + 1}.avif`);
+      const myndMat = new pc.StandardMaterial();
+      myndMat.cull = pc.CULLFACE_NONE;
+      const myndFrame = new pc.Entity("myndFrame");
+      myndFrame.addComponent("render", { type:"plane", material: myndMat });
+      {
+        const targetH = 3.8;
+        let height = Math.min(targetH, wallHeight - 1.0);
+        let width = 6.5;
+        myndFrame.setLocalScale(width, 1, height);
+        const pos = myndSpot.pos.clone();
+        pos.y = 1.0 + (height / 2);
+        myndFrame.setLocalPosition(pos);
+        myndFrame.setLocalEulerAngles(-90, myndSpot.yaw, 180);
+        app.root.addChild(myndFrame);
+      }
+      const myndFramePos = myndFrame.getLocalPosition().clone();
+
+      let myndIndex = 0;
+      function setMyndStill(idx) {
+        const file = myndFiles[idx % myndFiles.length];
+        app.assets.loadFromUrl(file, "texture", (err, asset) => {
+          if (!err && asset && asset.resource) {
+            myndMat.diffuseMap = asset.resource;
+            myndMat.emissiveMap = asset.resource;
+            myndMat.emissive.set(1,1,1);
+          } else {
+            myndMat.diffuse.set(0.1, 0.12, 0.2);
+            myndMat.emissive.set(0.18, 0.22, 0.4);
+          }
+          myndMat.update();
+        });
+      }
+      setMyndStill(myndIndex);
+      setInterval(() => {
+        myndIndex = (myndIndex + 1) % myndFiles.length;
+        setMyndStill(myndIndex);
+      }, 6000);
+
+      photos.forEach((file, i) => {
+        app.assets.loadFromUrl(file, "texture", (err, asset) => {
+          if (err || !asset || !asset.resource) {
+            console.warn("Photo load fail:", file, err);
+            return;
+          }
+          const mat = new pc.StandardMaterial();
+          mat.diffuseMap = asset.resource;
+          mat.emissiveMap = asset.resource; // keep bright
+          mat.emissive.set(1,1,1);
+          mat.cull = pc.CULLFACE_NONE; // show regardless of facing
+          mat.update();
+
+          const frame = new pc.Entity("photo"+i);
+          frame.addComponent("render", { type:"plane", material: mat });
+          // Preserve aspect ratio on a plane that lives in XZ (Y is up)
+          const tex = asset.resource;
+          const aspect = tex.height / tex.width; // h/w
+          const targetH = 3.2;
+          let height = Math.min(targetH, wallHeight - 1.2);
+          let width = height / aspect;
+          const maxWidth = 14;
+          if (width > maxWidth) {
+            width = maxWidth;
+            height = width * aspect;
+          }
+          // IMPORTANT: height goes on Z because PlayCanvas plane is XZ
+          frame.setLocalScale(width, 1, height);
+          const spot = photoSpots[i % photoSpots.length];
+          const pos = spot.pos.clone();
+          // keep all frames at same center height so they don't "lift" when taller
+          pos.y = 3.5;
+          frame.setLocalPosition(pos);
+          // Tilt up to vertical (-90 on X) then yaw to face the room correctly
+          // Flip 180 on Z to avoid upside-down textures
+          frame.setLocalEulerAngles(-90, spot.yaw, 180);
+          app.root.addChild(frame);
+        });
+      });
+
+      // TEST CUBE (ef þú sérð þetta þá virkar 3D)
+      const cube = new pc.Entity('testCube');
+      cube.addComponent('render', { type: 'box' });
+      cube.setLocalPosition(0, 1.2, 0);
+      cube.setLocalScale(1.2, 1.2, 1.2);
+      app.root.addChild(cube);
+
+      // Plinths
+      const plinthPositions = [];
+      const ringRadius = 14;
+
+      for (let i = 0; i < 6; i++) {
+        const ang = (i / 6) * Math.PI * 2;
+        const x = Math.cos(ang) * ringRadius;
+        const z = Math.sin(ang) * ringRadius;
+        plinthPositions.push(new pc.Vec3(x, 0, z));
+
+        const plinth = new pc.Entity('plinth' + i);
+        plinth.addComponent('render', { type: 'cylinder', material: plinthMat });
+        plinth.setLocalScale(2.2, 0.5, 2.2);
+        plinth.setLocalPosition(x, 0.25, z);
+        app.root.addChild(plinth);
+      }
+
+      // Load GLBs
+      const glbs = ["model1.glb","model2.glb","model3.glb","model4.glb","model5.glb","model6.glb"];
+      const glbEntities = [];
+      let loaded = 0, failed = 0;
+
+      const updateLoadStatus = () => {
+        setStatus(
+          "PlayCanvas OK.\n" +
+          "Ef þú sérð kassa -> 3D er í lagi.\n" +
+          `GLB: ${loaded} ok, ${failed} fail`,
+          "ok"
+        );
+      };
+      updateLoadStatus();
+
+      glbs.forEach((file, idx) => {
+        app.assets.loadFromUrl(file, "container", (err, asset) => {
+          if (err || !asset || !asset.resource) {
+            failed++;
+            updateLoadStatus();
+            console.warn("GLB load fail:", file, err);
+            return;
+          }
+
+          const inst = asset.resource.instantiateRenderEntity();
+
+          // place on plinth
+          const pos = plinthPositions[idx % plinthPositions.length].clone();
+          pos.y = 0.9;
+          inst.setLocalPosition(pos);
+          inst.setLocalEulerAngles(0, Math.random() * 360, 0);
+          app.root.addChild(inst);
+          glbEntities.push({
+            entity: inst,
+            spin: 10 + Math.random() * 10 // deg per second
+          });
+
+          loaded++;
+          updateLoadStatus();
+        });
+      });
+
+      // Controls: WASD + mouse/touch look
+      const keys = {};
+      window.addEventListener('keydown', (e) => keys[e.code] = true);
+      window.addEventListener('keyup',   (e) => keys[e.code] = false);
+
+      let yaw = 0;
+      let dragging = false, lastX = 0;
+      canvas.addEventListener('mousedown', (e) => { dragging = true; lastX = e.clientX; });
+      window.addEventListener('mouseup', () => dragging = false);
+      window.addEventListener('mousemove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - lastX;
+        lastX = e.clientX;
+        yaw -= dx * 0.15;
+      });
+
+      let touch = { active:false, lastX:0 };
+      canvas.addEventListener('touchstart', (e) => {
+        if (!e.touches.length) return;
+        touch.active = true;
+        touch.lastX = e.touches[0].clientX;
+      }, { passive:true });
+      canvas.addEventListener('touchmove', (e) => {
+        if (!touch.active || !e.touches.length) return;
+        const x = e.touches[0].clientX;
+        const dx = x - touch.lastX;
+        touch.lastX = x;
+        yaw -= dx * 0.15;
+      }, { passive:true });
+      canvas.addEventListener('touchend', () => touch.active = false, { passive:true });
+
+      const moveSpeed = (matchMedia("(pointer:coarse)").matches ? 3.5 : 5.5);
+      let t = 0;
+
+      app.on('update', (dt) => {
+        t += dt;
+        cube.setLocalEulerAngles(t * 30, t * 60, 0);
+        camera.setLocalEulerAngles(0, yaw, 0);
+
+        const forward = keys['KeyW'] || keys['ArrowUp'];
+        const back    = keys['KeyS'] || keys['ArrowDown'];
+        const turnL   = keys['KeyA'] || keys['ArrowLeft'];
+        const turnR   = keys['KeyD'] || keys['ArrowRight'];
+
+        const turnSpeed = 90; // deg/s
+        if (turnL) yaw += turnSpeed * dt;
+        if (turnR) yaw -= turnSpeed * dt;
+
+        const dirZ = (forward ? -1 : 0) + (back ? 1 : 0);
+
+        if (dirZ !== 0) {
+          const rad = yaw * Math.PI / 180;
+          const sin = Math.sin(rad);
+          const cos = Math.cos(rad);
+
+          const mx = sin * dirZ * moveSpeed * dt;
+          const mz = cos * dirZ * moveSpeed * dt;
+
+          const pos = camera.getLocalPosition();
+          pos.x += mx;
+          pos.z += mz;
+          pos.y = 1.8;
+
+          pos.x = pc.math.clamp(pos.x, -28, 28);
+          pos.z = pc.math.clamp(pos.z, -28, 28);
+          camera.setLocalPosition(pos);
+        }
+
+        // Keep sky domes centered on the camera
+        const camPos = camera.getLocalPosition();
+        skyStars.setLocalPosition(camPos);
+        skyAurora.setLocalPosition(camPos);
+
+        // Thu proximity audio trigger
+        if (thuFramePos) {
+          const dx = camPos.x - thuFramePos.x;
+          const dz = camPos.z - thuFramePos.z;
+          const dist = Math.hypot(dx, dz);
+          if (dist < 8) {
+            startThuAudio();
+            showThu();
+          } else {
+            stopThuAudio();
+            hideThu();
+          }
+        }
+        // Myndband proximity
+        if (myndFramePos) {
+          const dx2 = camPos.x - myndFramePos.x;
+          const dz2 = camPos.z - myndFramePos.z;
+          const dist2 = Math.hypot(dx2, dz2);
+          if (dist2 < 8) {
+            notifyMyndIframe('start-music');
+            showMynd();
+          } else {
+            notifyMyndIframe('stop-music');
+            hideMynd();
+          }
+        }
+
+        // Rotate GLB statues smoothly using accumulated time
+        glbEntities.forEach((item) => {
+          item.entity.setLocalEulerAngles(0, t * item.spin, 0);
+        });
+      });
+    }
+
+    // Try to load PlayCanvas from local first, then fall back to CDNs
+    function loadPc(idx = 0) {
+      if (idx >= scriptCandidates.length) {
+        setStatus(
+          "ERROR: PlayCanvas script hlaðst ekki.\n" +
+          "Sækja playcanvas-stable.min.js og setja við hlið index.html.",
+          "bad"
+        );
+        return;
+      }
+      const src = scriptCandidates[idx];
+      setStatus(`Hleð PlayCanvas (${src})…`);
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = () => {
+        if (window.pc) {
+          setStatus(`PlayCanvas hlaðið (${src}).`);
+          startApp();
+        } else {
+          setStatus(`PlayCanvas fannst ekki (${src}), prófa næsta…`, "bad");
+          loadPc(idx + 1);
+        }
+      };
+      s.onerror = () => {
+        setStatus(`Script hleðsla klikkaði (${src}), prófa næsta…`, "bad");
+        loadPc(idx + 1);
+      };
+      document.head.appendChild(s);
+    }
+
+    loadPc();
+  </script>
+</body>
+</html>

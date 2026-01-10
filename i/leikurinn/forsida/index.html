@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hérna er tölva sem inniheldur öll þau ljóð og öll þau hljóð sem þér gæti dottið í hug að finna.">
+    <meta property="og:title" content="Þetta er ótrúlegt!" />
+    <meta property="og:description" content="Hérna er tölva sem inniheldur öll þau ljóð og öll þau hljóð sem þér gæti dottið í hug að finna." />
+    <meta property="og:image" content="https://aron.dad/i/leikurinn/og/forsida.png" />
+    <meta property="og:url" content="https://aron.dad/i/leikurinn/forsida/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="is_IS" />
+    <link rel="canonical" href="https://aron.dad/i/leikurinn/forsida/" />
+    <meta name="robots" content="index, follow">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Þetta er ótrúlegt!">
+    <meta name="twitter:description" content="Hérna er tölva sem inniheldur öll þau ljóð og öll þau hljóð sem þér gæti dottið í hug að finna.">
+    <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/forsida.png">
+    <title>Þetta er ótrúlegt!</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Þetta er ótrúlegt!",
+      "description": "Hérna er tölva sem inniheldur öll þau ljóð og öll þau hljóð sem þér gæti dottið í hug að finna.",
+      "url": "https://aron.dad/i/leikurinn/forsida/",
+      "image": "https://aron.dad/i/leikurinn/og/forsida.png",
+      "inLanguage": "is",
+      "isFamilyFriendly": true
+    }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        @keyframes blinkBackground {
+            0%, 100% {
+                background-color: red;
+            }
+            25% {
+                background-color: yellow;
+            }
+            50% {
+                background-color: green;
+            }
+            75% {
+                background-color: blue;
+            }
+        }
+
+        @keyframes blinkText {
+            0%, 100% {
+                color: white;
+            }
+            25% {
+                color: black;
+            }
+            50% {
+                color: orange;
+            }
+            75% {
+                color: pink;
+            }
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            animation: blinkBackground 0.3s infinite;
+            border: 5px solid black;
+            z-index: 1000;
+        }
+
+        .popup h2 {
+            font-size: 32px;
+            margin: 0 0 10px;
+            text-transform: uppercase;
+            animation: blinkText 0.3s infinite;
+        }
+
+        .popup p {
+            font-size: 18px;
+            animation: blinkText 0.6s infinite;
+        }
+
+        .popup input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid red;
+            border-radius: 5px;
+        }
+
+        .popup button {
+            background-color: red;
+            color: white;
+            border: 2px solid yellow;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .popup button:hover {
+            background-color: yellow;
+            color: black;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <h2>FRÍTT DÓT!!!</h2>
+        <p>Til hamingju! Þú hefur unnið frítt dót! Settu inn tölvupóstinn þinn og við sendum það til þín strax!!!</p>
+        <input type="email" id="email" placeholder="Sláðu inn tölvupóst">
+        <button onclick="sendEmail()">Skrá mig</button>
+    </div>
+
+    <script>
+        function sendEmail() {
+            const email = document.getElementById('email').value;
+            if (email) {
+                const subject = encodeURIComponent("Já takk ég vil FRÍTT DÓT!!!");
+                const body = encodeURIComponent(
+                    `Takk kærlega fyrir að skrá mig á þennan póstlista.\n\n` +
+                    `Ég hlakka mikið til að fá allt þetta fría dót sem þið ætlið að gefa mér.\n` +
+                    `Þið voruð örugglega ekki að ljúga... ha? \n` +
+                    `Þið sendið það bara hingað: ${email}\n\n` +
+                    `Bestu kveðjur,\n${email}`
+                );
+
+                window.location.href = `mailto:villt@villt.is?subject=${subject}&body=${body}`;
+                closePopup();
+            } else {
+                alert('Vinsamlegast sláðu inn gilt tölvupóstfang.');
+            }
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Hávaði með hljóði
+        window.onload = function() {
+            const audio = new Audio('hljod.m4a');
+            audio.play()
+            };
+    </script>
+
+    <div class="container">
+        <!-- Imgur embed -->
+        <div class="embed" data-embed="imgur">
+            <img src="" alt="">
+        </div>
+        <!-- SoundCloud embed -->
+        <div class="embed" data-embed="soundcloud">
+        </div>
+        <iframe width="100%" height="100%" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/9560289&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur" title="Pungur Silungs" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Silungs</a> · <a href="https://soundcloud.com/pungur/sets/romantiskpolitik" title="Rómantísk Pólitík" target="_blank" style="color: #cccccc; text-decoration: none;">Rómantísk Pólitík</a></div>
+        <!-- YouTube embed -->
+        <div class="embed" data-embed="youtube">
+        </div>
+        <!-- Vimeo embed -->
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/NXlhxaQRIQ4?si=x59kOLzOUf_qvLmZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/izvDSzWjfwM?si=OF4l2HF8H5ja1x8M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/vTiFFiY6fCw?si=Fa2CNg7UewqpLYDR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/Bz_BjP7-Mns?si=KgX0-PiDrp1hUD-i" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="100" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/1936459927&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur-xtra" title="Pungur Extra" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Extra</a> · <a href="https://soundcloud.com/pungur-xtra/sets/brei-ur" title="Ábreiður" target="_blank" style="color: #cccccc; text-decoration: none;">Ábreiður</a></div>        <iframe width="560" height="315" src="https://www.youtube.com/embed/PLt8YFPPP8U?si=YUtp7FPDXrHjKq-8&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/cP_i5l3jD2M?si=w5jjz_daO-NHSyLY&" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/fLR9krzFcP4?si=yOnGKJ2tGagACYnt&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/oUARwNggCuQ?si=WJOg5jdn85sTZld8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/646067253&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur" title="Pungur Silungs" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Silungs</a> · <a href="https://soundcloud.com/pungur/popplag" title="Popplag" target="_blank" style="color: #cccccc; text-decoration: none;">Popplag</a></div>        <iframe width="560" height="315" src="https://www.youtube.com/embed/we9gUIKEVdE?si=3vK4wz6zuFEkF9bn&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="600" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/124559604&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur" title="Pungur Silungs" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Silungs</a> · <a href="https://soundcloud.com/pungur/waking-up-in-the-morning" title="Waking Up In The Morning" target="_blank" style="color: #cccccc; text-decoration: none;">Waking Up In The Morning</a></div>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/ZgHzpmT1gsk?si=082cRxUS_1N6vD1Q" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/RimNFEso2H0?si=CDsmNZ87fH5WEYoY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/L4b4YXatcbA?si=0BCtf32wXoF-xEPt" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/DER2frGCF88?si=sbbWILOjqiS2ocbP" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="450" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/1936573139&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur-xtra" title="Pungur Extra" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Extra</a> · <a href="https://soundcloud.com/pungur-xtra/sets/best-of-matarbo-fyrir-m-mmu" title="Best of Matarboð fyrir mömmu" target="_blank" style="color: #cccccc; text-decoration: none;">Best of Matarboð fyrir mömmu</a></div>     
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/s9Ur4m_ebIw?si=lC008z87GcdoZ8CJ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/GfXeIdi-_mQ?si=Oksjf-t-3Y-mwSmm&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/1DWMx7uGE9k?si=CNGA84WiOIYBGgqL&amp;controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/8en2ZVs4tvQ?si=I71m4tjMrxysUtWj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; vr" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe width="100%" height="600" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/232660968&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/pungur" title="Pungur Silungs" target="_blank" style="color: #cccccc; text-decoration: none;">Pungur Silungs</a> · <a href="https://soundcloud.com/pungur/ljonidogfjallid" title="Ljónið Og Fjallið" target="_blank" style="color: #cccccc; text-decoration: none;">Ljónið Og Fjallið</a></div>   
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/0Y4m36MViqBGYs8cq9lgxP?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+   
+    </div>
+</body>
+</html>

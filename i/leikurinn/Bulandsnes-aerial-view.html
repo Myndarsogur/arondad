@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bulandsnes – Lofthæðarkort</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; background: #0b0d13; color: #e9edf4; font-family: system-ui, -apple-system, sans-serif; overflow: hidden; }
+    header {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 10px 16px; background: rgba(8,10,15,0.85); backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    #map-wrap { position: absolute; inset: 52px 0 0 0; display: flex; justify-content: center; align-items: center; }
+    #map { max-width: 100vw; max-height: calc(100vh - 52px); border: 1px solid rgba(255,255,255,0.08); background: #0b0d13; }
+    #legend {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(8,10,15,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+      padding: 10px 12px; font-size: 13px; line-height: 1.5;
+    }
+    #legend div { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    #legend span.color { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+    #status { font-size: 12px; color: #9fb1c8; }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>Bulandsnes</strong> – loft/hæðar yfirlit (Papey ↔ Bulandstindur)</div>
+    <div id="status">Hleð gögn...</div>
+  </header>
+  <div id="map-wrap">
+    <canvas id="map" width="1800" height="1200"></canvas>
+    <div id="legend">
+      <div><span class="color" style="background:#0f6ba8"></span> Sjór</div>
+      <div><span class="color" style="background:#3b8f5a"></span> Land</div>
+      <div><span class="color" style="background:#bfc7d0"></span> Byggingar</div>
+      <div><span class="color" style="background:#111"></span> Vegir</div>
+    </div>
+  </div>
+
+  <script type="module">
+    const canvas = document.getElementById('map');
+    const ctx = canvas.getContext('2d');
+    const statusEl = document.getElementById('status');
+
+    const dataBase = './bulandsnes-data/'; // settu hæðar-/OSM skrár hingað
+
+    // BBOX sem nær Bulandstindi ↔ Papey (þrengtu/viddkaðu ef þarf)
+    const bounds = { minLat: 64.60, maxLat: 64.86, minLon: -14.45, maxLon: -14.05 };
+    const R = 6378137;
+    const mercX = lon => R * (lon * Math.PI / 180);
+    const mercY = lat => R * Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI / 180) / 2));
+    const xMin = mercX(bounds.minLon), xMax = mercX(bounds.maxLon);
+    const yMin = mercY(bounds.minLat), yMax = mercY(bounds.maxLat);
+
+    function llToXY(lat, lon) {
+      const x = (mercX(lon) - xMin) / (xMax - xMin);
+      const y = 1 - (mercY(lat) - yMin) / (yMax - yMin);
+      return { x, y };
+    }
+
+    async function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function loadData() {
+      const osm = await fetch(dataBase + 'osm.json').then(r => r.json()).catch(() => null);
+      const dem = await loadImage(dataBase + 'dem.png').catch(() => null);
+      return { osm, dem };
+    }
+
+    function drawDEM(demImg) {
+      if (!demImg) {
+        ctx.fillStyle = '#0f6ba8';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        statusEl.textContent = 'DEM vantar (settu dem.png í bulandsnes-data/)';
+        return;
+      }
+      const tmp = document.createElement('canvas');
+      tmp.width = canvas.width; tmp.height = canvas.height;
+      const tctx = tmp.getContext('2d');
+      tctx.drawImage(demImg, 0, 0, tmp.width, tmp.height);
+      const img = tctx.getImageData(0, 0, tmp.width, tmp.height);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const v = data[i]; // greyscale
+        const elevNorm = v / 255;
+        let r, g, b;
+        if (elevNorm < 0.45) {
+          r = 15; g = 107; b = 168; // sjór
+        } else {
+          const t = (elevNorm - 0.45) / 0.55;
+          r = 30 + 80 * t;
+          g = 110 + 90 * t;
+          b = 70 + 30 * t;
+        }
+        data[i] = r; data[i+1] = g; data[i+2] = b; data[i+3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+      statusEl.textContent = 'DEM hlaðið';
+    }
+
+    const roadStyle = {
+      motorway: { w: 12, c: '#f2c14e' },
+      trunk: { w: 11, c: '#f2c14e' },
+      primary: { w: 10, c: '#f6d55c' },
+      secondary: { w: 9, c: '#f6d55c' },
+      tertiary: { w: 8, c: '#e5e7eb' },
+      residential: { w: 7, c: '#e5e7eb' },
+      service: { w: 6, c: '#cbd2dc' },
+      track: { w: 4.5, c: '#9aa4b3' },
+      path: { w: 3.5, c: '#8b93a1' },
+      footway: { w: 3, c: '#8b93a1' },
+      default: { w: 6, c: '#dcdcdc' },
+    };
+
+    function drawRoads(ways) {
+      ways.filter(w => w.tags?.highway && w.geometry?.length > 1).forEach(w => {
+        const style = roadStyle[w.tags.highway] || roadStyle.default;
+        // halo
+        ctx.lineWidth = style.w + 4;
+        ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+        ctx.beginPath();
+        w.geometry.forEach((p, i) => {
+          const pos = llToXY(p.lat, p.lon);
+          const x = pos.x * canvas.width;
+          const y = pos.y * canvas.height;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        // main
+        ctx.lineWidth = style.w;
+        ctx.strokeStyle = style.c;
+        ctx.stroke();
+      });
+    }
+
+    function drawBuildings(ways) {
+      ctx.fillStyle = '#bfc7d0';
+      ctx.strokeStyle = 'rgba(17,17,17,0.2)';
+      ctx.lineWidth = 1;
+      ways.filter(w => w.tags?.building && w.geometry?.length >= 3).forEach(w => {
+        ctx.beginPath();
+        w.geometry.forEach((p, i) => {
+          const pos = llToXY(p.lat, p.lon);
+          const x = pos.x * canvas.width;
+          const y = pos.y * canvas.height;
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fill(); ctx.stroke();
+      });
+    }
+
+    function drawOSM(osm) {
+      if (!osm) {
+        statusEl.textContent += ' • OSM vantar (settu osm.json í bulandsnes-data/)';
+        return;
+      }
+      const ways = osm.elements?.filter?.(e => e.type === 'way') || [];
+      drawBuildings(ways);
+      drawRoads(ways);
+      statusEl.textContent += ' • OSM hlaðið';
+    }
+
+    function resizeCanvas() {
+      const maxW = window.innerWidth - 16;
+      const maxH = window.innerHeight - 60;
+      const aspect = canvas.width / canvas.height;
+      let w = maxW, h = w / aspect;
+      if (h > maxH) { h = maxH; w = h * aspect; }
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+
+    (async function init() {
+      resizeCanvas();
+      const { osm, dem } = await loadData();
+      drawDEM(dem);
+      if (osm) drawOSM(osm);
+    })().catch(err => { statusEl.textContent = 'Villa: ' + err; console.error(err); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bulandsnes 3D kort</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; overflow: hidden; background: #0b0d13; }
+    #hud {
+      position: fixed; top: 10px; left: 10px; z-index: 10;
+      padding: 10px 14px; border-radius: 8px;
+      background: rgba(0,0,0,0.55); color: #e9edf4;
+      font-family: system-ui,-apple-system,sans-serif; font-size: 14px; line-height: 1.5;
+      pointer-events: none;
+    }
+    #hud strong { color: #9cf1ff; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <div><strong>WASD</strong>/örvar: hreyfing • <strong>Q/E</strong>: snúa • <strong>Shift</strong>: hraðar</div>
+    <div><strong>H</strong>: fela/sýna merki</div>
+    <div style="font-size:12px;color:#9fb1c8">DEM/OSM: settu skrár í <code>bulandsnes-data/dem.png</code> (+ valfrjálst <code>dem-meta.json</code>) og <code>bulandsnes-data/osm.json</code></div>
+  </div>
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.159.0/build/three.module.js';
+
+    // --- Grunnstilling ---
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0b0d13);
+
+    const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 20000);
+    camera.position.set(0, 20, 80);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    const sun = new THREE.DirectionalLight(0xffffff, 0.9);
+    sun.position.set(400, 900, 300);
+    scene.add(ambient, sun);
+
+    // --- Gögn ---
+    const dataBase = './bulandsnes-data/';
+    // BBOX Bulandstindur ↔ Papey
+    const bounds = { minLat: 64.60, maxLat: 64.86, minLon: -14.45, maxLon: -14.05 };
+    const R = 6378137;
+    const mercX = lon => R * THREE.MathUtils.degToRad(lon);
+    const mercY = lat => R * Math.log(Math.tan(Math.PI / 4 + THREE.MathUtils.degToRad(lat) / 2));
+    const xMin = mercX(bounds.minLon), xMax = mercX(bounds.maxLon);
+    const yMin = mercY(bounds.minLat), yMax = mercY(bounds.maxLat);
+    const centerX = (xMin + xMax) * 0.5;
+    const centerY = (yMin + yMax) * 0.5;
+    const worldScale = 1; // metrar
+
+    function llToXZ(lat, lon) {
+      const mx = mercX(lon);
+      const my = mercY(lat);
+      return { x: (mx - centerX) * worldScale, z: -(my - centerY) * worldScale };
+    }
+
+    // DEM
+    let demData = null;
+    let demMeta = { min: 0, max: 1200 };
+    const demBounds = (() => {
+      const sw = llToXZ(bounds.minLat, bounds.minLon);
+      const ne = llToXZ(bounds.maxLat, bounds.maxLon);
+      const nw = llToXZ(bounds.maxLat, bounds.minLon);
+      const se = llToXZ(bounds.minLat, bounds.maxLon);
+      return {
+        minX: Math.min(sw.x, ne.x, nw.x, se.x),
+        maxX: Math.max(sw.x, ne.x, nw.x, se.x),
+        minZ: Math.min(sw.z, ne.z, nw.z, se.z),
+        maxZ: Math.max(sw.z, ne.z, nw.z, se.z),
+      };
+    })();
+
+    async function loadDem() {
+      try {
+        const meta = await fetch(dataBase + 'dem-meta.json').then(r => r.json());
+        if (meta?.min_elev_m !== undefined && meta?.max_elev_m !== undefined) {
+          demMeta = { min: meta.min_elev_m, max: meta.max_elev_m };
+        }
+      } catch (_) {}
+      const img = await new Promise((resolve, reject) => {
+        const im = new Image();
+        im.onload = () => resolve(im);
+        im.onerror = reject;
+        im.src = dataBase + 'dem.png';
+      });
+      const c = document.createElement('canvas');
+      c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      demData = ctx.getImageData(0, 0, img.width, img.height);
+      return { w: img.width, h: img.height };
+    }
+
+    function sampleDem(x, z) {
+      if (!demData) return 0;
+      const u = (x - demBounds.minX) / (demBounds.maxX - demBounds.minX);
+      const v = (z - demBounds.minZ) / (demBounds.maxZ - demBounds.minZ);
+      if (u < 0 || u > 1 || v < 0 || v > 1) return 0;
+      const px = Math.min(demData.width - 1, Math.max(0, Math.floor(u * demData.width)));
+      const py = Math.min(demData.height - 1, Math.max(0, Math.floor((1 - v) * demData.height)));
+      const idx = (py * demData.width + px) * 4;
+      const val = demData.data[idx];
+      const range = (demMeta.max - demMeta.min) || 1;
+      return (val / 255) * range + demMeta.min;
+    }
+
+    // --- Grunnflötur + sjór ---
+    const terrainScale = 0.35; // skala hæðar í míkró pappalandslag
+    const groundSize = 8000;
+    const groundGeo = new THREE.PlaneGeometry(groundSize, groundSize, 256, 256);
+    const gp = groundGeo.getAttribute('position');
+    for (let i = 0; i < gp.count; i++) {
+      const x = gp.getX(i);
+      const z = gp.getY(i);
+      const h = sampleDem(x, z) * terrainScale;
+      gp.setZ(i, h);
+    }
+    gp.needsUpdate = true;
+    groundGeo.computeVertexNormals();
+    const groundMat = new THREE.MeshStandardMaterial({
+      color: 0x3b8f5a,
+      roughness: 0.92,
+      metalness: 0.05,
+      flatShading: true,
+      vertexColors: false
+    });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    scene.add(ground);
+
+    const sea = new THREE.Mesh(
+      new THREE.PlaneGeometry(groundSize * 1.4, groundSize * 1.4),
+      new THREE.MeshBasicMaterial({ color: 0x0f6ba8, transparent: true, opacity: 0.85 })
+    );
+    sea.rotation.x = -Math.PI / 2;
+    sea.position.y = 0;
+    sea.renderOrder = 0;
+    scene.add(sea);
+
+    // --- Hópar ---
+    const roadsGroup = new THREE.Group();
+    const buildingsGroup = new THREE.Group();
+    const poiGroup = new THREE.Group();
+    scene.add(roadsGroup, buildingsGroup, poiGroup);
+
+    // --- Vegir ---
+    function roadWidth(tags = {}) {
+      if (tags.width && !isNaN(parseFloat(tags.width))) return parseFloat(tags.width);
+      const map = { motorway: 12, trunk: 11, primary: 10, secondary: 9, tertiary: 8, residential: 7, service: 5, track: 4, path: 3, footway: 2.5 };
+      return map[tags.highway] || 6;
+    }
+
+    function addRoad(way) {
+      if (!way.geometry || way.geometry.length < 2) return;
+      const pts = way.geometry.map(g => {
+        const p = llToXZ(g.lat, g.lon);
+        return new THREE.Vector3(p.x, sampleDem(p.x, p.z) * terrainScale + 0.2, p.z);
+      });
+      const baseWidth = roadWidth(way.tags) * 1.4;
+      const makeStrip = (half, color, emissive, intensity, renderOrder) => {
+        const positions = [];
+        const indices = [];
+        for (let i = 0; i < pts.length; i++) {
+          const pPrev = pts[Math.max(0, i - 1)];
+          const pNext = pts[Math.min(pts.length - 1, i + 1)];
+          const dir = new THREE.Vector2(pNext.x - pPrev.x, pNext.z - pPrev.z);
+          if (dir.lengthSq() === 0) continue;
+          dir.normalize();
+          const perp = new THREE.Vector2(-dir.y, dir.x);
+          const p = pts[i];
+          positions.push(
+            p.x + perp.x * half, p.y, p.z + perp.y * half,
+            p.x - perp.x * half, p.y, p.z - perp.y * half
+          );
+          if (i < pts.length - 1) {
+            const base = i * 2;
+            indices.push(base, base + 1, base + 2, base + 1, base + 3, base + 2);
+          }
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+        geo.setIndex(indices);
+        geo.computeVertexNormals();
+        const mat = new THREE.MeshStandardMaterial({
+          color,
+          emissive,
+          emissiveIntensity: intensity,
+          roughness: 0.4,
+          metalness: 0.05,
+          flatShading: true,
+          depthTest: false,
+          depthWrite: false,
+          transparent: true,
+          opacity: 0.98,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.renderOrder = renderOrder;
+        return mesh;
+      };
+      const halo = makeStrip(baseWidth * 0.65, 0x0b0d13, 0x0b0d13, 0.5, 18);
+      const top = makeStrip(baseWidth * 0.5, 0xf6f8fc, 0xcfd8ff, 1.0, 19);
+      roadsGroup.add(halo, top);
+    }
+
+    // --- Byggingar ---
+    function parseHeight(tags = {}) {
+      if (tags.height && !isNaN(parseFloat(tags.height))) return parseFloat(tags.height);
+      if (tags['building:levels'] && !isNaN(parseFloat(tags['building:levels']))) {
+        return 3 + parseFloat(tags['building:levels']) * 3;
+      }
+      return 6 + Math.random() * 6;
+    }
+
+    function addBuilding(way) {
+      if (!way.geometry || way.geometry.length < 3) return;
+      const pts = way.geometry.map(g => {
+        const p = llToXZ(g.lat, g.lon);
+        return new THREE.Vector2(p.x, p.z);
+      });
+      const shape = new THREE.Shape();
+      pts.forEach((p, i) => i === 0 ? shape.moveTo(p.x, p.y) : shape.lineTo(p.x, p.y));
+      const h = parseHeight(way.tags);
+      const extrude = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false });
+      extrude.rotateX(-Math.PI / 2);
+      let avgH = 0;
+      pts.forEach(p => avgH += sampleDem(p.x, p.y) * terrainScale);
+      avgH /= pts.length;
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0xc5cdd6,
+        roughness: 0.92,
+        metalness: 0.05,
+        flatShading: true
+      });
+      const mesh = new THREE.Mesh(extrude, mat);
+      mesh.position.y = avgH + 0.1;
+      buildingsGroup.add(mesh);
+    }
+
+    // --- POI (valfrjálst) ---
+    const poiColors = {
+      restaurant: '#ff7043', cafe: '#ffb74d', fast_food: '#ff8a65', pub: '#f06292', bar: '#f06292',
+      fuel: '#ffa000', hotel: '#ba68c8', hostel: '#ba68c8', guest_house: '#ba68c8', camp_site: '#81c784',
+      viewpoint: '#64b5f6', attraction: '#64b5f6', information: '#4db6ac', ferry_terminal: '#4fc3f7',
+      parking: '#90a4ae', default: '#f06292'
+    };
+    const allowedPoi = new Set(['restaurant','cafe','fast_food','pub','bar','fuel','hotel','hostel','guest_house','camp_site','viewpoint','attraction','information','ferry_terminal','parking']);
+
+    function addPoi(p) {
+      const tags = p.tags || {};
+      const type = tags.amenity || tags.tourism;
+      if (!allowedPoi.has(type)) return;
+      const name = tags.name || type;
+      const lat = p.lat ?? p.center?.lat ?? p.geometry?.[0]?.lat;
+      const lon = p.lon ?? p.center?.lon ?? p.geometry?.[0]?.lon;
+      if (lat === undefined || lon === undefined) return;
+      const pos = llToXZ(lat, lon);
+      const baseH = sampleDem(pos.x, pos.z) * terrainScale;
+      const color = poiColors[type] || poiColors.default;
+      const marker = new THREE.Mesh(
+        new THREE.SphereGeometry(1.3, 12, 12),
+        new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.7, flatShading: true })
+      );
+      marker.position.set(pos.x, baseH + 5, pos.z);
+      poiGroup.add(marker);
+    }
+
+    // --- Hreyfing ---
+    const keys = {};
+    window.addEventListener('keydown', e => { keys[e.code] = true; if (e.code === 'KeyH') poiGroup.visible = !poiGroup.visible; });
+    window.addEventListener('keyup', e => { keys[e.code] = false; });
+    let yaw = 0;
+    const baseSpeed = 40; // metrar/sek (hraðari flakk yfir stóra sviðið)
+    function updateMovement(dt) {
+      const forward = keys['KeyW'] || keys['ArrowUp'];
+      const backward = keys['KeyS'] || keys['ArrowDown'];
+      const left = keys['KeyA'] || keys['ArrowLeft'];
+      const right = keys['KeyD'] || keys['ArrowRight'];
+      if (keys['KeyQ']) yaw += 1.6 * dt;
+      if (keys['KeyE']) yaw -= 1.6 * dt;
+      const dir = new THREE.Vector3();
+      if (forward) dir.z -= 1;
+      if (backward) dir.z += 1;
+      dir.normalize();
+      const sin = Math.sin(yaw), cos = Math.cos(yaw);
+      const dx = dir.z * sin;
+      const dz = dir.z * cos;
+      const speed = baseSpeed * (keys['ShiftLeft'] ? 2.2 : 1);
+      camera.position.x += dx * speed * dt;
+      camera.position.z += dz * speed * dt;
+      const terrainH = sampleDem(camera.position.x, camera.position.z) * terrainScale;
+      camera.position.y = terrainH + 5;
+      camera.rotation.y = yaw;
+    }
+
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+    window.addEventListener('resize', onResize);
+
+    // --- Hleðsla ---
+    async function init() {
+      await loadDem();
+      const osm = await fetch(dataBase + 'osm.json').then(r => r.json()).catch(() => null);
+      const ways = osm?.elements?.filter?.(e => e.type === 'way') || [];
+      ways.forEach(w => {
+        if (w.tags?.highway) addRoad(w);
+        if (w.tags?.building) addBuilding(w);
+      });
+      const pois = osm?.elements?.filter?.(e => e.type === 'node' && (e.tags?.amenity || e.tags?.tourism)) || [];
+      pois.forEach(addPoi);
+      animate();
+    }
+
+    let last = performance.now();
+    function animate() {
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      updateMovement(dt);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    init().catch(err => console.error(err));
+  </script>
+</body>
+</html>

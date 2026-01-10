@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ást & bylting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    /* Þetta er fyrir matseðilinn sem við sækjum */
+    #menu {
+      margin: 0;
+      padding: 0;
+    }
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #000;
+      margin: 0 5px;
+    }
+    a:hover {
+      text-decoration: none;
+      font-weight: bolder;
+    }
+    .menu-container {
+      margin-top: 20px;
+    }
+    .main-content {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hér mun matseðillinn birtast -->
+  <div id="menu"></div>
+
+  
+
+
+
+  <!-- Aðalefni síðunnar (hér getur þú sett hvað sem er) -->
+  <div class="main-content">
+    <h2>Verkefnamiðaðar æfingar</h2>
+    <p>
+        Þetta eru æfingar til að æfa sig heima.
+        Það er ekki oft auðvelt að skapa og jafnvel þó að maður sé í öðru verkefninu, þá er oft gott að staldra við
+        og skapa eitthvað allt annað, þó það sé ekki nema bara smá glefsa í aðra veröld
+        til þess að fanga eitthvað fallegt á meðan við vinnum vinnuna miklu.
+    </p>
+    
+    <h3>Æfingar:</h3>
+    <p>Smelltu á æfingu til að fá nánari leiðbeiningar og hugmyndir:</p>
+    <ul>
+        <li>
+            <strong><a href="part1.html">Teiknaðu eina blaðsíðu af myndasögu á 20 mínútum:</a></strong> Leyfðu sögunni að koma, fleygðu henni frá þér, bara svo hún sé klár innan þess tíma.
+        </li>
+        <li>
+          <strong><a href="part2.html">Litaðu eina blaðsíðu af myndasögu á 20 mínútum:</a></strong> Litaðu frjálst og óheflað hugsaðu um að draga fram söguna og stemninguna sem þar býr
+      </li>
+        <li>
+            <strong><a href="part3.html">Gerðu myndasögu sem er sögð bara með umhverfinu:</a></strong> Engar persónur, bara hlutir og umhverfi. Notaðu umhverfið til að segja sögu.
+        </li>
+        <li>
+            <strong><a href="part4.html">Teiknaðu andlit á 1 mínútu:</a></strong> Veldu einhvern sem þú þekkir og teiknaðu andlitið á 1 mínútu.
+        </li>
+        <li>
+            <strong><a href="part4.html">Teiknaðu andlit á 10 sekúndum:</a></strong> Hvað geturu séð og hvað geturu sett frá þér, svo margt og það er magnað eins og kjarnaform andlitsins.
+        </li>
+        <li>
+            <strong><a href="part5.html">Upphaf, framhald og endir:</a></strong> 
+            <ul>
+                <li>Teiknaðu upphaf af myndasögu.</li>
+                <li>Teiknaðu framhald af einhverjum ramma.</li>
+                <li>Skapaðu góðan endi fyrir myndasögu.</li>
+            </ul>
+        </li>
+        <li>
+            <strong><a href="part6.html">Rannsakaðu og skapaðu:</a></strong> Rannsakaðu manneskju sem þú elskar. Skoðaðu hvaðan hún kemur og hver hún er. Skapaðu síðan nýja manneskju sem sér þessa fyrstu fyrir hver hún er og hvaðan hún kemur.
+        </li>
+        <li>
+            <strong><a href="part7.html">Teiknaðu tilfinningar:</a></strong> Sýndu ólíkar tilfinningar í teikningum þínum.
+        </li>
+        <li>
+            <strong><a href="part8.html">Teiknaðu eitthvað sem dansar á milli rammanna:</a></strong> Leyfðu hreyfingu að flæða milli rammanna að skapa sögu eða stemningu.
+        </li>
+    </ul>
+ 
+
+  </div>
+    <!-- JavaScript kóði til að sækja menu.html og stinga honum inn í #menu -->
+    <script>
+      // Sækir 'menu.html' (verður að vera í sömu möppu eða réttum stíg)
+      fetch('menu.html')
+        .then(response => response.text())
+        .then(data => {
+          // Setur textainnihaldið (HTML) inn í #menu
+          document.getElementById('menu').innerHTML = data;
+        })
+        .catch(error => console.error('Villa við að sækja menu.html:', error));
+    </script>
+  
+  </body>
+  </html>
+</body>
+</html>

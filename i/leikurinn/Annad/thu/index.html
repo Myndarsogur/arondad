@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <title>Þú víst sú</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      background: black;
+    }
+
+    .background-img {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    #preview {
+      position: fixed;
+      width: 300px;
+      height: 200px;
+      bottom: 150px;
+      right: 200px;
+      z-index: 2;
+      background: black;
+    }
+
+    #preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #leftClickArea, #rightClickArea {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      z-index: 3;
+    }
+
+    #leftClickArea { left: 0; }
+    #rightClickArea { right: 0; }
+  </style>
+</head>
+<body>
+  <img id="bg1" class="background-img" src="">
+  <img id="bg2" class="background-img" src="">
+
+  <div id="preview"></div>
+  <div id="leftClickArea"></div>
+  <div id="rightClickArea"></div>
+  <audio id="music" src="thu.mp3" autoplay loop></audio>
+
+  <script>
+    const totalImages = 49;
+    const imagePaths = Array.from({ length: totalImages }, (_, i) => `myndir/mynd${i + 1}.gif`);
+
+    // Preload myndir
+    imagePaths.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+
+    // Bakgrunnur – no fade
+    const bg1 = document.getElementById('bg1');
+    const bg2 = document.getElementById('bg2');
+    let useBg1 = true;
+    let currentBgIndex = 0;
+
+    function switchBackground(index) {
+      const nextSrc = imagePaths[index] + '?t=' + Date.now();
+      const topImg = useBg1 ? bg2 : bg1;
+      const bottomImg = useBg1 ? bg1 : bg2;
+
+      const loader = new Image();
+      loader.src = nextSrc;
+      loader.onload = () => {
+        topImg.src = nextSrc;
+        topImg.style.zIndex = 1;
+        bottomImg.style.zIndex = 0;
+        useBg1 = !useBg1;
+      };
+    }
+
+    switchBackground(currentBgIndex);
+    setInterval(() => {
+      currentBgIndex = (currentBgIndex + 1) % totalImages;
+      switchBackground(currentBgIndex);
+    }, 5000);
+
+    // Preview
+    const preview = document.getElementById('preview');
+    const visited = [];
+    let historyIndex = -1;
+
+    function showPreviewImage(index) {
+      const nextSrc = imagePaths[index] + '?t=' + Date.now();
+      const loader = new Image();
+      loader.src = nextSrc;
+      loader.onload = () => {
+        const newImg = document.createElement('img');
+        newImg.src = nextSrc;
+        newImg.alt = 'forskoðun';
+        newImg.style.width = '100%';
+        newImg.style.height = '100%';
+        newImg.style.objectFit = 'cover';
+        preview.innerHTML = '';
+        preview.appendChild(newImg);
+      };
+    }
+
+    function goForward() {
+      if (historyIndex < visited.length - 1) {
+        historyIndex++;
+        showPreviewImage(visited[historyIndex]);
+      } else {
+        if (visited.length >= totalImages) {
+          const current = visited[historyIndex];
+          visited.length = 0;
+          visited.push(current);
+          historyIndex = 0;
+        }
+
+        let next;
+        do {
+          next = Math.floor(Math.random() * totalImages);
+        } while (visited.includes(next));
+
+        visited.push(next);
+        historyIndex++;
+        showPreviewImage(next);
+      }
+      resetInactivityTimer();
+    }
+
+    function goBack() {
+      if (historyIndex > 0) {
+        historyIndex--;
+        showPreviewImage(visited[historyIndex]);
+      }
+      resetInactivityTimer();
+    }
+
+    document.getElementById('rightClickArea').addEventListener('click', goForward);
+    document.getElementById('leftClickArea').addEventListener('click', goBack);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        goForward();
+      } else if (e.key === 'ArrowLeft') {
+        goBack();
+      }
+    });
+
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        goForward();
+      }, 5000);
+    }
+
+    goForward();
+
+    function startMusicOnce() {
+      const music = document.getElementById('music');
+      music.play().catch((e) => console.log('Ekki tókst að spila lagið:', e));
+      document.removeEventListener('click', startMusicOnce);
+      document.removeEventListener('keydown', startMusicOnce);
+      document.removeEventListener('mousedown', startMusicOnce);
+    }
+
+    document.addEventListener('click', startMusicOnce);
+    document.addEventListener('keydown', startMusicOnce);
+    document.addEventListener('mousedown', startMusicOnce);
+
+    // Handle parent proximity messages
+    window.addEventListener('message', (event) => {
+      if (!event.data || !event.data.type) return;
+      if (event.data.type === 'start-music') {
+        startMusicOnce();
+      } else if (event.data.type === 'stop-music') {
+        document.getElementById('music').pause();
+      }
+    });
+  </script>
+</body>
+</html>

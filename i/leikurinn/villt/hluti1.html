@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ást & bylting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    /* Þetta er fyrir matseðilinn sem við sækjum */
+    #menu {
+      margin: 0;
+      padding: 0;
+    }
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #000;
+      margin: 0 5px;
+    }
+    a:hover {
+      text-decoration: none;
+      font-weight: bolder;
+    }
+    .menu-container {
+      margin-top: 20px;
+    }
+    .main-content {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hér mun matseðillinn birtast -->
+  <div id="menu"></div>
+
+  
+
+
+
+  <!-- Aðalefni síðunnar (hér getur þú sett hvað sem er) -->
+  <div class="main-content">
+    <h2>Áferðir eins og þær birtast </h2>
+    <p>Það snýst þá um hvort þær eru hrjúfar eða ekki</p>
+
+
+    <h2>Hvað er hægt að ganga langt?</h2>
+    <p>Er mögulegt að ná því fram sem að einhver þarf</p> 
+    <p> Getur einhver orðið sér að voða bara við það eitt að vona </p>
+    
+    <h2>Að skrifa</h2>
+    <p>
+        Að skrifa. Það er það sem tekur við. Koma hugmyndinni niður í orð. Sumir teikna. Aðrir gera blöndu af báðu. Einhverjir fara allt aðrar leiðir, leira, mála, öskra, dansa, syngja, blóta, hrjóta. Það er misjafnt hvernig fólk tekst á við hugmyndir. Þær eru líka ekkert alltaf auðveldar viðureignar, stundum taka þær yfir, stundum af góðri ástæðu og stundum af ástæðulausu. Stundum á maður hugmynd og stundum á hugmyndin mann.
+    </p>
+    <p>
+        Það er ekkert grín þegar hugmynd tekur yfir sem virðist ekki hafa neitt að gera með neitt. Á maður að berjast gegn henni til að geta haft allt einfalt og skiljanlegt eða á maður að elta hana út af brún í eitthvað sem virðist alveg fáránlega óútreiknanlegt, jafnvel óþægilegt.
+    </p>
+    <p>
+        Já við veljum það. Við viljum að okkur líði óþægilega. Við viljum að við séum brjáluð yfir því að okkur hafi dottið þetta í hug. Af því við viljum ekki gefast upp. Viljum ekki láta eins og við eigum ekkert inni.
+    </p>
+    <p>
+        Þess vegna þurfum við innilega að setja okkur í það sem við höfum. Leyfa okkur að sjá það fyrir hvað það er og getur orðið og taka þátt, vera með, sjá okkur einnig, okkar möguleika og virði.
+    </p>
+    <p>
+        Það er mikilvægt að taka á móti hugmyndum með virðingu, fyrir sér og hugmyndinni. Þess vegna þarf að skrásetja hana vandlega, ef hún er stór, því meiri skrásetning þarf að eiga sér stað. Litlar hugmyndir þurfa oft ekki mikið. En það má bæta þeim við stærri hugmyndir, svo lengi sem þær þjóna hvor annarri, elska hvor aðra og geta borið sig.
+    </p>
+    <p>
+        Það er alltaf eitthvað í hugmyndum. Það er eðli þeirra, þær eru heillandi, þær eru furðulegar, vekja forvitni. Hvort sem það er forvitni um meiri svör eða forvitni um fleiri furður skiptir ekki öllu. Hugmyndir fanga þig. Þess vegna eftir að þú hefur fangað hugmyndina, þarftu að beita henni rétt.
+    </p>
+
+
+  </div>
+    <!-- JavaScript kóði til að sækja menu.html og stinga honum inn í #menu -->
+    <script>
+      // Sækir 'menu.html' (verður að vera í sömu möppu eða réttum stíg)
+      fetch('menu.html')
+        .then(response => response.text())
+        .then(data => {
+          // Setur textainnihaldið (HTML) inn í #menu
+          document.getElementById('menu').innerHTML = data;
+        })
+        .catch(error => console.error('Villa við að sækja menu.html:', error));
+    </script>
+  
+  </body>
+  </html>
+</body>
+</html>

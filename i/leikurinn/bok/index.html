@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="is">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Það má líka lesa</title>
+  <meta name="description" content="Bækur eru eitthvað sem einu sinni var skrifað. Fólk las þær,  tók á móti orðum og innbyrgði þau, túlkaði og upplifði, þá má ennþá.">
+  <meta property="og:title" content="Það má líka lesa" />
+  <meta property="og:description" content="Bækur eru eitthvað sem einu sinni var skrifað. Fólk las þær,  tók á móti orðum og innbyrgði þau, túlkaði og upplifði, þá má ennþá." />
+  <meta property="og:image" content="https://aron.dad/i/leikurinn/og/bok.png" />
+  <meta property="og:url" content="https://aron.dad/i/leikurinn/bok/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="is_IS" />
+  <link rel="canonical" href="https://aron.dad/i/leikurinn/bok/" />
+  <meta name="robots" content="index, follow">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Það má líka lesa">
+  <meta name="twitter:description" content="Bækur eru eitthvað sem einu sinni var skrifað. Fólk las þær,  tók á móti orðum og innbyrgði þau, túlkaði og upplifði, þá má ennþá.">
+  <meta name="twitter:image" content="https://aron.dad/i/leikurinn/og/bok.png">
+  <link rel="icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Það má líka lesa",
+    "description": "Bækur eru eitthvað sem einu sinni var skrifað. Fólk las þær,  tók á móti orðum og innbyrgði þau, túlkaði og upplifði, þá má ennþá.",
+    "url": "https://aron.dad/i/leikurinn/bok/",
+    "image": "https://aron.dad/i/leikurinn/og/bok.png",
+    "inLanguage": "is",
+    "isFamilyFriendly": true
+  }
+  </script>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: #d8acac; color: #ffffff; font: 16px/1.4 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+
+    /* Grid sem lagar sig þannig að 4 reitir passi vel á skjá (2×2 á síma) */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 dálkar by default fyrir símaskjá */
+      gap: 12px;
+    }
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } /* 4 dálkar á stærri skjám */
+    }
+
+    /* Hver bók er einföld smelliflötur með titli. Nú með sveigjanlegri stærð. */
+    a.book {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      border: 1px solid #ffffff;
+      border-radius: 8px;
+      padding: 14px;              /* minna padding svo 2×2 passi án zooms */
+      aspect-ratio: 1 / 1.6;        /* ferkantaðir reitir; tryggir 2 raðir passi vel */
+      min-height: 0;              /* fjarlægjum fyrri læsingar */
+      max-width: none;
+    }
+
+    .title {
+      font-weight: 600;
+      /* Stærð stillt fyrir betri aðlögun í reitnum */
+      font-size: clamp(3.1rem, 1vw, 2.2rem);
+      line-height: 1.1;
+      /* Skuggi eins og þú baðst um */
+      text-shadow:2px 0px 122px rgba(0,0,0,0.5);
+    }
+
+
+    /* Engir litir, aðeins svart/hvítt á myndum/ikonum */
+    img, svg { filter: grayscale(100%); }
+
+    /* Reader overlay */
+    #readerOverlay {
+      position: fixed; inset: 0; background: #0b0b0f; color: #fff;
+      display: none; flex-direction: column; z-index: 99;
+    }
+    #readerToolbar {
+      display: flex; gap: 10px; align-items: center; padding: 10px 12px;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+    #readerToolbar button {
+      padding: 8px 12px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08); color: #fff; border-radius: 6px;
+    }
+    #readerToolbar input[type="range"] { flex: 1; }
+    #readerToolbar select { padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; }
+    #readerToolbar input[type="number"] {
+      width: 40px; padding: 6px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.08); color: #fff;
+      -moz-appearance: textfield;
+    }
+    #readerToolbar input[type="number"]::-webkit-outer-spin-button,
+    #readerToolbar input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    #viewer {
+      flex: 1;
+      overflow: hidden;
+    }
+    #status {
+      font-size: 0.9rem; opacity: 0.8; margin-left: 8px;
+    }
+    #pageTotal { font-size: 0.45rem; opacity: 0.75; }
+    .theme-dots { display: inline-flex; gap: 8px; align-items: center; }
+    .theme-dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      background: #000;
+      cursor: pointer;
+    }
+    .theme-dot.light { background: #fff; border-color: rgba(0,0,0,0.6); }
+    .theme-dot.dark { background: #000; border-color: rgba(255,255,255,0.6); }
+    .theme-dot:focus { outline: 2px solid #5cc1ff; outline-offset: 2px; }
+  </style>
+  <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/open-dyslexic" />
+</head>
+<body>
+  <main>
+    <section class="grid" aria-label="EPUB bækur">
+      <!-- Settu allt að ~6 bækur hér að neðan. Aðeins titill og hlekkur. -->
+      <a class="book" href="downloads/bok1.epub" download style="background: #a9e3b5; border: #1efe4b;" border-size="1px">
+        <div class="title">Nú eru góð ráð plöntur</div>
+      </a>
+      <a class="book" href="downloads/bok2.epub" download style="background: #d4e7e7;border: #2454f3;">
+        <div class="title">Now there are good advice plants</div>
+      </a>
+      <a class="book" href="downloads/bok3.epub" download style="background: #e6d4f7;border: #fe1eeb; color:#fff;">
+        <div class="title">Vók</div>
+      </a>
+      <a class="book" href="downloads/bok4.epub" download style="background: #none ;border: #fe1eeb;">
+        <div class="title">Ný bók</div>
+      </a>
+    </section>
+  </main>
+
+  <!-- Reader overlay -->
+  <div id="readerOverlay" aria-live="polite">
+    <div id="readerToolbar">
+      <button id="closeReader">Loka</button>
+      <button id="prevPage">◀</button>
+      <button id="nextPage">▶</button>
+      <input id="pageInput" type="number" min="1" value="1" />
+      <span id="pageTotal">/ ?</span>
+      <button id="fontMinus">A−</button>
+      <button id="fontPlus">A+</button>
+      <select id="fontSelect" title="Letur">
+        <option value="system">System</option>
+        <option value="serif">Serif</option>
+        <option value="sans" selected>Sans</option>
+        <option value="mono">Mono</option>
+      </select>
+      <button id="themeToggle" class="theme-dot" title="Skipta á ljóst/dökkt" aria-label="Þema"></button>
+      <span id="status"></span>
+    </div>
+    <div id="viewer"></div>
+    <div id="turnZones" style="position:fixed; inset:48px 0 0 0; display:none; z-index:100;">
+      <div id="zonePrev" style="position:absolute; left:0; top:0; bottom:0; width:35%;"></div>
+      <div id="zoneNext" style="position:absolute; right:0; top:0; bottom:0; width:35%;"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+    // Dynamic loader for epub.js (local first, then CDN)
+    const epubCandidates = [
+      "./epub.min.js",
+      "https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"
+    ];
+    function loadEpub(idx = 0) {
+      return new Promise((resolve, reject) => {
+        if (window.ePub) return resolve();
+        if (idx >= epubCandidates.length) return reject(new Error("epub.js fannst ekki"));
+        const s = document.createElement("script");
+        s.src = epubCandidates[idx];
+        s.onload = () => window.ePub ? resolve() : loadEpub(idx+1).then(resolve, reject);
+        s.onerror = () => loadEpub(idx+1).then(resolve, reject);
+        document.head.appendChild(s);
+      });
+    }
+
+    // Reader controls
+    const overlay = document.getElementById("readerOverlay");
+    const statusEl = document.getElementById("status");
+    const pageInput = document.getElementById("pageInput");
+    const pageTotalEl = document.getElementById("pageTotal");
+    const fontSelectEl = document.getElementById("fontSelect");
+    const turnZones = document.getElementById("turnZones");
+    const zonePrev = document.getElementById("zonePrev");
+    const zoneNext = document.getElementById("zoneNext");
+    const fontMinus = document.getElementById("fontMinus");
+    const fontPlus = document.getElementById("fontPlus");
+    const themeToggle = document.getElementById("themeToggle");
+    let book = null;
+    let rendition = null;
+    let displayed = null;
+    let toc = [];
+    let fontSizePct = 110;
+    let fontChoice = "sans";
+    let theme = "dark";
+    let totalPages = 0;
+
+    async function openBook(url) {
+      overlay.style.display = "flex";
+      statusEl.textContent = "Hleð bók…";
+
+      try {
+        await loadEpub();
+        if (!window.JSZip) throw new Error("JSZip fannst ekki – epub getur ekki opnast");
+
+        // hreinsa gamla viewer/iframe til að forðast hang
+        document.getElementById("viewer").innerHTML = "";
+
+        if (book) { book.destroy(); book = null; }
+        rendition = null;
+
+        // Sækjum EPUB sem binary (virkar betur með Live Server)
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`EPUB fannst ekki: ${res.status} ${res.statusText}`);
+        const buf = await res.arrayBuffer();
+
+        book = ePub(buf); // binary input
+        rendition = book.renderTo("viewer", { width: "100%", height: "100%", spread: "none" });
+        rendition.on("rendered", () => applyReaderTheme());
+
+        await book.ready;
+        await rendition.display();
+        applyReaderTheme();
+        syncTurnZones();
+
+        statusEl.textContent = "";
+
+        await regenerateLocations();
+        rendition.on("relocated", updateSlider);
+        updateSlider(rendition.currentLocation());
+
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = "Gat ekki opnað bók (sjá Console)";
+      }
+    }
+
+    function updateSlider(loc) {
+      if (!book || !rendition || !book.locations) return;
+      const here = loc || rendition.currentLocation();
+      const cfi = here?.start?.cfi;
+      if (!cfi) return;
+      const pct = book.locations.percentageFromCfi(cfi);
+      if (typeof pct !== "number" || isNaN(pct)) return;
+      const pageNum = Math.max(1, Math.round((pct) * totalPages));
+      if (!isNaN(pageNum)) {
+        pageInput.value = pageNum;
+      }
+    }
+
+    async function regenerateLocations() {
+      if (!book || !book.locations) return;
+      await book.locations.generate(800);
+      totalPages = book.locations.length() || 0;
+      pageTotalEl.textContent = totalPages ? `/ ${totalPages}` : "/ ?";
+      updateSlider();
+    }
+
+    document.getElementById("closeReader").onclick = () => {
+      overlay.style.display = "none";
+      if (book) { book.destroy(); book = null; }
+      turnZones.style.display = "none";
+    };
+    document.getElementById("prevPage").onclick = () => rendition && rendition.prev();
+    document.getElementById("nextPage").onclick = () => rendition && rendition.next();
+    pageInput.onchange = (e) => {
+      if (!book || !book.locations || !rendition) return;
+      if (totalPages <= 0) return;
+      const num = parseInt(e.target.value, 10);
+      if (isNaN(num) || num < 1 || num > totalPages) return;
+      const pct = num / totalPages;
+      const cfi = book.locations.cfiFromPercentage(pct);
+      rendition.display(cfi);
+    };
+
+    // Hook up book tiles to open in reader instead of bara download
+    document.querySelectorAll(".book").forEach(a => {
+      const url = a.getAttribute("href");
+      a.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        openBook(url);
+      });
+    });
+
+    function applyReaderTheme() {
+      if (!rendition) return;
+      const colors = theme === "light"
+        ? { text: "#111", bg: "#ffffff" }
+        : { text: "#f8f8f8", bg: "#0b0b0f" };
+      const fonts = {
+        system: `system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
+        serif:  `Georgia, "Times New Roman", Times, serif`,
+        sans:   `system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`,
+        mono:   `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace`
+      };
+      rendition.themes.override("font-size", `${fontSizePct}%`, true);
+      rendition.themes.override("font-family", (fonts[fontChoice] || fonts.system), true);
+      rendition.themes.override("line-height", "1.55", true);
+      rendition.themes.override("color", colors.text, true);
+      rendition.themes.override("background", colors.bg, true);
+      // Uppfæra yfirborðið líka
+      overlay.style.background = colors.bg;
+      overlay.style.color = colors.text;
+      document.getElementById("viewer").style.background = colors.bg;
+
+      // Endurreikna page count þegar letur breytist
+      regenerateLocations();
+      updateThemeDot();
+    }
+
+    fontMinus.onclick = () => {
+      fontSizePct = Math.max(70, fontSizePct - 10);
+      applyReaderTheme();
+    };
+    fontPlus.onclick = () => {
+      fontSizePct = Math.min(220, fontSizePct + 10);
+      applyReaderTheme();
+    };
+    fontSelectEl.onchange = (e) => {
+      fontChoice = e.target.value;
+      applyReaderTheme();
+    };
+    function updateThemeDot() {
+      themeToggle.classList.toggle("light", theme === "dark");
+      themeToggle.classList.toggle("dark", theme === "light");
+    }
+    themeToggle.onclick = () => {
+      theme = theme === "dark" ? "light" : "dark";
+      updateThemeDot();
+      applyReaderTheme();
+    };
+
+    function syncTurnZones() {
+      turnZones.style.display = (overlay.style.display === "flex") ? "block" : "none";
+    }
+
+    zonePrev.addEventListener("click", () => rendition && rendition.prev());
+    zoneNext.addEventListener("click", () => rendition && rendition.next());
+
+    // Lyklaborðs fletting: vinstri/hægri + bil fyrir næstu
+    window.addEventListener("keydown", (e) => {
+      if (overlay.style.display !== "flex") return;
+      const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+      if (tag === "input" || tag === "select" || tag === "textarea" || e.target.isContentEditable) return;
+      if (e.key === "ArrowLeft") { e.preventDefault(); rendition && rendition.prev(); }
+      if (e.key === "ArrowRight") { e.preventDefault(); rendition && rendition.next(); }
+      if (e.key === " " || e.code === "Space") { e.preventDefault(); rendition && rendition.next(); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,4978 @@
+<!DOCTYPE html>
+<html lang="is"><head>
+  <meta charset="UTF-8">
+  <title>3D heimur</title>
+  <style>
+    :root {
+      --ui-bg: rgba(0, 0, 0, 0.55);
+      --ui-text: #f7f7f7;
+    }
+    body { margin: 0; overflow: hidden; background: #87cefa; }
+    canvas { display: block; }
+    #hud {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: var(--ui-text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 280px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    #prompt {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      background: var(--ui-bg);
+      color: #ffeb3b;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      border-radius: 8px;
+      z-index: 10;
+      min-width: 180px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    #prompt.visible { opacity: 1; }
+    #fractal-hint {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: #9cf1ff;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 240px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+      display: none;
+    }
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 20;
+    }
+    #popup-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #popup-content {
+      width: min(90vw, 900px);
+      height: min(82vh, 680px);
+      background: #d9dce1;
+      border: 3px solid #7a7d82;
+      border-radius: 6px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    #popup-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 10px 12px;
+      background: #c3c6cc;
+      border-bottom: 2px solid #7a7d82;
+    }
+    #popup-close {
+      background: #e5e7eb;
+      border: 2px solid #3f434a;
+      color: #1c1e22;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    #popup-close:hover { background: #d7dbe0; }
+    #popup-frame {
+      flex: 1;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+    #minimap {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    #minimap button {
+      pointer-events: auto;
+      background:
+        linear-gradient(135deg, #6fb46b, #5a9a57) padding-box,
+        linear-gradient(135deg, #cbb27a, #a08858) border-box;
+      color: #2d2414;
+      border: 1px solid rgba(46, 34, 16, 0.6);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    #minimap-canvas {
+      pointer-events: auto;
+      width: 240px;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 44px;
+    }
+    #minimap.show #minimap-canvas { display: block; }
+  </style>
+</head>
+<body>
+  <audio id="fractal-audio" loop="" preload="auto" style="display:none">
+    <source src="/dans/lagid.mp3" type="audio/mpeg">
+  </audio>
+  <div id="hud" style="display:none"></div>
+  <div id="prompt" style="display:none"></div>
+  <div id="fractal-hint">Fraktal virkni: notaðu hreyfingar til að hræra í mynstrinu</div>
+  <div id="popup-overlay">
+    <div id="popup-content">
+      <div id="popup-bar">
+        <button id="popup-close" type="button">X</button>
+      </div>
+      <iframe id="popup-frame" src="" title="Forsíða" allow="autoplay"></iframe>
+    </div>
+  </div>
+  <div id="minimap">
+    <button id="minimap-toggle" type="button" aria-label="Opna kort">🗺️</button>
+    <canvas id="minimap-canvas" width="240" height="180"></canvas>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.159.0/build/three.module.js';
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87cefa); // himinn
+    const texLoader = new THREE.TextureLoader();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1.6, 10);
+
+    // Lyklaborðs inntak
+    const keys = {};
+    window.addEventListener('keydown', (e) => keys[e.code] = true);
+    window.addEventListener('keyup', (e) => keys[e.code] = false);
+    // Snertistýring til að labba á síma
+    let touchStartPos = null;
+    let touchDir = { x: 0, y: 0 };
+    let touchTapPos = null;
+    const resetTouch = () => { touchDir = { x: 0, y: 0 }; };
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        const t = e.touches[0];
+        touchStartPos = { x: t.clientX, y: t.clientY };
+        touchTapPos = { x: t.clientX, y: t.clientY };
+        touchDir = { x: 0, y: 0 };
+        ensureAudio(); // kick ambient/footsteps on first tap (mobile gesture)
+      }
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (!touchStartPos || e.touches.length === 0) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartPos.x;
+      const dy = t.clientY - touchStartPos.y;
+      const mag = Math.max(1, Math.hypot(dx, dy));
+      touchDir = { x: dx / mag, y: dy / mag };
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      touchStartPos = null;
+      resetTouch();
+    });
+    window.addEventListener('mousedown', () => {
+      ensureAudio(); // desktop gesture fallback
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePopup();
+    });
+
+    // Hljóð (þú getur bætt wind.mp3, birds.mp3, footsteps.mp3, bleat.mp3 í sömu möppu)
+    let audioInitiated = false;
+    let ambientWind = null;
+    let ambientBirds = null;
+    let footstepAudio = null;
+    let bleatAudio = null;
+    let riverAudio = null;
+    let bleatTimer = 0;
+    let footstepActive = false;
+
+    function createAudio(src, loop = false, volume = 1) {
+      const a = new Audio(src);
+      a.loop = loop;
+      a.preload = 'auto';
+      a.volume = volume;
+      return a;
+    }
+
+    function ensureAudio() {
+      if (audioInitiated) return;
+      audioInitiated = true;
+      try {
+        ambientWind = createAudio('wind.mp3', true, 0.25);
+        ambientWind.play().catch(() => {});
+      } catch (e) {}
+      try {
+        ambientBirds = createAudio('birds.mp3', true, 0.2);
+        ambientBirds.play().catch(() => {});
+      } catch (e) {}
+      try {
+        footstepAudio = createAudio('footsteps.mp3', true, 0.35);
+      } catch (e) {}
+      try {
+        bleatAudio = createAudio('bleat.mp3', false, 0.4);
+      } catch (e) {}
+      try {
+        riverAudio = createAudio('river.mp3', true, 0);
+        riverAudio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function setFootsteps(active) {
+      if (!footstepAudio) return;
+      if (active && !footstepActive) {
+        footstepActive = true;
+        footstepAudio.currentTime = 0;
+        footstepAudio.play().catch(() => {});
+      } else if (!active && footstepActive) {
+        footstepActive = false;
+        footstepAudio.pause();
+      }
+    }
+
+    // Ljós
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x888844, 0.9);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir.position.set(5, 10, 7);
+    scene.add(hemi, dir);
+
+    // Jörð með smá áferð
+    function makeGroundTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 512;
+      const ctx = c.getContext('2d');
+      const base = ctx.createLinearGradient(0, 0, 0, 512);
+      base.addColorStop(0, '#4fbf73');
+      base.addColorStop(1, '#3b9257');
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, 512, 512);
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
+      for (let i = 0; i < 2000; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const r = Math.random() * 1.8;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const groundTex = makeGroundTexture();
+    groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping;
+    groundTex.repeat.set(18, 18);
+    const groundGeo = new THREE.PlaneGeometry(400, 400);
+    const groundMat = new THREE.MeshLambertMaterial({ map: groundTex });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+
+    // Tré sem billboard (tvær hliðar) með smá fjölbreytileika
+    function makeTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(12, 20);
+      const trunkH = rand(40, 60);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 8;
+      ctx.fillStyle = ['#8B5A2B', '#6f4a1e', '#9c6b2f'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH); // stöng
+
+      const layers = 2 + (seed % 2);
+      ctx.beginPath();
+      for (let i = 0; i < layers; i++) {
+        const topY = 28 + i * 18;
+        const baseY = 78 + i * 10;
+        const spread = 32 + i * 10 + rand(-4, 4);
+        ctx.beginPath();
+        ctx.moveTo(64, topY);
+        ctx.lineTo(64 + spread, baseY);
+        ctx.lineTo(64 - spread, baseY);
+        ctx.closePath();
+        ctx.fillStyle = ['#2ECC71', '#2fb06f', '#35d17c'][seed % 3];
+        ctx.fill();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.needsUpdate = true;
+      return tex;
+    }
+    function makeSoftTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(10, 14);
+      const trunkH = rand(26, 38);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 10;
+      ctx.fillStyle = ['#7a4a24', '#6c3c1a', '#8c5c2d'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH);
+
+      const centerX = 64;
+      const centerY = 56;
+      const r = 35 + rand(-4, 6);
+      const grad = ctx.createRadialGradient(centerX, centerY, r * 0.2, centerX, centerY, r);
+      const greens = [
+        ['#3ac483', '#259b63'],
+        ['#3fbf78', '#2c8f5d'],
+        ['#43d08f', '#2b9c6a'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, r * 1.05, r * 0.85, 0, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBushTexture(seed = 0, berryColor = 'blue') {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(64, 64, 10, 64, 64, 48);
+      const greens = [
+        ['#2f7f46', '#1f5c31'],
+        ['#2e8b50', '#205e35'],
+        ['#288a52', '#1c5935'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+
+      // tvöföld "mm" sveigja
+      ctx.beginPath();
+      ctx.ellipse(48, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.ellipse(80, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // extra bumps
+      const bumps = 8;
+      for (let i = 0; i < bumps; i++) {
+        const x = 40 + i * 10 + rand(-6, 6);
+        const y = 66 + rand(-6, 6);
+        const rx = 16 + rand(-2, 4);
+        const ry = 12 + rand(-2, 3);
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // berries
+      const berryCount = 5 + Math.floor(Math.random() * 6);
+      for (let i = 0; i < berryCount; i++) {
+        const x = 36 + Math.random() * 56;
+        const y = 52 + Math.random() * 26;
+        const isBlue = berryColor === 'blue';
+        ctx.fillStyle = isBlue ? '#4c7cff' : '#ff4d4d';
+        ctx.beginPath();
+        ctx.arc(x, y, 2.6 + Math.random() * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath();
+        ctx.arc(x - 1, y - 1.5, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeMushroomTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f5e1c8';
+      ctx.fillRect(58, 72, 12, 32); // stilkur
+      ctx.beginPath();
+      ctx.arc(64, 70, 20, Math.PI, 0);
+      ctx.closePath();
+      const caps = ['#d93f3f', '#e3592f', '#c63448'];
+      ctx.fillStyle = caps[seed % caps.length];
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      for (let i = 0; i < 6; i++) {
+        const x = 52 + i * 6 + rand(-2, 2);
+        const y = 52 + rand(0, 12);
+        const r = rand(2, 4);
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeSheepTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 34, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      ctx.beginPath();
+      ctx.ellipse(64, 52, 26, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = ['#5a4633', '#3c2f23'][seed % 2];
+      ctx.beginPath();
+      ctx.ellipse(82, 60, 12, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(86, 58, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      // augu
+      ctx.beginPath();
+      ctx.arc(82, 57, 1.5, 0, Math.PI * 2);
+      ctx.arc(88, 59, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      for (let i = 0; i < 4; i++) {
+        const x = 52 + i * 10;
+        ctx.fillRect(x, 90, 6, 18);
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBirdTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.strokeStyle = ['#111', '#222', '#333'][seed % 3];
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 36, 92, 64);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 52, 92, 64);
+      ctx.stroke();
+      return new THREE.CanvasTexture(c);
+    }
+
+    const treeTextures = [makeTreeTexture(0), makeTreeTexture(1), makeTreeTexture(2)];
+    const softTreeTextures = [makeSoftTreeTexture(0), makeSoftTreeTexture(1), makeSoftTreeTexture(2)];
+    const bushTexturesBlue = [makeBushTexture(0, 'blue'), makeBushTexture(1, 'blue'), makeBushTexture(2, 'blue')];
+    const bushTexturesRed = [makeBushTexture(0, 'red'), makeBushTexture(1, 'red'), makeBushTexture(2, 'red')];
+    const mushroomTextures = [makeMushroomTexture(0), makeMushroomTexture(1), makeMushroomTexture(2)];
+    const sheepTextures = [makeSheepTexture(0), makeSheepTexture(1)];
+    const birdTextures = [makeBirdTexture(0), makeBirdTexture(1), makeBirdTexture(2)];
+    const puffinTexture = makePuffinTexture();
+    const bookTexture = makeBookTexture();
+    const buffetTexture = makeBuffetTexture();
+    const bananaTex = makeBananaTexture();
+    const appleTex = makeAppleTexture();
+    const pineappleTex = makePineappleTexture();
+    const grapesTex = makeGrapesTexture();
+    const breadTex = makeBreadTexture();
+    const minimapMarkers = [];
+
+    function makeRetroComputer() {
+      const group = new THREE.Group();
+
+      const shellMat = new THREE.MeshStandardMaterial({ color: 0xdadce0, metalness: 0.08, roughness: 0.82 });
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x7a7d82, metalness: 0.1, roughness: 0.7 });
+
+      const monitor = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.6, 1.4), shellMat);
+      monitor.position.y = 1.05;
+      group.add(monitor);
+
+      const screenTex = texLoader.load('mynd.avif');
+      screenTex.encoding = THREE.sRGBEncoding;
+      const screen = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.52, 1.02),
+        new THREE.MeshStandardMaterial({
+          map: screenTex,
+          emissive: 0x222a35,
+          emissiveIntensity: 0.7,
+          roughness: 0.4,
+          metalness: 0.05,
+        })
+      );
+      screen.position.set(0, 1.1, 0.76);
+      group.add(screen);
+
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.75, 1.22, 0.06), darkMat);
+      bezel.position.set(0, 1.1, 0.74);
+      group.add(bezel);
+
+      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.16, 0.95), shellMat);
+      stand.position.set(0, 0.45, 0);
+      group.add(stand);
+
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.22, 1.9), shellMat);
+      base.position.y = 0.2;
+      group.add(base);
+
+      const glow = new THREE.PointLight(0x7ddaff, 0.45, 8);
+      glow.position.set(0, 1.2, 1.1);
+      group.add(glow);
+
+      return group;
+    }
+
+    function makeTallTower() {
+      const group = new THREE.Group();
+      const stone = new THREE.MeshStandardMaterial({ color: 0x6f7279, metalness: 0.12, roughness: 0.82 });
+      const darker = new THREE.MeshStandardMaterial({ color: 0x55585f, metalness: 0.1, roughness: 0.76 });
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 5.4, 6, 10, 1, true), stone);
+      base.position.y = 3;
+      group.add(base);
+
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(3, 3.6, 26, 12, 1, true), darker);
+      shaft.position.y = 19;
+      group.add(shaft);
+
+      const crown = new THREE.Mesh(new THREE.CylinderGeometry(3.8, 3.8, 2.2, 12), stone);
+      crown.position.y = 32;
+      group.add(crown);
+
+      const spire = new THREE.Mesh(new THREE.ConeGeometry(3.2, 9, 12), darker);
+      spire.position.y = 38.5;
+      group.add(spire);
+
+      const point = new THREE.Mesh(new THREE.ConeGeometry(0.6, 2.8, 6), new THREE.MeshStandardMaterial({ color: 0x2c2f35, metalness: 0.4, roughness: 0.4 }));
+      point.position.y = 42.8;
+      group.add(point);
+
+      const light = new THREE.PointLight(0x87b3ff, 0.8, 40);
+      light.position.set(0, 36, 0);
+      group.add(light);
+
+      return group;
+    }
+
+    function makeSparkFlower() {
+      const group = new THREE.Group();
+      const stemMat = new THREE.MeshStandardMaterial({ color: 0x2f7f46, metalness: 0.15, roughness: 0.6, emissive: 0x0b2f18, emissiveIntensity: 0.3 });
+      const petalMat = new THREE.MeshStandardMaterial({ color: 0xff77cc, metalness: 0.4, roughness: 0.35, emissive: 0xff66cc, emissiveIntensity: 0.8 });
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xffe6ff, transparent: true, opacity: 0.4 });
+
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, 5.2, 10), stemMat);
+      stem.position.y = 2.6;
+      group.add(stem);
+
+      const bloom = new THREE.Mesh(new THREE.SphereGeometry(1.8, 24, 18), petalMat);
+      bloom.position.y = 5.8;
+      group.add(bloom);
+
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(2.5, 16, 12), glowMat);
+      halo.position.y = 5.8;
+      group.add(halo);
+
+      const sparkle = new THREE.PointLight(0xffccff, 1.1, 28);
+      sparkle.position.set(0, 6.4, 0);
+      group.add(sparkle);
+
+      return group;
+    }
+
+    function makePuffinTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 32, 34, 0, 0, Math.PI * 2);
+      ctx.fill(); // body shadow
+      ctx.fillStyle = '#f7f7f7';
+      ctx.beginPath();
+      ctx.ellipse(64, 72, 26, 30, 0, 0, Math.PI * 2);
+      ctx.fill(); // belly
+      ctx.fillStyle = '#0c0c0c';
+      ctx.beginPath();
+      ctx.ellipse(70, 46, 22, 20, 0, 0, Math.PI * 2);
+      ctx.fill(); // head dark
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(68, 48, 16, 14, 0, 0, Math.PI * 2);
+      ctx.fill(); // face
+      ctx.fillStyle = '#ff7f3f';
+      ctx.beginPath();
+      ctx.moveTo(82, 50);
+      ctx.quadraticCurveTo(112, 54, 78, 62);
+      ctx.closePath();
+      ctx.fill(); // beak orange
+      ctx.fillStyle = '#ff4f4f';
+      ctx.beginPath();
+      ctx.moveTo(82, 52);
+      ctx.quadraticCurveTo(98, 54, 80, 58);
+      ctx.closePath();
+      ctx.fill(); // beak tip
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.arc(64, 46, 4, 0, Math.PI * 2);
+      ctx.fill(); // eye
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(62.5, 45, 1.5, 0, Math.PI * 2);
+      ctx.fill(); // eye shine
+      ctx.fillStyle = '#ff9c40';
+      ctx.beginPath();
+      ctx.ellipse(52, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(74, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.fill(); // feet
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBookTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.fillRect(24, 24, 208, 208);
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(36, 40, 182, 180);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.font = 'bold 32px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('BÓK', 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBuffetTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#d9c3a3';
+      ctx.fillRect(0, 0, 256, 256);
+
+      // tabletop with lighter center and dark rim
+      const topGrad = ctx.createLinearGradient(0, 176, 0, 256);
+      topGrad.addColorStop(0, '#dcb88f');
+      topGrad.addColorStop(1, '#c9986c');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(8, 170, 240, 70);
+      ctx.fillStyle = '#9f7447';
+      ctx.fillRect(8, 236, 240, 6);
+
+      function plate(cx, cy, w = 36, h = 12) {
+        ctx.fillStyle = '#f2f2f2';
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      const fruits = [
+        { x: 36, y: 152, color: '#ffdf6b', detail: '#e3af3b' },   // banana bunch
+        { x: 86, y: 150, color: '#ff3344', detail: '#d81e2c' },   // apples
+        { x: 142, y: 148, color: '#ffca4d', detail: '#f59b32' },  // pineapple
+        { x: 198, y: 150, color: '#7dd36f', detail: '#4ca957' },  // grapes-ish
+        { x: 120, y: 126, color: '#ffa94d', detail: '#f07d2a' },  // oranges
+      ];
+
+      fruits.forEach((f, i) => {
+        plate(f.x, f.y + 10, 40, 14);
+        ctx.fillStyle = f.color;
+        if (i === 0) {
+          // bananas
+          for (let j = 0; j < 5; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x - 12 + j * 7, f.y - 6 + j * 2, 14, 7, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#6b4b1f';
+          ctx.fillRect(f.x - 14, f.y - 12, 5, 7);
+        } else if (i === 2) {
+          // pineapple
+          ctx.beginPath();
+          ctx.ellipse(f.x, f.y - 6, 20, 26, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = f.detail;
+          ctx.lineWidth = 2;
+          for (let k = -12; k <= 12; k += 5) {
+            ctx.beginPath();
+            ctx.moveTo(f.x - 18, f.y + k);
+            ctx.lineTo(f.x + 18, f.y + k + 16);
+            ctx.stroke();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          for (let k = 0; k < 6; k++) {
+            ctx.beginPath();
+            ctx.moveTo(f.x + k * 4 - 8, f.y - 26);
+            ctx.lineTo(f.x + k * 4 - 10, f.y - 34);
+            ctx.lineTo(f.x + k * 4 - 12, f.y - 26);
+            ctx.fill();
+          }
+        } else if (i === 3) {
+          // grapes
+          for (let r = 0; r < 16; r++) {
+            const ox = (r % 4) * 8 - 10;
+            const oy = Math.floor(r / 4) * 7;
+            ctx.beginPath();
+            ctx.ellipse(f.x + ox, f.y + oy - 12, 7.5, 7.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y - 28);
+          ctx.lineTo(f.x - 6, f.y - 38);
+          ctx.lineTo(f.x + 4, f.y - 34);
+          ctx.fill();
+        } else if (i === 4) {
+          // oranges
+          for (let j = 0; j < 3; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 10 - 10, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 16, 3, 4);
+          ctx.fillRect(f.x, f.y - 18, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        } else {
+          // apples default
+          for (let j = 0; j < 4; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 8 - 12, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 18, 3, 4);
+          ctx.fillRect(f.x, f.y - 16, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        }
+      });
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBananaTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffd966';
+      ctx.beginPath();
+      ctx.ellipse(32, 32, 24, 10, 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#c28b1c';
+      ctx.fillRect(18, 22, 4, 6);
+      ctx.fillRect(42, 40, 4, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeAppleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ff4c4c';
+      ctx.beginPath();
+      ctx.ellipse(32, 36, 14, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2f8b2f';
+      ctx.fillRect(30, 22, 3, 8);
+      ctx.beginPath();
+      ctx.moveTo(31, 22);
+      ctx.lineTo(37, 18);
+      ctx.lineTo(34, 24);
+      ctx.closePath();
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makePineappleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffca4d';
+      ctx.beginPath();
+      ctx.ellipse(32, 34, 12, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#f59b32';
+      ctx.lineWidth = 2;
+      for (let k = -12; k <= 12; k += 6) {
+        ctx.beginPath();
+        ctx.moveTo(20, 30 + k);
+        ctx.lineTo(44, 40 + k);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      for (let k = 0; k < 4; k++) {
+        ctx.beginPath();
+        ctx.moveTo(26 + k * 4, 16);
+        ctx.lineTo(24 + k * 4, 8);
+        ctx.lineTo(22 + k * 4, 16);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeGrapesTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#7dd36f';
+      for (let r = 0; r < 9; r++) {
+        const ox = (r % 3) * 8 - 8;
+        const oy = Math.floor(r / 3) * 8;
+        ctx.beginPath();
+        ctx.ellipse(32 + ox, 30 + oy, 6, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      ctx.fillRect(31, 16, 3, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBreadTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#d9b37a';
+      ctx.beginPath();
+      ctx.roundRect(14, 24, 36, 18, 6);
+      ctx.fill();
+      ctx.fillStyle = '#b5864c';
+      ctx.beginPath();
+      ctx.roundRect(18, 20, 28, 6, 4);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeFlowerTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      const petals = [['#ff6fa0', '#ff99c2'], ['#ffd84d', '#ffe784'], ['#8ad4ff', '#b7e8ff']];
+      const p = petals[seed % petals.length];
+      for (let i = 0; i < 6; i++) {
+        const ang = (Math.PI * 2 * i) / 6;
+        const x = 32 + Math.cos(ang) * 10;
+        const y = 32 + Math.sin(ang) * 10;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 12);
+        grad.addColorStop(0, p[0]);
+        grad.addColorStop(1, p[1]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 8, 6, ang, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#ffd35c';
+      ctx.beginPath();
+      ctx.arc(32, 32, 6, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+    const flowerTextures = [makeFlowerTexture(0), makeFlowerTexture(1), makeFlowerTexture(2)];
+
+    const trees = new THREE.Group();
+    const treeCount = 240;
+    for (let i = 0; i < treeCount; i++) {
+      const texSet = i % 4 === 0 ? softTreeTextures : treeTextures;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scaleY = 4 + Math.random() * 4.5;
+      const scaleX = scaleY * (0.5 + Math.random() * 0.3);
+      sprite.scale.set(scaleX, scaleY, 1);
+      const radius = 10 + Math.random() * 240;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scaleY * 0.5 + 0.4, Math.sin(angle) * radius);
+      trees.add(sprite);
+    }
+    scene.add(trees);
+
+    // Fjöll í fjarska
+    const mountains = new THREE.Group();
+    const mountainCount = 8;
+    for (let i = 0; i < mountainCount; i++) {
+      const height = 20 + Math.random() * 18;
+      const radius = 40 + Math.random() * 25;
+      const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.05, 0.4, 0.35 + Math.random() * 0.1);
+      const geom = new THREE.ConeGeometry(radius, height, 4 + Math.floor(Math.random() * 4));
+      const mat = new THREE.MeshStandardMaterial({ color, flatShading: true });
+      const cone = new THREE.Mesh(geom, mat);
+      const dist = 220 + Math.random() * 120;
+      const ang = Math.random() * Math.PI * 2;
+      cone.position.set(Math.cos(ang) * dist, height * 0.5, Math.sin(ang) * dist);
+      cone.rotation.y = Math.random() * Math.PI;
+      mountains.add(cone);
+    }
+    scene.add(mountains);
+
+    const bushes = new THREE.Group();
+    const bushCount = 180;
+    for (let i = 0; i < bushCount; i++) {
+      const useBlue = Math.random() < 0.5;
+      const texSet = useBlue ? bushTexturesBlue : bushTexturesRed;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.4 + Math.random() * 1.6;
+      sprite.scale.set(scale * (1.4 + Math.random() * 0.4), scale, 1);
+      const radius = 8 + Math.random() * 220;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.35 + 0.2, Math.sin(angle) * radius);
+      sprite.userData.wavePhase = Math.random() * Math.PI * 2;
+      sprite.userData.waveSpeed = 0.8 + Math.random() * 0.6;
+      sprite.userData.baseScale = { x: sprite.scale.x, y: sprite.scale.y };
+      bushes.add(sprite);
+    }
+    scene.add(bushes);
+
+    const mushrooms = new THREE.Group();
+    const mushroomCount = 260;
+    for (let i = 0; i < mushroomCount; i++) {
+      const tex = mushroomTextures[i % mushroomTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.6 + Math.random() * 0.7;
+      sprite.scale.set(scale, scale, 1);
+      const radius = 6 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      mushrooms.add(sprite);
+    }
+    scene.add(mushrooms);
+
+    const flowers = new THREE.Group();
+    const flowerCount = 320;
+    for (let i = 0; i < flowerCount; i++) {
+      const tex = flowerTextures[i % flowerTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.5 + Math.random() * 0.5;
+      sprite.scale.set(scale * 1.1, scale * 1.1, 1);
+      const radius = 4 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      flowers.add(sprite);
+    }
+    scene.add(flowers);
+
+    // Kindur
+    const sheep = new THREE.Group();
+    const sheepCount = 18;
+    for (let i = 0; i < sheepCount; i++) {
+      const tex = sheepTextures[i % sheepTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.2 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.5, scale * 2, 1);
+      const radius = 6 + Math.random() * 140;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5 + 0.3, Math.sin(angle) * radius);
+      sprite.userData.dir = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.5 + Math.random() * 0.6;
+      sprite.userData.grazeTime = Math.random() * 4;
+      sprite.userData.state = 'walk'; // walk/graze
+      sheep.add(sprite);
+    }
+    scene.add(sheep);
+
+    // Fuglarnir
+    const birds = new THREE.Group();
+    const birdCount = 14;
+    for (let i = 0; i < birdCount; i++) {
+      const tex = birdTextures[i % birdTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.3 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.4, scale * 1.5, 1);
+      const radius = 60 + Math.random() * 160;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, 8 + Math.random() * 6, Math.sin(angle) * radius);
+      sprite.userData.orbitR = radius;
+      sprite.userData.orbitA = angle;
+      sprite.userData.alt = sprite.position.y;
+      sprite.userData.flap = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.25 + Math.random() * 0.35;
+      birds.add(sprite);
+    }
+    scene.add(birds);
+
+    // Ský
+    function makeCloudTexture(seedOffset = 0) {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(255,255,255,0.0)';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      const circles = 7;
+      for (let i = 0; i < circles; i++) {
+        const x = 30 + i * 32 + Math.random() * 18 + seedOffset * 3;
+        const y = 50 + Math.random() * 22 + seedOffset;
+        const r = 24 + Math.random() * 22;
+        ctx.beginPath();
+        ctx.ellipse(x, y, r, r * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const cloudTextures = [makeCloudTexture(0), makeCloudTexture(10), makeCloudTexture(-10)];
+    const clouds = new THREE.Group();
+    const cloudCount = 28;
+    for (let i = 0; i < cloudCount; i++) {
+      const tex = cloudTextures[i % cloudTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(18 + Math.random() * 20, 9 + Math.random() * 8, 1);
+      sprite.position.set(-220 + Math.random() * 440, 20 + Math.random() * 14, -220 + Math.random() * 440);
+      sprite.userData.speed = 0.18 + Math.random() * 0.35;
+      sprite.userData.bound = 240;
+      clouds.add(sprite);
+    }
+    scene.add(clouds);
+
+    // Gamaldags tölvuskjár með mynd.avif á skjánum
+    const retroComputer = makeRetroComputer();
+    retroComputer.position.set(6, 0, -6);
+    retroComputer.rotation.y = Math.PI * 0.3;
+    scene.add(retroComputer);
+
+    const puffin = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffinTexture, transparent: true, depthWrite: false }));
+    puffin.scale.set(4.8, 6, 1);
+    puffin.position.set(0, 3, -160);
+    puffin.userData.phase = Math.random() * Math.PI * 2;
+    puffin.userData.speed = 1.4;
+    scene.add(puffin);
+
+    const sparkFlower = makeSparkFlower();
+    sparkFlower.position.set(-40, 0, -30);
+    sparkFlower.rotation.y = Math.PI * 0.12;
+    sparkFlower.scale.set(1.2, 1.2, 1.2); // tvöfalt hærra en 3m kassinn (ca 6m)
+    scene.add(sparkFlower);
+
+    const tallTower = makeTallTower();
+    tallTower.position.set(140, 0, 60);
+    tallTower.rotation.y = -Math.PI * 0.15;
+    scene.add(tallTower);
+
+    const book = new THREE.Mesh(
+      new THREE.BoxGeometry(4, 6, 1.2),
+      new THREE.MeshStandardMaterial({ map: bookTexture, metalness: 0.08, roughness: 0.7 })
+    );
+    book.position.set(70, 3, -60);
+    book.rotation.y = -Math.PI * 0.2;
+    scene.add(book);
+
+    const buffetTable = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 1, 4),
+      new THREE.MeshStandardMaterial({ map: buffetTexture, metalness: 0.1, roughness: 0.75 })
+    );
+    buffetTable.position.set(-90, 1, 30);
+    buffetTable.rotation.y = -Math.PI * 0.28;
+    scene.add(buffetTable);
+
+    const buffetFood = new THREE.Group();
+    buffetFood.position.copy(buffetTable.position);
+    buffetFood.rotation.y = buffetTable.rotation.y;
+
+    function addFoodSprite(tex, offsetX, offsetZ, scale = 2) {
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      spr.scale.set(scale, scale, 1);
+      spr.position.set(offsetX, 1.7, offsetZ);
+      buffetFood.add(spr);
+    }
+    addFoodSprite(bananaTex, -2.4, 0.6, 2.2);
+    addFoodSprite(appleTex, 0, -0.4, 2.1);
+    addFoodSprite(pineappleTex, 2.4, 0.2, 2.4);
+    addFoodSprite(grapesTex, -0.8, 1.1, 2);
+    addFoodSprite(breadTex, 1.4, -1, 2.6);
+    scene.add(buffetFood);
+
+    const river = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 200),
+      new THREE.MeshStandardMaterial({ color: 0x4aa4ff, transparent: true, opacity: 0.7, metalness: 0.2, roughness: 0.45 })
+    );
+    river.rotation.x = -Math.PI / 2;
+    river.position.set(-125, 0.02, 105);
+    river.rotation.z = 0.08;
+    scene.add(river);
+
+    minimapMarkers.push(
+      { name: 'Tölva', icon: '🖥️', color: '#9cf1ff', getPos: () => retroComputer.position },
+      { name: 'Blóm', icon: '🌸', color: '#ff77cc', getPos: () => sparkFlower.position },
+      { name: 'Turn', icon: '🗼', color: '#ffd966', getPos: () => tallTower.position },
+      { name: 'Bók', icon: '📖', color: '#e6d9b8', getPos: () => book.position },
+      { name: 'Lundi', icon: '🐧', color: '#ffffff', getPos: () => puffin.position },
+      { name: 'Matur', icon: '🍽️', color: '#ffae6f', getPos: () => buffetTable.position },
+      { name: 'Á', icon: '💧', color: '#4aa4ff', getPos: () => river.position },
+      { name: 'Kassi', icon: '🟥', color: '#ff0033', getPos: () => targetCube.position }
+    );
+
+    // Rauði kassinn
+    const targetCube = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 3, 3),
+      new THREE.MeshStandardMaterial({ color: 0xff0033, emissive: 0x330000 })
+    );
+    targetCube.position.set(0, 1.5, -80);
+    scene.add(targetCube);
+
+    // Fraktal ástand
+    let inFractal = false;
+    let fractalGroup = null;
+    let fractalGroup2 = null;
+    const fractalAudio = document.getElementById('fractal-audio');
+    const promptEl = document.getElementById('prompt');
+    const fractalHint = document.getElementById('fractal-hint');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupFrame = document.getElementById('popup-frame');
+    const popupCloseBtn = document.getElementById('popup-close');
+    const popupContent = document.getElementById('popup-content');
+    const minimapEl = document.getElementById('minimap');
+    const minimapToggle = document.getElementById('minimap-toggle');
+    const minimapCanvas = document.getElementById('minimap-canvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    let popupOpen = false;
+    let popupCooldown = 0;
+    let computerNeedsExit = false;
+    let towerNeedsExit = false;
+    let flowerNeedsExit = false;
+    let puffinNeedsExit = false;
+    let bookNeedsExit = false;
+    let buffetNeedsExit = false;
+    let fractalDepth = 0;
+    let fractalData2 = null;
+
+    function showPrompt(show) {
+      promptEl.classList.toggle('visible', show);
+    }
+
+    function openPopup(url = 'forsida/index.html') {
+      if (popupOpen) return;
+      popupOpen = true;
+      popupOverlay.classList.add('visible');
+      popupFrame.src = url;
+    }
+
+    function closePopup() {
+      if (!popupOpen) return;
+      popupOpen = false;
+      popupOverlay.classList.remove('visible');
+      popupFrame.src = '';
+      popupCooldown = 0.8; // smá bið svo glugginn opnist ekki strax aftur
+      computerNeedsExit = true;
+      towerNeedsExit = true;
+      flowerNeedsExit = true;
+      puffinNeedsExit = true;
+      bookNeedsExit = true;
+      buffetNeedsExit = true;
+    }
+
+    popupOverlay.addEventListener('click', closePopup);
+    popupCloseBtn.addEventListener('click', closePopup);
+    popupContent.addEventListener('click', (e) => e.stopPropagation());
+    popupFrame.addEventListener('load', () => {
+      if (popupFrame.src.includes('geton/index.html')) {
+        popupFrame.contentWindow?.postMessage({ type: 'start-music' }, '*');
+      }
+    });
+
+    function createFractalGroup(scale = 1, count = 2000, size = 0.25) {
+      const group = new THREE.Group();
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < count; i++) {
+        const angle = i * golden;
+        const radius = scale * 0.08 * Math.sqrt(i);
+        positions[i * 3] = Math.cos(angle) * radius;
+        positions[i * 3 + 1] = (i - count / 2) * 0.0035 * scale;
+        positions[i * 3 + 2] = Math.sin(angle) * radius;
+
+        const t = i / count;
+        colors[i * 3] = 0.5 + 0.5 * Math.sin(t * 10);
+        colors[i * 3 + 1] = 0.5 + 0.5 * Math.sin(t * 13 + 1.2);
+        colors[i * 3 + 2] = 0.5 + 0.5 * Math.sin(t * 17 + 2.4);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({ size, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });
+      const points = new THREE.Points(geo, mat);
+      group.add(points);
+      return { group, points };
+    }
+
+    let fractalData = null;
+    function enterFractal() {
+      if (inFractal) return;
+      inFractal = true;
+      window.location.href = '/dans/'; // hoppa í nýtt psychedelic umhverfi
+    }
+
+    // Hreyfing
+    let yaw = 0;
+    const moveSpeed = 12;
+    const rotSpeed = 1.6;
+    let lastTime = performance.now();
+    let pendingFractal = false;
+    let pendingTimer = 0;
+
+    function updateMovement(dt) {
+      const forward = (keys['ArrowUp'] || keys['KeyW']) || (touchDir.y < -0.2);
+      const backward = (keys['ArrowDown'] || keys['KeyS']) || (touchDir.y > 0.2);
+      const left = (keys['ArrowLeft'] || keys['KeyA']) || (touchDir.x < -0.2);
+      const right = (keys['ArrowRight'] || keys['KeyD']) || (touchDir.x > 0.2);
+
+      const moving = forward || backward || left || right;
+      if (moving) ensureAudio();
+      setFootsteps(moving);
+
+      if (left && !right) yaw += rotSpeed * dt;
+      if (right && !left) yaw -= rotSpeed * dt;
+
+      const dir = new THREE.Vector3();
+      if (forward) dir.z -= 1;
+      if (backward) dir.z += 1;
+      dir.normalize();
+
+      const sin = Math.sin(yaw);
+      const cos = Math.cos(yaw);
+      const dx = dir.z * sin;
+      const dz = dir.z * cos;
+
+      camera.position.x += dx * moveSpeed * dt;
+      camera.position.z += dz * moveSpeed * dt;
+
+      camera.rotation.y = yaw;
+      camera.position.y = 1.6;
+    }
+
+    function updateClouds(dt) {
+      clouds.children.forEach(c => {
+        c.position.x += c.userData.speed * dt * 8;
+        if (c.position.x > c.userData.bound) c.position.x = -c.userData.bound;
+      });
+    }
+
+    function updateBushes(dt) {
+      bushes.children.forEach(b => {
+        b.userData.wavePhase += dt * b.userData.waveSpeed;
+        const wobble = Math.sin(b.userData.wavePhase) * 0.06;
+        b.scale.x = b.userData.baseScale.x * (1 + wobble);
+        b.scale.y = b.userData.baseScale.y * (1 + wobble * 0.7);
+      });
+    }
+
+    function updateSheep(dt) {
+      sheep.children.forEach(s => {
+        s.userData.grazeTime -= dt;
+        if (s.userData.grazeTime <= 0) {
+          if (s.userData.state === 'walk') {
+            s.userData.state = 'graze';
+            s.userData.grazeTime = 2 + Math.random() * 3;
+          } else {
+            s.userData.state = 'walk';
+            s.userData.grazeTime = 4 + Math.random() * 5;
+            s.userData.dir += rand(-0.6, 0.6);
+          }
+        }
+        if (s.userData.state === 'walk') {
+          s.userData.dir += rand(-0.08, 0.08) * dt;
+          const dx = Math.sin(s.userData.dir) * s.userData.speed * dt * 2.4;
+          const dz = Math.cos(s.userData.dir) * s.userData.speed * dt * 2.4;
+          s.position.x += dx;
+          s.position.z += dz;
+          const r = Math.hypot(s.position.x, s.position.z);
+          const maxR = 180;
+          if (r > maxR) {
+            s.userData.dir += Math.PI + rand(-0.4, 0.4);
+          }
+        }
+        s.material.rotation = 0;
+      });
+    }
+
+    function updateBirds(dt) {
+      birds.children.forEach(b => {
+        b.userData.orbitA += dt * b.userData.speed;
+        b.userData.flap += dt * 6;
+        const yOsc = Math.sin(b.userData.flap) * 0.4;
+        const r = b.userData.orbitR;
+        b.position.set(Math.cos(b.userData.orbitA) * r, b.userData.alt + yOsc, Math.sin(b.userData.orbitA) * r);
+        b.material.rotation = -b.userData.orbitA + Math.PI / 2;
+      });
+    }
+
+    function updatePuffin(dt) {
+      if (!puffin) return;
+      puffin.userData.phase += dt * puffin.userData.speed;
+      const sway = Math.sin(puffin.userData.phase) * 0.2;
+      const hop = Math.max(0, Math.sin(puffin.userData.phase * 1.4)) * 0.35;
+      puffin.position.y = 1.5 + hop;
+      puffin.material.rotation = sway;
+    }
+
+    function updateFractal(dt) {
+      if (!fractalGroup || !fractalData) return;
+      fractalDepth += dt * 12;
+
+      const time = performance.now() * 0.001;
+      const wobble = Math.sin(time * 0.7) * 0.25;
+
+      fractalGroup.position.z = -fractalDepth * 1.2;
+      fractalGroup2.position.z = -fractalDepth * 0.8 - 8;
+
+      fractalGroup.rotation.y += dt * 0.6;
+      fractalGroup.rotation.x += dt * 0.14;
+      fractalGroup2.rotation.y -= dt * 0.4;
+      fractalGroup2.rotation.x += dt * 0.08;
+
+      const posAttr = fractalData.points.geometry.getAttribute('position');
+      const posAttr2 = fractalData2.points.geometry.getAttribute('position');
+      for (let i = 0; i < posAttr.count; i++) {
+        const y = posAttr.getY(i);
+        posAttr.setY(i, y + Math.sin(time + i * 0.02) * 0.0008);
+      }
+      for (let i = 0; i < posAttr2.count; i++) {
+        const y = posAttr2.getY(i);
+        posAttr2.setY(i, y + Math.cos(time * 1.2 + i * 0.018) * 0.0011);
+      }
+      posAttr.needsUpdate = true;
+      posAttr2.needsUpdate = true;
+
+      // fallandi tilfinning
+      camera.position.y = 1.1 + wobble * 0.4;
+      camera.position.z -= dt * 10;
+
+      // litaflæði
+      const hue = (time * 0.07) % 1;
+      scene.background = new THREE.Color().setHSL(hue, 0.6, 0.08 + 0.1 * Math.sin(time * 0.6) * 0.5);
+    }
+
+    function checkTarget() {
+      if (inFractal) return;
+      const dist = camera.position.distanceTo(targetCube.position);
+      const near = dist < 3.2;
+      if (near) {
+        if (!pendingFractal) {
+          pendingFractal = true;
+          pendingTimer = 0;
+        }
+      } else {
+        pendingFractal = false;
+        pendingTimer = 0;
+      }
+    }
+
+    function checkComputerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(retroComputer.position);
+      if (computerNeedsExit && dist < 3.4) return;
+      if (dist > 3.4) computerNeedsExit = false;
+      if (dist < 2.6) {
+        openPopup();
+      }
+    }
+
+    function checkTowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(tallTower.position);
+      if (towerNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) towerNeedsExit = false;
+      if (dist < 3.6) {
+        openPopup('Annad/index.html');
+      }
+    }
+
+    function checkFlowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(sparkFlower.position);
+      if (flowerNeedsExit && dist < 4) return;
+      if (dist > 4) flowerNeedsExit = false;
+      if (dist < 2.8) {
+        openPopup('Aldurinn/index.html');
+      }
+    }
+
+    function checkPuffinInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(puffin.position);
+      if (puffinNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) puffinNeedsExit = false;
+      if (dist < 3.2) {
+        openPopup('geton/index.html');
+      }
+    }
+
+    function checkBookInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(book.position);
+      if (bookNeedsExit && dist < 4.2) return;
+      if (dist > 4.2) bookNeedsExit = false;
+      if (dist < 3) {
+        openPopup('bok/index.html');
+      }
+    }
+
+    function updateRiverSound(dt) {
+      if (!riverAudio) return;
+      if (audioInitiated && riverAudio.paused) {
+        riverAudio.play().catch(() => {});
+      }
+      const dist = camera.position.distanceTo(river.position);
+      const t = Math.max(0, 1 - dist / 70);
+      const target = 0.35 * t;
+      const lerp = Math.min(1, dt * 4);
+      riverAudio.volume += (target - riverAudio.volume) * lerp;
+    }
+
+    function renderMinimap() {
+      const w = minimapCanvas.width;
+      const h = minimapCanvas.height;
+      minimapCtx.clearRect(0, 0, w, h);
+      minimapCtx.fillStyle = '#5ca66a';
+      minimapCtx.fillRect(0, 0, w, h);
+      const positions = minimapMarkers.map(m => m.getPos());
+      const xs = positions.map(p => p.x);
+      const zs = positions.map(p => p.z);
+      const minX = Math.min(...xs) - 10;
+      const maxX = Math.max(...xs) + 10;
+      const minZ = Math.min(...zs) - 10;
+      const maxZ = Math.max(...zs) + 10;
+      const rangeX = maxX - minX || 1;
+      const rangeZ = maxZ - minZ || 1;
+      const margin = 18;
+      minimapCtx.fillStyle = '#7c6041';
+      const peaks = [
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 6 },
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin - 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin + 4 },
+        { x: margin + 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: margin + 10, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 10, y: margin + Math.random() * (h - margin * 2) },
+      ];
+      peaks.forEach(p => {
+        const peakH = 10 + Math.random() * 8;
+        minimapCtx.beginPath();
+        minimapCtx.moveTo(p.x - 10, p.y);
+        minimapCtx.lineTo(p.x, p.y - peakH);
+        minimapCtx.lineTo(p.x + 10, p.y);
+        minimapCtx.closePath();
+        minimapCtx.fill();
+      });
+      function toMap(p) {
+        const x = ((p.x - minX) / rangeX) * (w - margin * 2) + margin;
+        const y = ((p.z - minZ) / rangeZ) * (h - margin * 2) + margin;
+        return {
+          x: Math.max(margin, Math.min(w - margin, x)),
+          y: Math.max(margin, Math.min(h - margin, y)),
+        };
+      }
+      const mapped = minimapMarkers.map(m => toMap(m.getPos()));
+      minimapCtx.setLineDash([4, 6]);
+      minimapCtx.strokeStyle = 'rgba(255,255,255,0.45)';
+      minimapCtx.lineWidth = 1.5;
+      minimapCtx.beginPath();
+      mapped.forEach((p, idx) => {
+        if (idx === 0) minimapCtx.moveTo(p.x, p.y);
+        else minimapCtx.lineTo(p.x, p.y);
+      });
+      minimapCtx.stroke();
+      minimapCtx.setLineDash([]);
+    minimapMarkers.forEach(m => {
+      const p = toMap(m.getPos());
+      minimapCtx.font = '15px system-ui, sans-serif';
+      minimapCtx.textAlign = 'center';
+      minimapCtx.textBaseline = 'middle';
+      minimapCtx.fillStyle = m.color;
+      minimapCtx.fillText(m.icon, p.x, p.y);
+    });
+
+    }
+
+    function checkBuffetInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(buffetTable.position);
+      if (buffetNeedsExit && dist < 4.8) return;
+      if (dist > 4.8) buffetNeedsExit = false;
+      if (dist < 3.4) {
+        openPopup('Matarbod/index.html');
+      }
+    }
+
+    minimapToggle.addEventListener('click', () => {
+      minimapEl.classList.toggle('show');
+      if (minimapEl.classList.contains('show')) {
+        renderMinimap();
+      }
+    });
+
+    function animate() {
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      popupCooldown = Math.max(0, popupCooldown - dt);
+
+      // Slembijarm af og til
+      if (bleatAudio && audioInitiated) {
+        bleatTimer -= dt;
+        if (bleatTimer <= 0) {
+          if (Math.random() < 0.2) {
+            bleatAudio.currentTime = 0;
+            bleatAudio.play().catch(() => {});
+          }
+          bleatTimer = 8 + Math.random() * 16;
+        }
+      }
+
+      if (!inFractal) {
+        updateMovement(dt);
+        updateClouds(dt);
+        updateBushes(dt);
+        updateSheep(dt);
+        updateBirds(dt);
+        updatePuffin(dt);
+        updateRiverSound(dt);
+        checkTarget();
+        checkComputerInteraction();
+        checkTowerInteraction();
+        checkFlowerInteraction();
+        checkPuffinInteraction();
+        checkBookInteraction();
+        checkBuffetInteraction();
+        if (pendingFractal) {
+          pendingTimer += dt;
+          yaw += dt * 1.8; // smá snúningur
+          camera.rotation.y = yaw;
+          camera.rotation.x = Math.sin(pendingTimer * 1.5) * 0.15; // vertical sway
+          if (pendingTimer >= 3) {
+            enterFractal();
+          }
+        }
+      } else {
+        updateMovement(dt * 0.5); // hægari í fraktal
+        updateFractal(dt);
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+<canvas data-engine="three.js r159" width="263" height="726" style="display: block; width: 263px; height: 726px;"></canvas></body></html>
+<head>
+  <meta charset="UTF-8">
+  <title>3D heimur</title>
+  <style>
+    :root {
+      --ui-bg: rgba(0, 0, 0, 0.55);
+      --ui-text: #f7f7f7;
+    }
+    body { margin: 0; overflow: hidden; background: #87cefa; }
+    canvas { display: block; }
+    #hud {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: var(--ui-text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 280px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    #prompt {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      background: var(--ui-bg);
+      color: #ffeb3b;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      border-radius: 8px;
+      z-index: 10;
+      min-width: 180px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    #prompt.visible { opacity: 1; }
+    #fractal-hint {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: #9cf1ff;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 240px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+      display: none;
+    }
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 20;
+    }
+    #popup-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #popup-content {
+      width: min(90vw, 900px);
+      height: min(82vh, 680px);
+      background: #d9dce1;
+      border: 3px solid #7a7d82;
+      border-radius: 6px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    #popup-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 10px 12px;
+      background: #c3c6cc;
+      border-bottom: 2px solid #7a7d82;
+    }
+    #popup-close {
+      background: #e5e7eb;
+      border: 2px solid #3f434a;
+      color: #1c1e22;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    #popup-close:hover { background: #d7dbe0; }
+    #popup-frame {
+      flex: 1;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+    #minimap {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    #minimap button {
+      pointer-events: auto;
+      background:
+        linear-gradient(135deg, #6fb46b, #5a9a57) padding-box,
+        linear-gradient(135deg, #cbb27a, #a08858) border-box;
+      color: #2d2414;
+      border: 1px solid rgba(46, 34, 16, 0.6);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    #minimap-canvas {
+      pointer-events: auto;
+      width: 240px;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 44px;
+    }
+    #minimap.show #minimap-canvas { display: block; }
+  </style>
+</head>
+<body>
+  <audio id="fractal-audio" loop="" preload="auto" style="display:none">
+    <source src="/dans/lagid.mp3" type="audio/mpeg">
+  </audio>
+  <div id="hud" style="display:none"></div>
+  <div id="prompt" style="display:none"></div>
+  <div id="fractal-hint">Fraktal virkni: notaðu hreyfingar til að hræra í mynstrinu</div>
+  <div id="popup-overlay">
+    <div id="popup-content">
+      <div id="popup-bar">
+        <button id="popup-close" type="button">X</button>
+      </div>
+      <iframe id="popup-frame" src="" title="Forsíða" allow="autoplay"></iframe>
+    </div>
+  </div>
+  <div id="minimap">
+    <button id="minimap-toggle" type="button" aria-label="Opna kort">🗺️</button>
+    <canvas id="minimap-canvas" width="240" height="180"></canvas>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.159.0/build/three.module.js';
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87cefa); // himinn
+    const texLoader = new THREE.TextureLoader();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1.6, 10);
+
+    // Lyklaborðs inntak
+    const keys = {};
+    window.addEventListener('keydown', (e) => keys[e.code] = true);
+    window.addEventListener('keyup', (e) => keys[e.code] = false);
+    // Snertistýring til að labba á síma
+    let touchStartPos = null;
+    let touchDir = { x: 0, y: 0 };
+    let touchTapPos = null;
+    const resetTouch = () => { touchDir = { x: 0, y: 0 }; };
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        const t = e.touches[0];
+        touchStartPos = { x: t.clientX, y: t.clientY };
+        touchTapPos = { x: t.clientX, y: t.clientY };
+        touchDir = { x: 0, y: 0 };
+        ensureAudio(); // kick ambient/footsteps on first tap (mobile gesture)
+      }
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (!touchStartPos || e.touches.length === 0) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartPos.x;
+      const dy = t.clientY - touchStartPos.y;
+      const mag = Math.max(1, Math.hypot(dx, dy));
+      touchDir = { x: dx / mag, y: dy / mag };
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      touchStartPos = null;
+      resetTouch();
+    });
+    window.addEventListener('mousedown', () => {
+      ensureAudio(); // desktop gesture fallback
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePopup();
+    });
+
+    // Hljóð (þú getur bætt wind.mp3, birds.mp3, footsteps.mp3, bleat.mp3 í sömu möppu)
+    let audioInitiated = false;
+    let ambientWind = null;
+    let ambientBirds = null;
+    let footstepAudio = null;
+    let bleatAudio = null;
+    let riverAudio = null;
+    let bleatTimer = 0;
+    let footstepActive = false;
+
+    function createAudio(src, loop = false, volume = 1) {
+      const a = new Audio(src);
+      a.loop = loop;
+      a.preload = 'auto';
+      a.volume = volume;
+      return a;
+    }
+
+    function ensureAudio() {
+      if (audioInitiated) return;
+      audioInitiated = true;
+      try {
+        ambientWind = createAudio('wind.mp3', true, 0.25);
+        ambientWind.play().catch(() => {});
+      } catch (e) {}
+      try {
+        ambientBirds = createAudio('birds.mp3', true, 0.2);
+        ambientBirds.play().catch(() => {});
+      } catch (e) {}
+      try {
+        footstepAudio = createAudio('footsteps.mp3', true, 0.35);
+      } catch (e) {}
+      try {
+        bleatAudio = createAudio('bleat.mp3', false, 0.4);
+      } catch (e) {}
+      try {
+        riverAudio = createAudio('river.mp3', true, 0);
+        riverAudio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function setFootsteps(active) {
+      if (!footstepAudio) return;
+      if (active && !footstepActive) {
+        footstepActive = true;
+        footstepAudio.currentTime = 0;
+        footstepAudio.play().catch(() => {});
+      } else if (!active && footstepActive) {
+        footstepActive = false;
+        footstepAudio.pause();
+      }
+    }
+
+    // Ljós
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x888844, 0.9);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir.position.set(5, 10, 7);
+    scene.add(hemi, dir);
+
+    // Jörð með smá áferð
+    function makeGroundTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 512;
+      const ctx = c.getContext('2d');
+      const base = ctx.createLinearGradient(0, 0, 0, 512);
+      base.addColorStop(0, '#4fbf73');
+      base.addColorStop(1, '#3b9257');
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, 512, 512);
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
+      for (let i = 0; i < 2000; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const r = Math.random() * 1.8;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const groundTex = makeGroundTexture();
+    groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping;
+    groundTex.repeat.set(18, 18);
+    const groundGeo = new THREE.PlaneGeometry(400, 400);
+    const groundMat = new THREE.MeshLambertMaterial({ map: groundTex });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+
+    // Tré sem billboard (tvær hliðar) með smá fjölbreytileika
+    function makeTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(12, 20);
+      const trunkH = rand(40, 60);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 8;
+      ctx.fillStyle = ['#8B5A2B', '#6f4a1e', '#9c6b2f'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH); // stöng
+
+      const layers = 2 + (seed % 2);
+      ctx.beginPath();
+      for (let i = 0; i < layers; i++) {
+        const topY = 28 + i * 18;
+        const baseY = 78 + i * 10;
+        const spread = 32 + i * 10 + rand(-4, 4);
+        ctx.beginPath();
+        ctx.moveTo(64, topY);
+        ctx.lineTo(64 + spread, baseY);
+        ctx.lineTo(64 - spread, baseY);
+        ctx.closePath();
+        ctx.fillStyle = ['#2ECC71', '#2fb06f', '#35d17c'][seed % 3];
+        ctx.fill();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.needsUpdate = true;
+      return tex;
+    }
+    function makeSoftTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(10, 14);
+      const trunkH = rand(26, 38);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 10;
+      ctx.fillStyle = ['#7a4a24', '#6c3c1a', '#8c5c2d'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH);
+
+      const centerX = 64;
+      const centerY = 56;
+      const r = 35 + rand(-4, 6);
+      const grad = ctx.createRadialGradient(centerX, centerY, r * 0.2, centerX, centerY, r);
+      const greens = [
+        ['#3ac483', '#259b63'],
+        ['#3fbf78', '#2c8f5d'],
+        ['#43d08f', '#2b9c6a'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, r * 1.05, r * 0.85, 0, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBushTexture(seed = 0, berryColor = 'blue') {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(64, 64, 10, 64, 64, 48);
+      const greens = [
+        ['#2f7f46', '#1f5c31'],
+        ['#2e8b50', '#205e35'],
+        ['#288a52', '#1c5935'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+
+      // tvöföld "mm" sveigja
+      ctx.beginPath();
+      ctx.ellipse(48, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.ellipse(80, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // extra bumps
+      const bumps = 8;
+      for (let i = 0; i < bumps; i++) {
+        const x = 40 + i * 10 + rand(-6, 6);
+        const y = 66 + rand(-6, 6);
+        const rx = 16 + rand(-2, 4);
+        const ry = 12 + rand(-2, 3);
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // berries
+      const berryCount = 5 + Math.floor(Math.random() * 6);
+      for (let i = 0; i < berryCount; i++) {
+        const x = 36 + Math.random() * 56;
+        const y = 52 + Math.random() * 26;
+        const isBlue = berryColor === 'blue';
+        ctx.fillStyle = isBlue ? '#4c7cff' : '#ff4d4d';
+        ctx.beginPath();
+        ctx.arc(x, y, 2.6 + Math.random() * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath();
+        ctx.arc(x - 1, y - 1.5, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeMushroomTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f5e1c8';
+      ctx.fillRect(58, 72, 12, 32); // stilkur
+      ctx.beginPath();
+      ctx.arc(64, 70, 20, Math.PI, 0);
+      ctx.closePath();
+      const caps = ['#d93f3f', '#e3592f', '#c63448'];
+      ctx.fillStyle = caps[seed % caps.length];
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      for (let i = 0; i < 6; i++) {
+        const x = 52 + i * 6 + rand(-2, 2);
+        const y = 52 + rand(0, 12);
+        const r = rand(2, 4);
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeSheepTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 34, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      ctx.beginPath();
+      ctx.ellipse(64, 52, 26, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = ['#5a4633', '#3c2f23'][seed % 2];
+      ctx.beginPath();
+      ctx.ellipse(82, 60, 12, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(86, 58, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      // augu
+      ctx.beginPath();
+      ctx.arc(82, 57, 1.5, 0, Math.PI * 2);
+      ctx.arc(88, 59, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      for (let i = 0; i < 4; i++) {
+        const x = 52 + i * 10;
+        ctx.fillRect(x, 90, 6, 18);
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBirdTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.strokeStyle = ['#111', '#222', '#333'][seed % 3];
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 36, 92, 64);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 52, 92, 64);
+      ctx.stroke();
+      return new THREE.CanvasTexture(c);
+    }
+
+    const treeTextures = [makeTreeTexture(0), makeTreeTexture(1), makeTreeTexture(2)];
+    const softTreeTextures = [makeSoftTreeTexture(0), makeSoftTreeTexture(1), makeSoftTreeTexture(2)];
+    const bushTexturesBlue = [makeBushTexture(0, 'blue'), makeBushTexture(1, 'blue'), makeBushTexture(2, 'blue')];
+    const bushTexturesRed = [makeBushTexture(0, 'red'), makeBushTexture(1, 'red'), makeBushTexture(2, 'red')];
+    const mushroomTextures = [makeMushroomTexture(0), makeMushroomTexture(1), makeMushroomTexture(2)];
+    const sheepTextures = [makeSheepTexture(0), makeSheepTexture(1)];
+    const birdTextures = [makeBirdTexture(0), makeBirdTexture(1), makeBirdTexture(2)];
+    const puffinTexture = makePuffinTexture();
+    const bookTexture = makeBookTexture();
+    const buffetTexture = makeBuffetTexture();
+    const bananaTex = makeBananaTexture();
+    const appleTex = makeAppleTexture();
+    const pineappleTex = makePineappleTexture();
+    const grapesTex = makeGrapesTexture();
+    const breadTex = makeBreadTexture();
+    const minimapMarkers = [];
+
+    function makeRetroComputer() {
+      const group = new THREE.Group();
+
+      const shellMat = new THREE.MeshStandardMaterial({ color: 0xdadce0, metalness: 0.08, roughness: 0.82 });
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x7a7d82, metalness: 0.1, roughness: 0.7 });
+
+      const monitor = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.6, 1.4), shellMat);
+      monitor.position.y = 1.05;
+      group.add(monitor);
+
+      const screenTex = texLoader.load('mynd.avif');
+      screenTex.encoding = THREE.sRGBEncoding;
+      const screen = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.52, 1.02),
+        new THREE.MeshStandardMaterial({
+          map: screenTex,
+          emissive: 0x222a35,
+          emissiveIntensity: 0.7,
+          roughness: 0.4,
+          metalness: 0.05,
+        })
+      );
+      screen.position.set(0, 1.1, 0.76);
+      group.add(screen);
+
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.75, 1.22, 0.06), darkMat);
+      bezel.position.set(0, 1.1, 0.74);
+      group.add(bezel);
+
+      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.16, 0.95), shellMat);
+      stand.position.set(0, 0.45, 0);
+      group.add(stand);
+
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.22, 1.9), shellMat);
+      base.position.y = 0.2;
+      group.add(base);
+
+      const glow = new THREE.PointLight(0x7ddaff, 0.45, 8);
+      glow.position.set(0, 1.2, 1.1);
+      group.add(glow);
+
+      return group;
+    }
+
+    function makeTallTower() {
+      const group = new THREE.Group();
+      const stone = new THREE.MeshStandardMaterial({ color: 0x6f7279, metalness: 0.12, roughness: 0.82 });
+      const darker = new THREE.MeshStandardMaterial({ color: 0x55585f, metalness: 0.1, roughness: 0.76 });
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 5.4, 6, 10, 1, true), stone);
+      base.position.y = 3;
+      group.add(base);
+
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(3, 3.6, 26, 12, 1, true), darker);
+      shaft.position.y = 19;
+      group.add(shaft);
+
+      const crown = new THREE.Mesh(new THREE.CylinderGeometry(3.8, 3.8, 2.2, 12), stone);
+      crown.position.y = 32;
+      group.add(crown);
+
+      const spire = new THREE.Mesh(new THREE.ConeGeometry(3.2, 9, 12), darker);
+      spire.position.y = 38.5;
+      group.add(spire);
+
+      const point = new THREE.Mesh(new THREE.ConeGeometry(0.6, 2.8, 6), new THREE.MeshStandardMaterial({ color: 0x2c2f35, metalness: 0.4, roughness: 0.4 }));
+      point.position.y = 42.8;
+      group.add(point);
+
+      const light = new THREE.PointLight(0x87b3ff, 0.8, 40);
+      light.position.set(0, 36, 0);
+      group.add(light);
+
+      return group;
+    }
+
+    function makeSparkFlower() {
+      const group = new THREE.Group();
+      const stemMat = new THREE.MeshStandardMaterial({ color: 0x2f7f46, metalness: 0.15, roughness: 0.6, emissive: 0x0b2f18, emissiveIntensity: 0.3 });
+      const petalMat = new THREE.MeshStandardMaterial({ color: 0xff77cc, metalness: 0.4, roughness: 0.35, emissive: 0xff66cc, emissiveIntensity: 0.8 });
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xffe6ff, transparent: true, opacity: 0.4 });
+
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, 5.2, 10), stemMat);
+      stem.position.y = 2.6;
+      group.add(stem);
+
+      const bloom = new THREE.Mesh(new THREE.SphereGeometry(1.8, 24, 18), petalMat);
+      bloom.position.y = 5.8;
+      group.add(bloom);
+
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(2.5, 16, 12), glowMat);
+      halo.position.y = 5.8;
+      group.add(halo);
+
+      const sparkle = new THREE.PointLight(0xffccff, 1.1, 28);
+      sparkle.position.set(0, 6.4, 0);
+      group.add(sparkle);
+
+      return group;
+    }
+
+    function makePuffinTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 32, 34, 0, 0, Math.PI * 2);
+      ctx.fill(); // body shadow
+      ctx.fillStyle = '#f7f7f7';
+      ctx.beginPath();
+      ctx.ellipse(64, 72, 26, 30, 0, 0, Math.PI * 2);
+      ctx.fill(); // belly
+      ctx.fillStyle = '#0c0c0c';
+      ctx.beginPath();
+      ctx.ellipse(70, 46, 22, 20, 0, 0, Math.PI * 2);
+      ctx.fill(); // head dark
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(68, 48, 16, 14, 0, 0, Math.PI * 2);
+      ctx.fill(); // face
+      ctx.fillStyle = '#ff7f3f';
+      ctx.beginPath();
+      ctx.moveTo(82, 50);
+      ctx.quadraticCurveTo(112, 54, 78, 62);
+      ctx.closePath();
+      ctx.fill(); // beak orange
+      ctx.fillStyle = '#ff4f4f';
+      ctx.beginPath();
+      ctx.moveTo(82, 52);
+      ctx.quadraticCurveTo(98, 54, 80, 58);
+      ctx.closePath();
+      ctx.fill(); // beak tip
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.arc(64, 46, 4, 0, Math.PI * 2);
+      ctx.fill(); // eye
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(62.5, 45, 1.5, 0, Math.PI * 2);
+      ctx.fill(); // eye shine
+      ctx.fillStyle = '#ff9c40';
+      ctx.beginPath();
+      ctx.ellipse(52, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(74, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.fill(); // feet
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBookTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.fillRect(24, 24, 208, 208);
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(36, 40, 182, 180);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.font = 'bold 32px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('BÓK', 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBuffetTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#d9c3a3';
+      ctx.fillRect(0, 0, 256, 256);
+
+      // tabletop with lighter center and dark rim
+      const topGrad = ctx.createLinearGradient(0, 176, 0, 256);
+      topGrad.addColorStop(0, '#dcb88f');
+      topGrad.addColorStop(1, '#c9986c');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(8, 170, 240, 70);
+      ctx.fillStyle = '#9f7447';
+      ctx.fillRect(8, 236, 240, 6);
+
+      function plate(cx, cy, w = 36, h = 12) {
+        ctx.fillStyle = '#f2f2f2';
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      const fruits = [
+        { x: 36, y: 152, color: '#ffdf6b', detail: '#e3af3b' },   // banana bunch
+        { x: 86, y: 150, color: '#ff3344', detail: '#d81e2c' },   // apples
+        { x: 142, y: 148, color: '#ffca4d', detail: '#f59b32' },  // pineapple
+        { x: 198, y: 150, color: '#7dd36f', detail: '#4ca957' },  // grapes-ish
+        { x: 120, y: 126, color: '#ffa94d', detail: '#f07d2a' },  // oranges
+      ];
+
+      fruits.forEach((f, i) => {
+        plate(f.x, f.y + 10, 40, 14);
+        ctx.fillStyle = f.color;
+        if (i === 0) {
+          // bananas
+          for (let j = 0; j < 5; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x - 12 + j * 7, f.y - 6 + j * 2, 14, 7, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#6b4b1f';
+          ctx.fillRect(f.x - 14, f.y - 12, 5, 7);
+        } else if (i === 2) {
+          // pineapple
+          ctx.beginPath();
+          ctx.ellipse(f.x, f.y - 6, 20, 26, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = f.detail;
+          ctx.lineWidth = 2;
+          for (let k = -12; k <= 12; k += 5) {
+            ctx.beginPath();
+            ctx.moveTo(f.x - 18, f.y + k);
+            ctx.lineTo(f.x + 18, f.y + k + 16);
+            ctx.stroke();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          for (let k = 0; k < 6; k++) {
+            ctx.beginPath();
+            ctx.moveTo(f.x + k * 4 - 8, f.y - 26);
+            ctx.lineTo(f.x + k * 4 - 10, f.y - 34);
+            ctx.lineTo(f.x + k * 4 - 12, f.y - 26);
+            ctx.fill();
+          }
+        } else if (i === 3) {
+          // grapes
+          for (let r = 0; r < 16; r++) {
+            const ox = (r % 4) * 8 - 10;
+            const oy = Math.floor(r / 4) * 7;
+            ctx.beginPath();
+            ctx.ellipse(f.x + ox, f.y + oy - 12, 7.5, 7.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y - 28);
+          ctx.lineTo(f.x - 6, f.y - 38);
+          ctx.lineTo(f.x + 4, f.y - 34);
+          ctx.fill();
+        } else if (i === 4) {
+          // oranges
+          for (let j = 0; j < 3; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 10 - 10, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 16, 3, 4);
+          ctx.fillRect(f.x, f.y - 18, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        } else {
+          // apples default
+          for (let j = 0; j < 4; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 8 - 12, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 18, 3, 4);
+          ctx.fillRect(f.x, f.y - 16, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        }
+      });
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBananaTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffd966';
+      ctx.beginPath();
+      ctx.ellipse(32, 32, 24, 10, 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#c28b1c';
+      ctx.fillRect(18, 22, 4, 6);
+      ctx.fillRect(42, 40, 4, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeAppleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ff4c4c';
+      ctx.beginPath();
+      ctx.ellipse(32, 36, 14, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2f8b2f';
+      ctx.fillRect(30, 22, 3, 8);
+      ctx.beginPath();
+      ctx.moveTo(31, 22);
+      ctx.lineTo(37, 18);
+      ctx.lineTo(34, 24);
+      ctx.closePath();
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makePineappleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffca4d';
+      ctx.beginPath();
+      ctx.ellipse(32, 34, 12, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#f59b32';
+      ctx.lineWidth = 2;
+      for (let k = -12; k <= 12; k += 6) {
+        ctx.beginPath();
+        ctx.moveTo(20, 30 + k);
+        ctx.lineTo(44, 40 + k);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      for (let k = 0; k < 4; k++) {
+        ctx.beginPath();
+        ctx.moveTo(26 + k * 4, 16);
+        ctx.lineTo(24 + k * 4, 8);
+        ctx.lineTo(22 + k * 4, 16);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeGrapesTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#7dd36f';
+      for (let r = 0; r < 9; r++) {
+        const ox = (r % 3) * 8 - 8;
+        const oy = Math.floor(r / 3) * 8;
+        ctx.beginPath();
+        ctx.ellipse(32 + ox, 30 + oy, 6, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      ctx.fillRect(31, 16, 3, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBreadTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#d9b37a';
+      ctx.beginPath();
+      ctx.roundRect(14, 24, 36, 18, 6);
+      ctx.fill();
+      ctx.fillStyle = '#b5864c';
+      ctx.beginPath();
+      ctx.roundRect(18, 20, 28, 6, 4);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeFlowerTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      const petals = [['#ff6fa0', '#ff99c2'], ['#ffd84d', '#ffe784'], ['#8ad4ff', '#b7e8ff']];
+      const p = petals[seed % petals.length];
+      for (let i = 0; i < 6; i++) {
+        const ang = (Math.PI * 2 * i) / 6;
+        const x = 32 + Math.cos(ang) * 10;
+        const y = 32 + Math.sin(ang) * 10;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 12);
+        grad.addColorStop(0, p[0]);
+        grad.addColorStop(1, p[1]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 8, 6, ang, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#ffd35c';
+      ctx.beginPath();
+      ctx.arc(32, 32, 6, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+    const flowerTextures = [makeFlowerTexture(0), makeFlowerTexture(1), makeFlowerTexture(2)];
+
+    const trees = new THREE.Group();
+    const treeCount = 240;
+    for (let i = 0; i < treeCount; i++) {
+      const texSet = i % 4 === 0 ? softTreeTextures : treeTextures;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scaleY = 4 + Math.random() * 4.5;
+      const scaleX = scaleY * (0.5 + Math.random() * 0.3);
+      sprite.scale.set(scaleX, scaleY, 1);
+      const radius = 10 + Math.random() * 240;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scaleY * 0.5 + 0.4, Math.sin(angle) * radius);
+      trees.add(sprite);
+    }
+    scene.add(trees);
+
+    // Fjöll í fjarska
+    const mountains = new THREE.Group();
+    const mountainCount = 8;
+    for (let i = 0; i < mountainCount; i++) {
+      const height = 20 + Math.random() * 18;
+      const radius = 40 + Math.random() * 25;
+      const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.05, 0.4, 0.35 + Math.random() * 0.1);
+      const geom = new THREE.ConeGeometry(radius, height, 4 + Math.floor(Math.random() * 4));
+      const mat = new THREE.MeshStandardMaterial({ color, flatShading: true });
+      const cone = new THREE.Mesh(geom, mat);
+      const dist = 220 + Math.random() * 120;
+      const ang = Math.random() * Math.PI * 2;
+      cone.position.set(Math.cos(ang) * dist, height * 0.5, Math.sin(ang) * dist);
+      cone.rotation.y = Math.random() * Math.PI;
+      mountains.add(cone);
+    }
+    scene.add(mountains);
+
+    const bushes = new THREE.Group();
+    const bushCount = 180;
+    for (let i = 0; i < bushCount; i++) {
+      const useBlue = Math.random() < 0.5;
+      const texSet = useBlue ? bushTexturesBlue : bushTexturesRed;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.4 + Math.random() * 1.6;
+      sprite.scale.set(scale * (1.4 + Math.random() * 0.4), scale, 1);
+      const radius = 8 + Math.random() * 220;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.35 + 0.2, Math.sin(angle) * radius);
+      sprite.userData.wavePhase = Math.random() * Math.PI * 2;
+      sprite.userData.waveSpeed = 0.8 + Math.random() * 0.6;
+      sprite.userData.baseScale = { x: sprite.scale.x, y: sprite.scale.y };
+      bushes.add(sprite);
+    }
+    scene.add(bushes);
+
+    const mushrooms = new THREE.Group();
+    const mushroomCount = 260;
+    for (let i = 0; i < mushroomCount; i++) {
+      const tex = mushroomTextures[i % mushroomTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.6 + Math.random() * 0.7;
+      sprite.scale.set(scale, scale, 1);
+      const radius = 6 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      mushrooms.add(sprite);
+    }
+    scene.add(mushrooms);
+
+    const flowers = new THREE.Group();
+    const flowerCount = 320;
+    for (let i = 0; i < flowerCount; i++) {
+      const tex = flowerTextures[i % flowerTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.5 + Math.random() * 0.5;
+      sprite.scale.set(scale * 1.1, scale * 1.1, 1);
+      const radius = 4 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      flowers.add(sprite);
+    }
+    scene.add(flowers);
+
+    // Kindur
+    const sheep = new THREE.Group();
+    const sheepCount = 18;
+    for (let i = 0; i < sheepCount; i++) {
+      const tex = sheepTextures[i % sheepTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.2 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.5, scale * 2, 1);
+      const radius = 6 + Math.random() * 140;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5 + 0.3, Math.sin(angle) * radius);
+      sprite.userData.dir = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.5 + Math.random() * 0.6;
+      sprite.userData.grazeTime = Math.random() * 4;
+      sprite.userData.state = 'walk'; // walk/graze
+      sheep.add(sprite);
+    }
+    scene.add(sheep);
+
+    // Fuglarnir
+    const birds = new THREE.Group();
+    const birdCount = 14;
+    for (let i = 0; i < birdCount; i++) {
+      const tex = birdTextures[i % birdTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.3 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.4, scale * 1.5, 1);
+      const radius = 60 + Math.random() * 160;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, 8 + Math.random() * 6, Math.sin(angle) * radius);
+      sprite.userData.orbitR = radius;
+      sprite.userData.orbitA = angle;
+      sprite.userData.alt = sprite.position.y;
+      sprite.userData.flap = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.25 + Math.random() * 0.35;
+      birds.add(sprite);
+    }
+    scene.add(birds);
+
+    // Ský
+    function makeCloudTexture(seedOffset = 0) {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(255,255,255,0.0)';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      const circles = 7;
+      for (let i = 0; i < circles; i++) {
+        const x = 30 + i * 32 + Math.random() * 18 + seedOffset * 3;
+        const y = 50 + Math.random() * 22 + seedOffset;
+        const r = 24 + Math.random() * 22;
+        ctx.beginPath();
+        ctx.ellipse(x, y, r, r * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const cloudTextures = [makeCloudTexture(0), makeCloudTexture(10), makeCloudTexture(-10)];
+    const clouds = new THREE.Group();
+    const cloudCount = 28;
+    for (let i = 0; i < cloudCount; i++) {
+      const tex = cloudTextures[i % cloudTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(18 + Math.random() * 20, 9 + Math.random() * 8, 1);
+      sprite.position.set(-220 + Math.random() * 440, 20 + Math.random() * 14, -220 + Math.random() * 440);
+      sprite.userData.speed = 0.18 + Math.random() * 0.35;
+      sprite.userData.bound = 240;
+      clouds.add(sprite);
+    }
+    scene.add(clouds);
+
+    // Gamaldags tölvuskjár með mynd.avif á skjánum
+    const retroComputer = makeRetroComputer();
+    retroComputer.position.set(6, 0, -6);
+    retroComputer.rotation.y = Math.PI * 0.3;
+    scene.add(retroComputer);
+
+    const puffin = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffinTexture, transparent: true, depthWrite: false }));
+    puffin.scale.set(4.8, 6, 1);
+    puffin.position.set(0, 3, -160);
+    puffin.userData.phase = Math.random() * Math.PI * 2;
+    puffin.userData.speed = 1.4;
+    scene.add(puffin);
+
+    const sparkFlower = makeSparkFlower();
+    sparkFlower.position.set(-40, 0, -30);
+    sparkFlower.rotation.y = Math.PI * 0.12;
+    sparkFlower.scale.set(1.2, 1.2, 1.2); // tvöfalt hærra en 3m kassinn (ca 6m)
+    scene.add(sparkFlower);
+
+    const tallTower = makeTallTower();
+    tallTower.position.set(140, 0, 60);
+    tallTower.rotation.y = -Math.PI * 0.15;
+    scene.add(tallTower);
+
+    const book = new THREE.Mesh(
+      new THREE.BoxGeometry(4, 6, 1.2),
+      new THREE.MeshStandardMaterial({ map: bookTexture, metalness: 0.08, roughness: 0.7 })
+    );
+    book.position.set(70, 3, -60);
+    book.rotation.y = -Math.PI * 0.2;
+    scene.add(book);
+
+    const buffetTable = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 1, 4),
+      new THREE.MeshStandardMaterial({ map: buffetTexture, metalness: 0.1, roughness: 0.75 })
+    );
+    buffetTable.position.set(-90, 1, 30);
+    buffetTable.rotation.y = -Math.PI * 0.28;
+    scene.add(buffetTable);
+
+    const buffetFood = new THREE.Group();
+    buffetFood.position.copy(buffetTable.position);
+    buffetFood.rotation.y = buffetTable.rotation.y;
+
+    function addFoodSprite(tex, offsetX, offsetZ, scale = 2) {
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      spr.scale.set(scale, scale, 1);
+      spr.position.set(offsetX, 1.7, offsetZ);
+      buffetFood.add(spr);
+    }
+    addFoodSprite(bananaTex, -2.4, 0.6, 2.2);
+    addFoodSprite(appleTex, 0, -0.4, 2.1);
+    addFoodSprite(pineappleTex, 2.4, 0.2, 2.4);
+    addFoodSprite(grapesTex, -0.8, 1.1, 2);
+    addFoodSprite(breadTex, 1.4, -1, 2.6);
+    scene.add(buffetFood);
+
+    const river = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 200),
+      new THREE.MeshStandardMaterial({ color: 0x4aa4ff, transparent: true, opacity: 0.7, metalness: 0.2, roughness: 0.45 })
+    );
+    river.rotation.x = -Math.PI / 2;
+    river.position.set(-125, 0.02, 105);
+    river.rotation.z = 0.08;
+    scene.add(river);
+
+    minimapMarkers.push(
+      { name: 'Tölva', icon: '🖥️', color: '#9cf1ff', getPos: () => retroComputer.position },
+      { name: 'Blóm', icon: '🌸', color: '#ff77cc', getPos: () => sparkFlower.position },
+      { name: 'Turn', icon: '🗼', color: '#ffd966', getPos: () => tallTower.position },
+      { name: 'Bók', icon: '📖', color: '#e6d9b8', getPos: () => book.position },
+      { name: 'Lundi', icon: '🐧', color: '#ffffff', getPos: () => puffin.position },
+      { name: 'Matur', icon: '🍽️', color: '#ffae6f', getPos: () => buffetTable.position },
+      { name: 'Á', icon: '💧', color: '#4aa4ff', getPos: () => river.position },
+      { name: 'Kassi', icon: '🟥', color: '#ff0033', getPos: () => targetCube.position }
+    );
+
+    // Rauði kassinn
+    const targetCube = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 3, 3),
+      new THREE.MeshStandardMaterial({ color: 0xff0033, emissive: 0x330000 })
+    );
+    targetCube.position.set(0, 1.5, -80);
+    scene.add(targetCube);
+
+    // Fraktal ástand
+    let inFractal = false;
+    let fractalGroup = null;
+    let fractalGroup2 = null;
+    const fractalAudio = document.getElementById('fractal-audio');
+    const promptEl = document.getElementById('prompt');
+    const fractalHint = document.getElementById('fractal-hint');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupFrame = document.getElementById('popup-frame');
+    const popupCloseBtn = document.getElementById('popup-close');
+    const popupContent = document.getElementById('popup-content');
+    const minimapEl = document.getElementById('minimap');
+    const minimapToggle = document.getElementById('minimap-toggle');
+    const minimapCanvas = document.getElementById('minimap-canvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    let popupOpen = false;
+    let popupCooldown = 0;
+    let computerNeedsExit = false;
+    let towerNeedsExit = false;
+    let flowerNeedsExit = false;
+    let puffinNeedsExit = false;
+    let bookNeedsExit = false;
+    let buffetNeedsExit = false;
+    let fractalDepth = 0;
+    let fractalData2 = null;
+
+    function showPrompt(show) {
+      promptEl.classList.toggle('visible', show);
+    }
+
+    function openPopup(url = 'forsida/index.html') {
+      if (popupOpen) return;
+      popupOpen = true;
+      popupOverlay.classList.add('visible');
+      popupFrame.src = url;
+    }
+
+    function closePopup() {
+      if (!popupOpen) return;
+      popupOpen = false;
+      popupOverlay.classList.remove('visible');
+      popupFrame.src = '';
+      popupCooldown = 0.8; // smá bið svo glugginn opnist ekki strax aftur
+      computerNeedsExit = true;
+      towerNeedsExit = true;
+      flowerNeedsExit = true;
+      puffinNeedsExit = true;
+      bookNeedsExit = true;
+      buffetNeedsExit = true;
+    }
+
+    popupOverlay.addEventListener('click', closePopup);
+    popupCloseBtn.addEventListener('click', closePopup);
+    popupContent.addEventListener('click', (e) => e.stopPropagation());
+    popupFrame.addEventListener('load', () => {
+      if (popupFrame.src.includes('geton/index.html')) {
+        popupFrame.contentWindow?.postMessage({ type: 'start-music' }, '*');
+      }
+    });
+
+    function createFractalGroup(scale = 1, count = 2000, size = 0.25) {
+      const group = new THREE.Group();
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < count; i++) {
+        const angle = i * golden;
+        const radius = scale * 0.08 * Math.sqrt(i);
+        positions[i * 3] = Math.cos(angle) * radius;
+        positions[i * 3 + 1] = (i - count / 2) * 0.0035 * scale;
+        positions[i * 3 + 2] = Math.sin(angle) * radius;
+
+        const t = i / count;
+        colors[i * 3] = 0.5 + 0.5 * Math.sin(t * 10);
+        colors[i * 3 + 1] = 0.5 + 0.5 * Math.sin(t * 13 + 1.2);
+        colors[i * 3 + 2] = 0.5 + 0.5 * Math.sin(t * 17 + 2.4);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({ size, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });
+      const points = new THREE.Points(geo, mat);
+      group.add(points);
+      return { group, points };
+    }
+
+    let fractalData = null;
+    function enterFractal() {
+      if (inFractal) return;
+      inFractal = true;
+      window.location.href = '/dans/'; // hoppa í nýtt psychedelic umhverfi
+    }
+
+    // Hreyfing
+    let yaw = 0;
+    const moveSpeed = 12;
+    const rotSpeed = 1.6;
+    let lastTime = performance.now();
+    let pendingFractal = false;
+    let pendingTimer = 0;
+
+    function updateMovement(dt) {
+      const forward = (keys['ArrowUp'] || keys['KeyW']) || (touchDir.y < -0.2);
+      const backward = (keys['ArrowDown'] || keys['KeyS']) || (touchDir.y > 0.2);
+      const left = (keys['ArrowLeft'] || keys['KeyA']) || (touchDir.x < -0.2);
+      const right = (keys['ArrowRight'] || keys['KeyD']) || (touchDir.x > 0.2);
+
+      const moving = forward || backward || left || right;
+      if (moving) ensureAudio();
+      setFootsteps(moving);
+
+      if (left && !right) yaw += rotSpeed * dt;
+      if (right && !left) yaw -= rotSpeed * dt;
+
+      const dir = new THREE.Vector3();
+      if (forward) dir.z -= 1;
+      if (backward) dir.z += 1;
+      dir.normalize();
+
+      const sin = Math.sin(yaw);
+      const cos = Math.cos(yaw);
+      const dx = dir.z * sin;
+      const dz = dir.z * cos;
+
+      camera.position.x += dx * moveSpeed * dt;
+      camera.position.z += dz * moveSpeed * dt;
+
+      camera.rotation.y = yaw;
+      camera.position.y = 1.6;
+    }
+
+    function updateClouds(dt) {
+      clouds.children.forEach(c => {
+        c.position.x += c.userData.speed * dt * 8;
+        if (c.position.x > c.userData.bound) c.position.x = -c.userData.bound;
+      });
+    }
+
+    function updateBushes(dt) {
+      bushes.children.forEach(b => {
+        b.userData.wavePhase += dt * b.userData.waveSpeed;
+        const wobble = Math.sin(b.userData.wavePhase) * 0.06;
+        b.scale.x = b.userData.baseScale.x * (1 + wobble);
+        b.scale.y = b.userData.baseScale.y * (1 + wobble * 0.7);
+      });
+    }
+
+    function updateSheep(dt) {
+      sheep.children.forEach(s => {
+        s.userData.grazeTime -= dt;
+        if (s.userData.grazeTime <= 0) {
+          if (s.userData.state === 'walk') {
+            s.userData.state = 'graze';
+            s.userData.grazeTime = 2 + Math.random() * 3;
+          } else {
+            s.userData.state = 'walk';
+            s.userData.grazeTime = 4 + Math.random() * 5;
+            s.userData.dir += rand(-0.6, 0.6);
+          }
+        }
+        if (s.userData.state === 'walk') {
+          s.userData.dir += rand(-0.08, 0.08) * dt;
+          const dx = Math.sin(s.userData.dir) * s.userData.speed * dt * 2.4;
+          const dz = Math.cos(s.userData.dir) * s.userData.speed * dt * 2.4;
+          s.position.x += dx;
+          s.position.z += dz;
+          const r = Math.hypot(s.position.x, s.position.z);
+          const maxR = 180;
+          if (r > maxR) {
+            s.userData.dir += Math.PI + rand(-0.4, 0.4);
+          }
+        }
+        s.material.rotation = 0;
+      });
+    }
+
+    function updateBirds(dt) {
+      birds.children.forEach(b => {
+        b.userData.orbitA += dt * b.userData.speed;
+        b.userData.flap += dt * 6;
+        const yOsc = Math.sin(b.userData.flap) * 0.4;
+        const r = b.userData.orbitR;
+        b.position.set(Math.cos(b.userData.orbitA) * r, b.userData.alt + yOsc, Math.sin(b.userData.orbitA) * r);
+        b.material.rotation = -b.userData.orbitA + Math.PI / 2;
+      });
+    }
+
+    function updatePuffin(dt) {
+      if (!puffin) return;
+      puffin.userData.phase += dt * puffin.userData.speed;
+      const sway = Math.sin(puffin.userData.phase) * 0.2;
+      const hop = Math.max(0, Math.sin(puffin.userData.phase * 1.4)) * 0.35;
+      puffin.position.y = 1.5 + hop;
+      puffin.material.rotation = sway;
+    }
+
+    function updateFractal(dt) {
+      if (!fractalGroup || !fractalData) return;
+      fractalDepth += dt * 12;
+
+      const time = performance.now() * 0.001;
+      const wobble = Math.sin(time * 0.7) * 0.25;
+
+      fractalGroup.position.z = -fractalDepth * 1.2;
+      fractalGroup2.position.z = -fractalDepth * 0.8 - 8;
+
+      fractalGroup.rotation.y += dt * 0.6;
+      fractalGroup.rotation.x += dt * 0.14;
+      fractalGroup2.rotation.y -= dt * 0.4;
+      fractalGroup2.rotation.x += dt * 0.08;
+
+      const posAttr = fractalData.points.geometry.getAttribute('position');
+      const posAttr2 = fractalData2.points.geometry.getAttribute('position');
+      for (let i = 0; i < posAttr.count; i++) {
+        const y = posAttr.getY(i);
+        posAttr.setY(i, y + Math.sin(time + i * 0.02) * 0.0008);
+      }
+      for (let i = 0; i < posAttr2.count; i++) {
+        const y = posAttr2.getY(i);
+        posAttr2.setY(i, y + Math.cos(time * 1.2 + i * 0.018) * 0.0011);
+      }
+      posAttr.needsUpdate = true;
+      posAttr2.needsUpdate = true;
+
+      // fallandi tilfinning
+      camera.position.y = 1.1 + wobble * 0.4;
+      camera.position.z -= dt * 10;
+
+      // litaflæði
+      const hue = (time * 0.07) % 1;
+      scene.background = new THREE.Color().setHSL(hue, 0.6, 0.08 + 0.1 * Math.sin(time * 0.6) * 0.5);
+    }
+
+    function checkTarget() {
+      if (inFractal) return;
+      const dist = camera.position.distanceTo(targetCube.position);
+      const near = dist < 3.2;
+      if (near) {
+        if (!pendingFractal) {
+          pendingFractal = true;
+          pendingTimer = 0;
+        }
+      } else {
+        pendingFractal = false;
+        pendingTimer = 0;
+      }
+    }
+
+    function checkComputerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(retroComputer.position);
+      if (computerNeedsExit && dist < 3.4) return;
+      if (dist > 3.4) computerNeedsExit = false;
+      if (dist < 2.6) {
+        openPopup();
+      }
+    }
+
+    function checkTowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(tallTower.position);
+      if (towerNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) towerNeedsExit = false;
+      if (dist < 3.6) {
+        openPopup('Annad/index.html');
+      }
+    }
+
+    function checkFlowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(sparkFlower.position);
+      if (flowerNeedsExit && dist < 4) return;
+      if (dist > 4) flowerNeedsExit = false;
+      if (dist < 2.8) {
+        openPopup('Aldurinn/index.html');
+      }
+    }
+
+    function checkPuffinInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(puffin.position);
+      if (puffinNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) puffinNeedsExit = false;
+      if (dist < 3.2) {
+        openPopup('geton/index.html');
+      }
+    }
+
+    function checkBookInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(book.position);
+      if (bookNeedsExit && dist < 4.2) return;
+      if (dist > 4.2) bookNeedsExit = false;
+      if (dist < 3) {
+        openPopup('bok/index.html');
+      }
+    }
+
+    function updateRiverSound(dt) {
+      if (!riverAudio) return;
+      if (audioInitiated && riverAudio.paused) {
+        riverAudio.play().catch(() => {});
+      }
+      const dist = camera.position.distanceTo(river.position);
+      const t = Math.max(0, 1 - dist / 70);
+      const target = 0.35 * t;
+      const lerp = Math.min(1, dt * 4);
+      riverAudio.volume += (target - riverAudio.volume) * lerp;
+    }
+
+    function renderMinimap() {
+      const w = minimapCanvas.width;
+      const h = minimapCanvas.height;
+      minimapCtx.clearRect(0, 0, w, h);
+      minimapCtx.fillStyle = '#5ca66a';
+      minimapCtx.fillRect(0, 0, w, h);
+      const positions = minimapMarkers.map(m => m.getPos());
+      const xs = positions.map(p => p.x);
+      const zs = positions.map(p => p.z);
+      const minX = Math.min(...xs) - 10;
+      const maxX = Math.max(...xs) + 10;
+      const minZ = Math.min(...zs) - 10;
+      const maxZ = Math.max(...zs) + 10;
+      const rangeX = maxX - minX || 1;
+      const rangeZ = maxZ - minZ || 1;
+      const margin = 18;
+      minimapCtx.fillStyle = '#7c6041';
+      const peaks = [
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 6 },
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin - 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin + 4 },
+        { x: margin + 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: margin + 10, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 10, y: margin + Math.random() * (h - margin * 2) },
+      ];
+      peaks.forEach(p => {
+        const peakH = 10 + Math.random() * 8;
+        minimapCtx.beginPath();
+        minimapCtx.moveTo(p.x - 10, p.y);
+        minimapCtx.lineTo(p.x, p.y - peakH);
+        minimapCtx.lineTo(p.x + 10, p.y);
+        minimapCtx.closePath();
+        minimapCtx.fill();
+      });
+      function toMap(p) {
+        const x = ((p.x - minX) / rangeX) * (w - margin * 2) + margin;
+        const y = ((p.z - minZ) / rangeZ) * (h - margin * 2) + margin;
+        return {
+          x: Math.max(margin, Math.min(w - margin, x)),
+          y: Math.max(margin, Math.min(h - margin, y)),
+        };
+      }
+      const mapped = minimapMarkers.map(m => toMap(m.getPos()));
+      minimapCtx.setLineDash([4, 6]);
+      minimapCtx.strokeStyle = 'rgba(255,255,255,0.45)';
+      minimapCtx.lineWidth = 1.5;
+      minimapCtx.beginPath();
+      mapped.forEach((p, idx) => {
+        if (idx === 0) minimapCtx.moveTo(p.x, p.y);
+        else minimapCtx.lineTo(p.x, p.y);
+      });
+      minimapCtx.stroke();
+      minimapCtx.setLineDash([]);
+    minimapMarkers.forEach(m => {
+      const p = toMap(m.getPos());
+      minimapCtx.font = '15px system-ui, sans-serif';
+      minimapCtx.textAlign = 'center';
+      minimapCtx.textBaseline = 'middle';
+      minimapCtx.fillStyle = m.color;
+      minimapCtx.fillText(m.icon, p.x, p.y);
+    });
+
+    }
+
+    function checkBuffetInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(buffetTable.position);
+      if (buffetNeedsExit && dist < 4.8) return;
+      if (dist > 4.8) buffetNeedsExit = false;
+      if (dist < 3.4) {
+        openPopup('Matarbod/index.html');
+      }
+    }
+
+    minimapToggle.addEventListener('click', () => {
+      minimapEl.classList.toggle('show');
+      if (minimapEl.classList.contains('show')) {
+        renderMinimap();
+      }
+    });
+
+    function animate() {
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      popupCooldown = Math.max(0, popupCooldown - dt);
+
+      // Slembijarm af og til
+      if (bleatAudio && audioInitiated) {
+        bleatTimer -= dt;
+        if (bleatTimer <= 0) {
+          if (Math.random() < 0.2) {
+            bleatAudio.currentTime = 0;
+            bleatAudio.play().catch(() => {});
+          }
+          bleatTimer = 8 + Math.random() * 16;
+        }
+      }
+
+      if (!inFractal) {
+        updateMovement(dt);
+        updateClouds(dt);
+        updateBushes(dt);
+        updateSheep(dt);
+        updateBirds(dt);
+        updatePuffin(dt);
+        updateRiverSound(dt);
+        checkTarget();
+        checkComputerInteraction();
+        checkTowerInteraction();
+        checkFlowerInteraction();
+        checkPuffinInteraction();
+        checkBookInteraction();
+        checkBuffetInteraction();
+        if (pendingFractal) {
+          pendingTimer += dt;
+          yaw += dt * 1.8; // smá snúningur
+          camera.rotation.y = yaw;
+          camera.rotation.x = Math.sin(pendingTimer * 1.5) * 0.15; // vertical sway
+          if (pendingTimer >= 3) {
+            enterFractal();
+          }
+        }
+      } else {
+        updateMovement(dt * 0.5); // hægari í fraktal
+        updateFractal(dt);
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+<canvas data-engine="three.js r159" width="263" height="726" style="display: block; width: 263px; height: 726px;"></canvas></body>
+<html lang="is"><head>
+  <meta charset="UTF-8">
+  <title>3D heimur</title>
+  <style>
+    :root {
+      --ui-bg: rgba(0, 0, 0, 0.55);
+      --ui-text: #f7f7f7;
+    }
+    body { margin: 0; overflow: hidden; background: #87cefa; }
+    canvas { display: block; }
+    #hud {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: var(--ui-text);
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 280px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+    }
+    #prompt {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 16px;
+      background: var(--ui-bg);
+      color: #ffeb3b;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      border-radius: 8px;
+      z-index: 10;
+      min-width: 180px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    #prompt.visible { opacity: 1; }
+    #fractal-hint {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 14px;
+      background: var(--ui-bg);
+      color: #9cf1ff;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      border-radius: 6px;
+      max-width: 240px;
+      z-index: 10;
+      line-height: 1.4;
+      pointer-events: none;
+      display: none;
+    }
+    #popup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 20;
+    }
+    #popup-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #popup-content {
+      width: min(90vw, 900px);
+      height: min(82vh, 680px);
+      background: #d9dce1;
+      border: 3px solid #7a7d82;
+      border-radius: 6px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    #popup-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 10px 12px;
+      background: #c3c6cc;
+      border-bottom: 2px solid #7a7d82;
+    }
+    #popup-close {
+      background: #e5e7eb;
+      border: 2px solid #3f434a;
+      color: #1c1e22;
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 14px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    #popup-close:hover { background: #d7dbe0; }
+    #popup-frame {
+      flex: 1;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+    }
+    #minimap {
+      position: fixed;
+      right: 12px;
+      bottom: 12px;
+      z-index: 15;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+    #minimap button {
+      pointer-events: auto;
+      background:
+        linear-gradient(135deg, #6fb46b, #5a9a57) padding-box,
+        linear-gradient(135deg, #cbb27a, #a08858) border-box;
+      color: #2d2414;
+      border: 1px solid rgba(46, 34, 16, 0.6);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    #minimap-canvas {
+      pointer-events: auto;
+      width: 240px;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      display: none;
+      position: absolute;
+      right: 0;
+      bottom: 44px;
+    }
+    #minimap.show #minimap-canvas { display: block; }
+  </style>
+</head>
+<body>
+  <audio id="fractal-audio" loop="" preload="auto" style="display:none">
+    <source src="/dans/lagid.mp3" type="audio/mpeg">
+  </audio>
+  <div id="hud" style="display:none"></div>
+  <div id="prompt" style="display:none"></div>
+  <div id="fractal-hint">Fraktal virkni: notaðu hreyfingar til að hræra í mynstrinu</div>
+  <div id="popup-overlay">
+    <div id="popup-content">
+      <div id="popup-bar">
+        <button id="popup-close" type="button">X</button>
+      </div>
+      <iframe id="popup-frame" src="" title="Forsíða" allow="autoplay"></iframe>
+    </div>
+  </div>
+  <div id="minimap">
+    <button id="minimap-toggle" type="button" aria-label="Opna kort">🗺️</button>
+    <canvas id="minimap-canvas" width="240" height="180"></canvas>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://unpkg.com/three@0.159.0/build/three.module.js';
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87cefa); // himinn
+    const texLoader = new THREE.TextureLoader();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 1.6, 10);
+
+    // Lyklaborðs inntak
+    const keys = {};
+    window.addEventListener('keydown', (e) => keys[e.code] = true);
+    window.addEventListener('keyup', (e) => keys[e.code] = false);
+    // Snertistýring til að labba á síma
+    let touchStartPos = null;
+    let touchDir = { x: 0, y: 0 };
+    let touchTapPos = null;
+    const resetTouch = () => { touchDir = { x: 0, y: 0 }; };
+    window.addEventListener('touchstart', (e) => {
+      if (e.touches.length > 0) {
+        const t = e.touches[0];
+        touchStartPos = { x: t.clientX, y: t.clientY };
+        touchTapPos = { x: t.clientX, y: t.clientY };
+        touchDir = { x: 0, y: 0 };
+        ensureAudio(); // kick ambient/footsteps on first tap (mobile gesture)
+      }
+    }, { passive: true });
+    window.addEventListener('touchmove', (e) => {
+      if (!touchStartPos || e.touches.length === 0) return;
+      const t = e.touches[0];
+      const dx = t.clientX - touchStartPos.x;
+      const dy = t.clientY - touchStartPos.y;
+      const mag = Math.max(1, Math.hypot(dx, dy));
+      touchDir = { x: dx / mag, y: dy / mag };
+    }, { passive: true });
+    window.addEventListener('touchend', () => {
+      touchStartPos = null;
+      resetTouch();
+    });
+    window.addEventListener('mousedown', () => {
+      ensureAudio(); // desktop gesture fallback
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePopup();
+    });
+
+    // Hljóð (þú getur bætt wind.mp3, birds.mp3, footsteps.mp3, bleat.mp3 í sömu möppu)
+    let audioInitiated = false;
+    let ambientWind = null;
+    let ambientBirds = null;
+    let footstepAudio = null;
+    let bleatAudio = null;
+    let riverAudio = null;
+    let bleatTimer = 0;
+    let footstepActive = false;
+
+    function createAudio(src, loop = false, volume = 1) {
+      const a = new Audio(src);
+      a.loop = loop;
+      a.preload = 'auto';
+      a.volume = volume;
+      return a;
+    }
+
+    function ensureAudio() {
+      if (audioInitiated) return;
+      audioInitiated = true;
+      try {
+        ambientWind = createAudio('wind.mp3', true, 0.25);
+        ambientWind.play().catch(() => {});
+      } catch (e) {}
+      try {
+        ambientBirds = createAudio('birds.mp3', true, 0.2);
+        ambientBirds.play().catch(() => {});
+      } catch (e) {}
+      try {
+        footstepAudio = createAudio('footsteps.mp3', true, 0.35);
+      } catch (e) {}
+      try {
+        bleatAudio = createAudio('bleat.mp3', false, 0.4);
+      } catch (e) {}
+      try {
+        riverAudio = createAudio('river.mp3', true, 0);
+        riverAudio.play().catch(() => {});
+      } catch (e) {}
+    }
+
+    function setFootsteps(active) {
+      if (!footstepAudio) return;
+      if (active && !footstepActive) {
+        footstepActive = true;
+        footstepAudio.currentTime = 0;
+        footstepAudio.play().catch(() => {});
+      } else if (!active && footstepActive) {
+        footstepActive = false;
+        footstepAudio.pause();
+      }
+    }
+
+    // Ljós
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x888844, 0.9);
+    const dir = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir.position.set(5, 10, 7);
+    scene.add(hemi, dir);
+
+    // Jörð með smá áferð
+    function makeGroundTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 512;
+      const ctx = c.getContext('2d');
+      const base = ctx.createLinearGradient(0, 0, 0, 512);
+      base.addColorStop(0, '#4fbf73');
+      base.addColorStop(1, '#3b9257');
+      ctx.fillStyle = base;
+      ctx.fillRect(0, 0, 512, 512);
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
+      for (let i = 0; i < 2000; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const r = Math.random() * 1.8;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const groundTex = makeGroundTexture();
+    groundTex.wrapS = groundTex.wrapT = THREE.RepeatWrapping;
+    groundTex.repeat.set(18, 18);
+    const groundGeo = new THREE.PlaneGeometry(400, 400);
+    const groundMat = new THREE.MeshLambertMaterial({ map: groundTex });
+    const ground = new THREE.Mesh(groundGeo, groundMat);
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+
+    // Tré sem billboard (tvær hliðar) með smá fjölbreytileika
+    function makeTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(12, 20);
+      const trunkH = rand(40, 60);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 8;
+      ctx.fillStyle = ['#8B5A2B', '#6f4a1e', '#9c6b2f'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH); // stöng
+
+      const layers = 2 + (seed % 2);
+      ctx.beginPath();
+      for (let i = 0; i < layers; i++) {
+        const topY = 28 + i * 18;
+        const baseY = 78 + i * 10;
+        const spread = 32 + i * 10 + rand(-4, 4);
+        ctx.beginPath();
+        ctx.moveTo(64, topY);
+        ctx.lineTo(64 + spread, baseY);
+        ctx.lineTo(64 - spread, baseY);
+        ctx.closePath();
+        ctx.fillStyle = ['#2ECC71', '#2fb06f', '#35d17c'][seed % 3];
+        ctx.fill();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.needsUpdate = true;
+      return tex;
+    }
+    function makeSoftTreeTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const trunkW = rand(10, 14);
+      const trunkH = rand(26, 38);
+      const trunkX = 64 - trunkW / 2;
+      const trunkY = 128 - trunkH - 10;
+      ctx.fillStyle = ['#7a4a24', '#6c3c1a', '#8c5c2d'][seed % 3];
+      ctx.fillRect(trunkX, trunkY, trunkW, trunkH);
+
+      const centerX = 64;
+      const centerY = 56;
+      const r = 35 + rand(-4, 6);
+      const grad = ctx.createRadialGradient(centerX, centerY, r * 0.2, centerX, centerY, r);
+      const greens = [
+        ['#3ac483', '#259b63'],
+        ['#3fbf78', '#2c8f5d'],
+        ['#43d08f', '#2b9c6a'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, r * 1.05, r * 0.85, 0, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBushTexture(seed = 0, berryColor = 'blue') {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createRadialGradient(64, 64, 10, 64, 64, 48);
+      const greens = [
+        ['#2f7f46', '#1f5c31'],
+        ['#2e8b50', '#205e35'],
+        ['#288a52', '#1c5935'],
+      ];
+      const palette = greens[seed % greens.length];
+      grad.addColorStop(0, palette[0]);
+      grad.addColorStop(1, palette[1]);
+      ctx.fillStyle = grad;
+
+      // tvöföld "mm" sveigja
+      ctx.beginPath();
+      ctx.ellipse(48, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.ellipse(80, 76, 32, 30, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // extra bumps
+      const bumps = 8;
+      for (let i = 0; i < bumps; i++) {
+        const x = 40 + i * 10 + rand(-6, 6);
+        const y = 66 + rand(-6, 6);
+        const rx = 16 + rand(-2, 4);
+        const ry = 12 + rand(-2, 3);
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // berries
+      const berryCount = 5 + Math.floor(Math.random() * 6);
+      for (let i = 0; i < berryCount; i++) {
+        const x = 36 + Math.random() * 56;
+        const y = 52 + Math.random() * 26;
+        const isBlue = berryColor === 'blue';
+        ctx.fillStyle = isBlue ? '#4c7cff' : '#ff4d4d';
+        ctx.beginPath();
+        ctx.arc(x, y, 2.6 + Math.random() * 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.beginPath();
+        ctx.arc(x - 1, y - 1.5, 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeMushroomTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f5e1c8';
+      ctx.fillRect(58, 72, 12, 32); // stilkur
+      ctx.beginPath();
+      ctx.arc(64, 70, 20, Math.PI, 0);
+      ctx.closePath();
+      const caps = ['#d93f3f', '#e3592f', '#c63448'];
+      ctx.fillStyle = caps[seed % caps.length];
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      for (let i = 0; i < 6; i++) {
+        const x = 52 + i * 6 + rand(-2, 2);
+        const y = 52 + rand(0, 12);
+        const r = rand(2, 4);
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeSheepTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 34, 22, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      ctx.beginPath();
+      ctx.ellipse(64, 52, 26, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = ['#5a4633', '#3c2f23'][seed % 2];
+      ctx.beginPath();
+      ctx.ellipse(82, 60, 12, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#000';
+      ctx.beginPath();
+      ctx.arc(86, 58, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+      // augu
+      ctx.beginPath();
+      ctx.arc(82, 57, 1.5, 0, Math.PI * 2);
+      ctx.arc(88, 59, 1.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#d9d9d9';
+      for (let i = 0; i < 4; i++) {
+        const x = 52 + i * 10;
+        ctx.fillRect(x, 90, 6, 18);
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBirdTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.strokeStyle = ['#111', '#222', '#333'][seed % 3];
+      ctx.lineWidth = 5;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 36, 92, 64);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(36, 64);
+      ctx.quadraticCurveTo(64, 52, 92, 64);
+      ctx.stroke();
+      return new THREE.CanvasTexture(c);
+    }
+
+    const treeTextures = [makeTreeTexture(0), makeTreeTexture(1), makeTreeTexture(2)];
+    const softTreeTextures = [makeSoftTreeTexture(0), makeSoftTreeTexture(1), makeSoftTreeTexture(2)];
+    const bushTexturesBlue = [makeBushTexture(0, 'blue'), makeBushTexture(1, 'blue'), makeBushTexture(2, 'blue')];
+    const bushTexturesRed = [makeBushTexture(0, 'red'), makeBushTexture(1, 'red'), makeBushTexture(2, 'red')];
+    const mushroomTextures = [makeMushroomTexture(0), makeMushroomTexture(1), makeMushroomTexture(2)];
+    const sheepTextures = [makeSheepTexture(0), makeSheepTexture(1)];
+    const birdTextures = [makeBirdTexture(0), makeBirdTexture(1), makeBirdTexture(2)];
+    const puffinTexture = makePuffinTexture();
+    const bookTexture = makeBookTexture();
+    const buffetTexture = makeBuffetTexture();
+    const bananaTex = makeBananaTexture();
+    const appleTex = makeAppleTexture();
+    const pineappleTex = makePineappleTexture();
+    const grapesTex = makeGrapesTexture();
+    const breadTex = makeBreadTexture();
+    const minimapMarkers = [];
+
+    function makeRetroComputer() {
+      const group = new THREE.Group();
+
+      const shellMat = new THREE.MeshStandardMaterial({ color: 0xdadce0, metalness: 0.08, roughness: 0.82 });
+      const darkMat = new THREE.MeshStandardMaterial({ color: 0x7a7d82, metalness: 0.1, roughness: 0.7 });
+
+      const monitor = new THREE.Mesh(new THREE.BoxGeometry(2.3, 1.6, 1.4), shellMat);
+      monitor.position.y = 1.05;
+      group.add(monitor);
+
+      const screenTex = texLoader.load('mynd.avif');
+      screenTex.encoding = THREE.sRGBEncoding;
+      const screen = new THREE.Mesh(
+        new THREE.PlaneGeometry(1.52, 1.02),
+        new THREE.MeshStandardMaterial({
+          map: screenTex,
+          emissive: 0x222a35,
+          emissiveIntensity: 0.7,
+          roughness: 0.4,
+          metalness: 0.05,
+        })
+      );
+      screen.position.set(0, 1.1, 0.76);
+      group.add(screen);
+
+      const bezel = new THREE.Mesh(new THREE.BoxGeometry(1.75, 1.22, 0.06), darkMat);
+      bezel.position.set(0, 1.1, 0.74);
+      group.add(bezel);
+
+      const stand = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.16, 0.95), shellMat);
+      stand.position.set(0, 0.45, 0);
+      group.add(stand);
+
+      const base = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.22, 1.9), shellMat);
+      base.position.y = 0.2;
+      group.add(base);
+
+      const glow = new THREE.PointLight(0x7ddaff, 0.45, 8);
+      glow.position.set(0, 1.2, 1.1);
+      group.add(glow);
+
+      return group;
+    }
+
+    function makeTallTower() {
+      const group = new THREE.Group();
+      const stone = new THREE.MeshStandardMaterial({ color: 0x6f7279, metalness: 0.12, roughness: 0.82 });
+      const darker = new THREE.MeshStandardMaterial({ color: 0x55585f, metalness: 0.1, roughness: 0.76 });
+
+      const base = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 5.4, 6, 10, 1, true), stone);
+      base.position.y = 3;
+      group.add(base);
+
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(3, 3.6, 26, 12, 1, true), darker);
+      shaft.position.y = 19;
+      group.add(shaft);
+
+      const crown = new THREE.Mesh(new THREE.CylinderGeometry(3.8, 3.8, 2.2, 12), stone);
+      crown.position.y = 32;
+      group.add(crown);
+
+      const spire = new THREE.Mesh(new THREE.ConeGeometry(3.2, 9, 12), darker);
+      spire.position.y = 38.5;
+      group.add(spire);
+
+      const point = new THREE.Mesh(new THREE.ConeGeometry(0.6, 2.8, 6), new THREE.MeshStandardMaterial({ color: 0x2c2f35, metalness: 0.4, roughness: 0.4 }));
+      point.position.y = 42.8;
+      group.add(point);
+
+      const light = new THREE.PointLight(0x87b3ff, 0.8, 40);
+      light.position.set(0, 36, 0);
+      group.add(light);
+
+      return group;
+    }
+
+    function makeSparkFlower() {
+      const group = new THREE.Group();
+      const stemMat = new THREE.MeshStandardMaterial({ color: 0x2f7f46, metalness: 0.15, roughness: 0.6, emissive: 0x0b2f18, emissiveIntensity: 0.3 });
+      const petalMat = new THREE.MeshStandardMaterial({ color: 0xff77cc, metalness: 0.4, roughness: 0.35, emissive: 0xff66cc, emissiveIntensity: 0.8 });
+      const glowMat = new THREE.MeshBasicMaterial({ color: 0xffe6ff, transparent: true, opacity: 0.4 });
+
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.55, 5.2, 10), stemMat);
+      stem.position.y = 2.6;
+      group.add(stem);
+
+      const bloom = new THREE.Mesh(new THREE.SphereGeometry(1.8, 24, 18), petalMat);
+      bloom.position.y = 5.8;
+      group.add(bloom);
+
+      const halo = new THREE.Mesh(new THREE.SphereGeometry(2.5, 16, 12), glowMat);
+      halo.position.y = 5.8;
+      group.add(halo);
+
+      const sparkle = new THREE.PointLight(0xffccff, 1.1, 28);
+      sparkle.position.set(0, 6.4, 0);
+      group.add(sparkle);
+
+      return group;
+    }
+
+    function makePuffinTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.ellipse(64, 70, 32, 34, 0, 0, Math.PI * 2);
+      ctx.fill(); // body shadow
+      ctx.fillStyle = '#f7f7f7';
+      ctx.beginPath();
+      ctx.ellipse(64, 72, 26, 30, 0, 0, Math.PI * 2);
+      ctx.fill(); // belly
+      ctx.fillStyle = '#0c0c0c';
+      ctx.beginPath();
+      ctx.ellipse(70, 46, 22, 20, 0, 0, Math.PI * 2);
+      ctx.fill(); // head dark
+      ctx.fillStyle = '#f2f2f2';
+      ctx.beginPath();
+      ctx.ellipse(68, 48, 16, 14, 0, 0, Math.PI * 2);
+      ctx.fill(); // face
+      ctx.fillStyle = '#ff7f3f';
+      ctx.beginPath();
+      ctx.moveTo(82, 50);
+      ctx.quadraticCurveTo(112, 54, 78, 62);
+      ctx.closePath();
+      ctx.fill(); // beak orange
+      ctx.fillStyle = '#ff4f4f';
+      ctx.beginPath();
+      ctx.moveTo(82, 52);
+      ctx.quadraticCurveTo(98, 54, 80, 58);
+      ctx.closePath();
+      ctx.fill(); // beak tip
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.arc(64, 46, 4, 0, Math.PI * 2);
+      ctx.fill(); // eye
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(62.5, 45, 1.5, 0, Math.PI * 2);
+      ctx.fill(); // eye shine
+      ctx.fillStyle = '#ff9c40';
+      ctx.beginPath();
+      ctx.ellipse(52, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.ellipse(74, 100, 10, 8, 0, 0, Math.PI * 2);
+      ctx.fill(); // feet
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBookTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.fillRect(24, 24, 208, 208);
+      ctx.fillStyle = '#2d2b35';
+      ctx.fillRect(36, 40, 182, 180);
+      ctx.fillStyle = '#e6d9b8';
+      ctx.font = 'bold 32px serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('BÓK', 128, 128);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBuffetTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#d9c3a3';
+      ctx.fillRect(0, 0, 256, 256);
+
+      // tabletop with lighter center and dark rim
+      const topGrad = ctx.createLinearGradient(0, 176, 0, 256);
+      topGrad.addColorStop(0, '#dcb88f');
+      topGrad.addColorStop(1, '#c9986c');
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(8, 170, 240, 70);
+      ctx.fillStyle = '#9f7447';
+      ctx.fillRect(8, 236, 240, 6);
+
+      function plate(cx, cy, w = 36, h = 12) {
+        ctx.fillStyle = '#f2f2f2';
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, w, h, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      const fruits = [
+        { x: 36, y: 152, color: '#ffdf6b', detail: '#e3af3b' },   // banana bunch
+        { x: 86, y: 150, color: '#ff3344', detail: '#d81e2c' },   // apples
+        { x: 142, y: 148, color: '#ffca4d', detail: '#f59b32' },  // pineapple
+        { x: 198, y: 150, color: '#7dd36f', detail: '#4ca957' },  // grapes-ish
+        { x: 120, y: 126, color: '#ffa94d', detail: '#f07d2a' },  // oranges
+      ];
+
+      fruits.forEach((f, i) => {
+        plate(f.x, f.y + 10, 40, 14);
+        ctx.fillStyle = f.color;
+        if (i === 0) {
+          // bananas
+          for (let j = 0; j < 5; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x - 12 + j * 7, f.y - 6 + j * 2, 14, 7, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#6b4b1f';
+          ctx.fillRect(f.x - 14, f.y - 12, 5, 7);
+        } else if (i === 2) {
+          // pineapple
+          ctx.beginPath();
+          ctx.ellipse(f.x, f.y - 6, 20, 26, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = f.detail;
+          ctx.lineWidth = 2;
+          for (let k = -12; k <= 12; k += 5) {
+            ctx.beginPath();
+            ctx.moveTo(f.x - 18, f.y + k);
+            ctx.lineTo(f.x + 18, f.y + k + 16);
+            ctx.stroke();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          for (let k = 0; k < 6; k++) {
+            ctx.beginPath();
+            ctx.moveTo(f.x + k * 4 - 8, f.y - 26);
+            ctx.lineTo(f.x + k * 4 - 10, f.y - 34);
+            ctx.lineTo(f.x + k * 4 - 12, f.y - 26);
+            ctx.fill();
+          }
+        } else if (i === 3) {
+          // grapes
+          for (let r = 0; r < 16; r++) {
+            const ox = (r % 4) * 8 - 10;
+            const oy = Math.floor(r / 4) * 7;
+            ctx.beginPath();
+            ctx.ellipse(f.x + ox, f.y + oy - 12, 7.5, 7.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.beginPath();
+          ctx.moveTo(f.x, f.y - 28);
+          ctx.lineTo(f.x - 6, f.y - 38);
+          ctx.lineTo(f.x + 4, f.y - 34);
+          ctx.fill();
+        } else if (i === 4) {
+          // oranges
+          for (let j = 0; j < 3; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 10 - 10, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 16, 3, 4);
+          ctx.fillRect(f.x, f.y - 18, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        } else {
+          // apples default
+          for (let j = 0; j < 4; j++) {
+            ctx.beginPath();
+            ctx.ellipse(f.x + j * 8 - 12, f.y - j * 2, 11, 11, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.fillStyle = '#3d7b2d';
+          ctx.fillRect(f.x - 8, f.y - 18, 3, 4);
+          ctx.fillRect(f.x, f.y - 16, 3, 4);
+          ctx.fillRect(f.x + 8, f.y - 14, 3, 4);
+        }
+      });
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBananaTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffd966';
+      ctx.beginPath();
+      ctx.ellipse(32, 32, 24, 10, 0.6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#c28b1c';
+      ctx.fillRect(18, 22, 4, 6);
+      ctx.fillRect(42, 40, 4, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeAppleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ff4c4c';
+      ctx.beginPath();
+      ctx.ellipse(32, 36, 14, 12, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#2f8b2f';
+      ctx.fillRect(30, 22, 3, 8);
+      ctx.beginPath();
+      ctx.moveTo(31, 22);
+      ctx.lineTo(37, 18);
+      ctx.lineTo(34, 24);
+      ctx.closePath();
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makePineappleTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#ffca4d';
+      ctx.beginPath();
+      ctx.ellipse(32, 34, 12, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#f59b32';
+      ctx.lineWidth = 2;
+      for (let k = -12; k <= 12; k += 6) {
+        ctx.beginPath();
+        ctx.moveTo(20, 30 + k);
+        ctx.lineTo(44, 40 + k);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      for (let k = 0; k < 4; k++) {
+        ctx.beginPath();
+        ctx.moveTo(26 + k * 4, 16);
+        ctx.lineTo(24 + k * 4, 8);
+        ctx.lineTo(22 + k * 4, 16);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeGrapesTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#7dd36f';
+      for (let r = 0; r < 9; r++) {
+        const ox = (r % 3) * 8 - 8;
+        const oy = Math.floor(r / 3) * 8;
+        ctx.beginPath();
+        ctx.ellipse(32 + ox, 30 + oy, 6, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#3d7b2d';
+      ctx.fillRect(31, 16, 3, 6);
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeBreadTexture() {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(0,0,0,0)';
+      ctx.fillRect(0, 0, 64, 64);
+      ctx.fillStyle = '#d9b37a';
+      ctx.beginPath();
+      ctx.roundRect(14, 24, 36, 18, 6);
+      ctx.fill();
+      ctx.fillStyle = '#b5864c';
+      ctx.beginPath();
+      ctx.roundRect(18, 20, 28, 6, 4);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+
+    function makeFlowerTexture(seed = 0) {
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      const ctx = c.getContext('2d');
+      const petals = [['#ff6fa0', '#ff99c2'], ['#ffd84d', '#ffe784'], ['#8ad4ff', '#b7e8ff']];
+      const p = petals[seed % petals.length];
+      for (let i = 0; i < 6; i++) {
+        const ang = (Math.PI * 2 * i) / 6;
+        const x = 32 + Math.cos(ang) * 10;
+        const y = 32 + Math.sin(ang) * 10;
+        const grad = ctx.createRadialGradient(x, y, 0, x, y, 12);
+        grad.addColorStop(0, p[0]);
+        grad.addColorStop(1, p[1]);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 8, 6, ang, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#ffd35c';
+      ctx.beginPath();
+      ctx.arc(32, 32, 6, 0, Math.PI * 2);
+      ctx.fill();
+      return new THREE.CanvasTexture(c);
+    }
+    const flowerTextures = [makeFlowerTexture(0), makeFlowerTexture(1), makeFlowerTexture(2)];
+
+    const trees = new THREE.Group();
+    const treeCount = 240;
+    for (let i = 0; i < treeCount; i++) {
+      const texSet = i % 4 === 0 ? softTreeTextures : treeTextures;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scaleY = 4 + Math.random() * 4.5;
+      const scaleX = scaleY * (0.5 + Math.random() * 0.3);
+      sprite.scale.set(scaleX, scaleY, 1);
+      const radius = 10 + Math.random() * 240;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scaleY * 0.5 + 0.4, Math.sin(angle) * radius);
+      trees.add(sprite);
+    }
+    scene.add(trees);
+
+    // Fjöll í fjarska
+    const mountains = new THREE.Group();
+    const mountainCount = 8;
+    for (let i = 0; i < mountainCount; i++) {
+      const height = 20 + Math.random() * 18;
+      const radius = 40 + Math.random() * 25;
+      const color = new THREE.Color().setHSL(0.12 + Math.random() * 0.05, 0.4, 0.35 + Math.random() * 0.1);
+      const geom = new THREE.ConeGeometry(radius, height, 4 + Math.floor(Math.random() * 4));
+      const mat = new THREE.MeshStandardMaterial({ color, flatShading: true });
+      const cone = new THREE.Mesh(geom, mat);
+      const dist = 220 + Math.random() * 120;
+      const ang = Math.random() * Math.PI * 2;
+      cone.position.set(Math.cos(ang) * dist, height * 0.5, Math.sin(ang) * dist);
+      cone.rotation.y = Math.random() * Math.PI;
+      mountains.add(cone);
+    }
+    scene.add(mountains);
+
+    const bushes = new THREE.Group();
+    const bushCount = 180;
+    for (let i = 0; i < bushCount; i++) {
+      const useBlue = Math.random() < 0.5;
+      const texSet = useBlue ? bushTexturesBlue : bushTexturesRed;
+      const tex = texSet[i % texSet.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.4 + Math.random() * 1.6;
+      sprite.scale.set(scale * (1.4 + Math.random() * 0.4), scale, 1);
+      const radius = 8 + Math.random() * 220;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.35 + 0.2, Math.sin(angle) * radius);
+      sprite.userData.wavePhase = Math.random() * Math.PI * 2;
+      sprite.userData.waveSpeed = 0.8 + Math.random() * 0.6;
+      sprite.userData.baseScale = { x: sprite.scale.x, y: sprite.scale.y };
+      bushes.add(sprite);
+    }
+    scene.add(bushes);
+
+    const mushrooms = new THREE.Group();
+    const mushroomCount = 260;
+    for (let i = 0; i < mushroomCount; i++) {
+      const tex = mushroomTextures[i % mushroomTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.6 + Math.random() * 0.7;
+      sprite.scale.set(scale, scale, 1);
+      const radius = 6 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      mushrooms.add(sprite);
+    }
+    scene.add(mushrooms);
+
+    const flowers = new THREE.Group();
+    const flowerCount = 320;
+    for (let i = 0; i < flowerCount; i++) {
+      const tex = flowerTextures[i % flowerTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 0.5 + Math.random() * 0.5;
+      sprite.scale.set(scale * 1.1, scale * 1.1, 1);
+      const radius = 4 + Math.random() * 200;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5, Math.sin(angle) * radius);
+      flowers.add(sprite);
+    }
+    scene.add(flowers);
+
+    // Kindur
+    const sheep = new THREE.Group();
+    const sheepCount = 18;
+    for (let i = 0; i < sheepCount; i++) {
+      const tex = sheepTextures[i % sheepTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.2 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.5, scale * 2, 1);
+      const radius = 6 + Math.random() * 140;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, scale * 0.5 + 0.3, Math.sin(angle) * radius);
+      sprite.userData.dir = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.5 + Math.random() * 0.6;
+      sprite.userData.grazeTime = Math.random() * 4;
+      sprite.userData.state = 'walk'; // walk/graze
+      sheep.add(sprite);
+    }
+    scene.add(sheep);
+
+    // Fuglarnir
+    const birds = new THREE.Group();
+    const birdCount = 14;
+    for (let i = 0; i < birdCount; i++) {
+      const tex = birdTextures[i % birdTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      const scale = 1.3 + Math.random() * 0.6;
+      sprite.scale.set(scale * 2.4, scale * 1.5, 1);
+      const radius = 60 + Math.random() * 160;
+      const angle = Math.random() * Math.PI * 2;
+      sprite.position.set(Math.cos(angle) * radius, 8 + Math.random() * 6, Math.sin(angle) * radius);
+      sprite.userData.orbitR = radius;
+      sprite.userData.orbitA = angle;
+      sprite.userData.alt = sprite.position.y;
+      sprite.userData.flap = Math.random() * Math.PI * 2;
+      sprite.userData.speed = 0.25 + Math.random() * 0.35;
+      birds.add(sprite);
+    }
+    scene.add(birds);
+
+    // Ský
+    function makeCloudTexture(seedOffset = 0) {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 128;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = 'rgba(255,255,255,0.0)';
+      ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      const circles = 7;
+      for (let i = 0; i < circles; i++) {
+        const x = 30 + i * 32 + Math.random() * 18 + seedOffset * 3;
+        const y = 50 + Math.random() * 22 + seedOffset;
+        const r = 24 + Math.random() * 22;
+        ctx.beginPath();
+        ctx.ellipse(x, y, r, r * 0.6, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      return new THREE.CanvasTexture(c);
+    }
+    const cloudTextures = [makeCloudTexture(0), makeCloudTexture(10), makeCloudTexture(-10)];
+    const clouds = new THREE.Group();
+    const cloudCount = 28;
+    for (let i = 0; i < cloudCount; i++) {
+      const tex = cloudTextures[i % cloudTextures.length];
+      const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
+      const sprite = new THREE.Sprite(mat);
+      sprite.scale.set(18 + Math.random() * 20, 9 + Math.random() * 8, 1);
+      sprite.position.set(-220 + Math.random() * 440, 20 + Math.random() * 14, -220 + Math.random() * 440);
+      sprite.userData.speed = 0.18 + Math.random() * 0.35;
+      sprite.userData.bound = 240;
+      clouds.add(sprite);
+    }
+    scene.add(clouds);
+
+    // Gamaldags tölvuskjár með mynd.avif á skjánum
+    const retroComputer = makeRetroComputer();
+    retroComputer.position.set(6, 0, -6);
+    retroComputer.rotation.y = Math.PI * 0.3;
+    scene.add(retroComputer);
+
+    const puffin = new THREE.Sprite(new THREE.SpriteMaterial({ map: puffinTexture, transparent: true, depthWrite: false }));
+    puffin.scale.set(4.8, 6, 1);
+    puffin.position.set(0, 3, -160);
+    puffin.userData.phase = Math.random() * Math.PI * 2;
+    puffin.userData.speed = 1.4;
+    scene.add(puffin);
+
+    const sparkFlower = makeSparkFlower();
+    sparkFlower.position.set(-40, 0, -30);
+    sparkFlower.rotation.y = Math.PI * 0.12;
+    sparkFlower.scale.set(1.2, 1.2, 1.2); // tvöfalt hærra en 3m kassinn (ca 6m)
+    scene.add(sparkFlower);
+
+    const tallTower = makeTallTower();
+    tallTower.position.set(140, 0, 60);
+    tallTower.rotation.y = -Math.PI * 0.15;
+    scene.add(tallTower);
+
+    const book = new THREE.Mesh(
+      new THREE.BoxGeometry(4, 6, 1.2),
+      new THREE.MeshStandardMaterial({ map: bookTexture, metalness: 0.08, roughness: 0.7 })
+    );
+    book.position.set(70, 3, -60);
+    book.rotation.y = -Math.PI * 0.2;
+    scene.add(book);
+
+    const buffetTable = new THREE.Mesh(
+      new THREE.BoxGeometry(8, 1, 4),
+      new THREE.MeshStandardMaterial({ map: buffetTexture, metalness: 0.1, roughness: 0.75 })
+    );
+    buffetTable.position.set(-90, 1, 30);
+    buffetTable.rotation.y = -Math.PI * 0.28;
+    scene.add(buffetTable);
+
+    const buffetFood = new THREE.Group();
+    buffetFood.position.copy(buffetTable.position);
+    buffetFood.rotation.y = buffetTable.rotation.y;
+
+    function addFoodSprite(tex, offsetX, offsetZ, scale = 2) {
+      const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+      spr.scale.set(scale, scale, 1);
+      spr.position.set(offsetX, 1.7, offsetZ);
+      buffetFood.add(spr);
+    }
+    addFoodSprite(bananaTex, -2.4, 0.6, 2.2);
+    addFoodSprite(appleTex, 0, -0.4, 2.1);
+    addFoodSprite(pineappleTex, 2.4, 0.2, 2.4);
+    addFoodSprite(grapesTex, -0.8, 1.1, 2);
+    addFoodSprite(breadTex, 1.4, -1, 2.6);
+    scene.add(buffetFood);
+
+    const river = new THREE.Mesh(
+      new THREE.PlaneGeometry(12, 200),
+      new THREE.MeshStandardMaterial({ color: 0x4aa4ff, transparent: true, opacity: 0.7, metalness: 0.2, roughness: 0.45 })
+    );
+    river.rotation.x = -Math.PI / 2;
+    river.position.set(-125, 0.02, 105);
+    river.rotation.z = 0.08;
+    scene.add(river);
+
+    minimapMarkers.push(
+      { name: 'Tölva', icon: '🖥️', color: '#9cf1ff', getPos: () => retroComputer.position },
+      { name: 'Blóm', icon: '🌸', color: '#ff77cc', getPos: () => sparkFlower.position },
+      { name: 'Turn', icon: '🗼', color: '#ffd966', getPos: () => tallTower.position },
+      { name: 'Bók', icon: '📖', color: '#e6d9b8', getPos: () => book.position },
+      { name: 'Lundi', icon: '🐧', color: '#ffffff', getPos: () => puffin.position },
+      { name: 'Matur', icon: '🍽️', color: '#ffae6f', getPos: () => buffetTable.position },
+      { name: 'Á', icon: '💧', color: '#4aa4ff', getPos: () => river.position },
+      { name: 'Kassi', icon: '🟥', color: '#ff0033', getPos: () => targetCube.position }
+    );
+
+    // Rauði kassinn
+    const targetCube = new THREE.Mesh(
+      new THREE.BoxGeometry(3, 3, 3),
+      new THREE.MeshStandardMaterial({ color: 0xff0033, emissive: 0x330000 })
+    );
+    targetCube.position.set(0, 1.5, -80);
+    scene.add(targetCube);
+
+    // Fraktal ástand
+    let inFractal = false;
+    let fractalGroup = null;
+    let fractalGroup2 = null;
+    const fractalAudio = document.getElementById('fractal-audio');
+    const promptEl = document.getElementById('prompt');
+    const fractalHint = document.getElementById('fractal-hint');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupFrame = document.getElementById('popup-frame');
+    const popupCloseBtn = document.getElementById('popup-close');
+    const popupContent = document.getElementById('popup-content');
+    const minimapEl = document.getElementById('minimap');
+    const minimapToggle = document.getElementById('minimap-toggle');
+    const minimapCanvas = document.getElementById('minimap-canvas');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    let popupOpen = false;
+    let popupCooldown = 0;
+    let computerNeedsExit = false;
+    let towerNeedsExit = false;
+    let flowerNeedsExit = false;
+    let puffinNeedsExit = false;
+    let bookNeedsExit = false;
+    let buffetNeedsExit = false;
+    let fractalDepth = 0;
+    let fractalData2 = null;
+
+    function showPrompt(show) {
+      promptEl.classList.toggle('visible', show);
+    }
+
+    function openPopup(url = 'forsida/index.html') {
+      if (popupOpen) return;
+      popupOpen = true;
+      popupOverlay.classList.add('visible');
+      popupFrame.src = url;
+    }
+
+    function closePopup() {
+      if (!popupOpen) return;
+      popupOpen = false;
+      popupOverlay.classList.remove('visible');
+      popupFrame.src = '';
+      popupCooldown = 0.8; // smá bið svo glugginn opnist ekki strax aftur
+      computerNeedsExit = true;
+      towerNeedsExit = true;
+      flowerNeedsExit = true;
+      puffinNeedsExit = true;
+      bookNeedsExit = true;
+      buffetNeedsExit = true;
+    }
+
+    popupOverlay.addEventListener('click', closePopup);
+    popupCloseBtn.addEventListener('click', closePopup);
+    popupContent.addEventListener('click', (e) => e.stopPropagation());
+    popupFrame.addEventListener('load', () => {
+      if (popupFrame.src.includes('geton/index.html')) {
+        popupFrame.contentWindow?.postMessage({ type: 'start-music' }, '*');
+      }
+    });
+
+    function createFractalGroup(scale = 1, count = 2000, size = 0.25) {
+      const group = new THREE.Group();
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+      const golden = Math.PI * (3 - Math.sqrt(5));
+      for (let i = 0; i < count; i++) {
+        const angle = i * golden;
+        const radius = scale * 0.08 * Math.sqrt(i);
+        positions[i * 3] = Math.cos(angle) * radius;
+        positions[i * 3 + 1] = (i - count / 2) * 0.0035 * scale;
+        positions[i * 3 + 2] = Math.sin(angle) * radius;
+
+        const t = i / count;
+        colors[i * 3] = 0.5 + 0.5 * Math.sin(t * 10);
+        colors[i * 3 + 1] = 0.5 + 0.5 * Math.sin(t * 13 + 1.2);
+        colors[i * 3 + 2] = 0.5 + 0.5 * Math.sin(t * 17 + 2.4);
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      const mat = new THREE.PointsMaterial({ size, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false });
+      const points = new THREE.Points(geo, mat);
+      group.add(points);
+      return { group, points };
+    }
+
+    let fractalData = null;
+    function enterFractal() {
+      if (inFractal) return;
+      inFractal = true;
+      window.location.href = '/dans/'; // hoppa í nýtt psychedelic umhverfi
+    }
+
+    // Hreyfing
+    let yaw = 0;
+    const moveSpeed = 12;
+    const rotSpeed = 1.6;
+    let lastTime = performance.now();
+    let pendingFractal = false;
+    let pendingTimer = 0;
+
+    function updateMovement(dt) {
+      const forward = (keys['ArrowUp'] || keys['KeyW']) || (touchDir.y < -0.2);
+      const backward = (keys['ArrowDown'] || keys['KeyS']) || (touchDir.y > 0.2);
+      const left = (keys['ArrowLeft'] || keys['KeyA']) || (touchDir.x < -0.2);
+      const right = (keys['ArrowRight'] || keys['KeyD']) || (touchDir.x > 0.2);
+
+      const moving = forward || backward || left || right;
+      if (moving) ensureAudio();
+      setFootsteps(moving);
+
+      if (left && !right) yaw += rotSpeed * dt;
+      if (right && !left) yaw -= rotSpeed * dt;
+
+      const dir = new THREE.Vector3();
+      if (forward) dir.z -= 1;
+      if (backward) dir.z += 1;
+      dir.normalize();
+
+      const sin = Math.sin(yaw);
+      const cos = Math.cos(yaw);
+      const dx = dir.z * sin;
+      const dz = dir.z * cos;
+
+      camera.position.x += dx * moveSpeed * dt;
+      camera.position.z += dz * moveSpeed * dt;
+
+      camera.rotation.y = yaw;
+      camera.position.y = 1.6;
+    }
+
+    function updateClouds(dt) {
+      clouds.children.forEach(c => {
+        c.position.x += c.userData.speed * dt * 8;
+        if (c.position.x > c.userData.bound) c.position.x = -c.userData.bound;
+      });
+    }
+
+    function updateBushes(dt) {
+      bushes.children.forEach(b => {
+        b.userData.wavePhase += dt * b.userData.waveSpeed;
+        const wobble = Math.sin(b.userData.wavePhase) * 0.06;
+        b.scale.x = b.userData.baseScale.x * (1 + wobble);
+        b.scale.y = b.userData.baseScale.y * (1 + wobble * 0.7);
+      });
+    }
+
+    function updateSheep(dt) {
+      sheep.children.forEach(s => {
+        s.userData.grazeTime -= dt;
+        if (s.userData.grazeTime <= 0) {
+          if (s.userData.state === 'walk') {
+            s.userData.state = 'graze';
+            s.userData.grazeTime = 2 + Math.random() * 3;
+          } else {
+            s.userData.state = 'walk';
+            s.userData.grazeTime = 4 + Math.random() * 5;
+            s.userData.dir += rand(-0.6, 0.6);
+          }
+        }
+        if (s.userData.state === 'walk') {
+          s.userData.dir += rand(-0.08, 0.08) * dt;
+          const dx = Math.sin(s.userData.dir) * s.userData.speed * dt * 2.4;
+          const dz = Math.cos(s.userData.dir) * s.userData.speed * dt * 2.4;
+          s.position.x += dx;
+          s.position.z += dz;
+          const r = Math.hypot(s.position.x, s.position.z);
+          const maxR = 180;
+          if (r > maxR) {
+            s.userData.dir += Math.PI + rand(-0.4, 0.4);
+          }
+        }
+        s.material.rotation = 0;
+      });
+    }
+
+    function updateBirds(dt) {
+      birds.children.forEach(b => {
+        b.userData.orbitA += dt * b.userData.speed;
+        b.userData.flap += dt * 6;
+        const yOsc = Math.sin(b.userData.flap) * 0.4;
+        const r = b.userData.orbitR;
+        b.position.set(Math.cos(b.userData.orbitA) * r, b.userData.alt + yOsc, Math.sin(b.userData.orbitA) * r);
+        b.material.rotation = -b.userData.orbitA + Math.PI / 2;
+      });
+    }
+
+    function updatePuffin(dt) {
+      if (!puffin) return;
+      puffin.userData.phase += dt * puffin.userData.speed;
+      const sway = Math.sin(puffin.userData.phase) * 0.2;
+      const hop = Math.max(0, Math.sin(puffin.userData.phase * 1.4)) * 0.35;
+      puffin.position.y = 1.5 + hop;
+      puffin.material.rotation = sway;
+    }
+
+    function updateFractal(dt) {
+      if (!fractalGroup || !fractalData) return;
+      fractalDepth += dt * 12;
+
+      const time = performance.now() * 0.001;
+      const wobble = Math.sin(time * 0.7) * 0.25;
+
+      fractalGroup.position.z = -fractalDepth * 1.2;
+      fractalGroup2.position.z = -fractalDepth * 0.8 - 8;
+
+      fractalGroup.rotation.y += dt * 0.6;
+      fractalGroup.rotation.x += dt * 0.14;
+      fractalGroup2.rotation.y -= dt * 0.4;
+      fractalGroup2.rotation.x += dt * 0.08;
+
+      const posAttr = fractalData.points.geometry.getAttribute('position');
+      const posAttr2 = fractalData2.points.geometry.getAttribute('position');
+      for (let i = 0; i < posAttr.count; i++) {
+        const y = posAttr.getY(i);
+        posAttr.setY(i, y + Math.sin(time + i * 0.02) * 0.0008);
+      }
+      for (let i = 0; i < posAttr2.count; i++) {
+        const y = posAttr2.getY(i);
+        posAttr2.setY(i, y + Math.cos(time * 1.2 + i * 0.018) * 0.0011);
+      }
+      posAttr.needsUpdate = true;
+      posAttr2.needsUpdate = true;
+
+      // fallandi tilfinning
+      camera.position.y = 1.1 + wobble * 0.4;
+      camera.position.z -= dt * 10;
+
+      // litaflæði
+      const hue = (time * 0.07) % 1;
+      scene.background = new THREE.Color().setHSL(hue, 0.6, 0.08 + 0.1 * Math.sin(time * 0.6) * 0.5);
+    }
+
+    function checkTarget() {
+      if (inFractal) return;
+      const dist = camera.position.distanceTo(targetCube.position);
+      const near = dist < 3.2;
+      if (near) {
+        if (!pendingFractal) {
+          pendingFractal = true;
+          pendingTimer = 0;
+        }
+      } else {
+        pendingFractal = false;
+        pendingTimer = 0;
+      }
+    }
+
+    function checkComputerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(retroComputer.position);
+      if (computerNeedsExit && dist < 3.4) return;
+      if (dist > 3.4) computerNeedsExit = false;
+      if (dist < 2.6) {
+        openPopup();
+      }
+    }
+
+    function checkTowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(tallTower.position);
+      if (towerNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) towerNeedsExit = false;
+      if (dist < 3.6) {
+        openPopup('Annad/index.html');
+      }
+    }
+
+    function checkFlowerInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(sparkFlower.position);
+      if (flowerNeedsExit && dist < 4) return;
+      if (dist > 4) flowerNeedsExit = false;
+      if (dist < 2.8) {
+        openPopup('Aldurinn/index.html');
+      }
+    }
+
+    function checkPuffinInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(puffin.position);
+      if (puffinNeedsExit && dist < 4.5) return;
+      if (dist > 4.5) puffinNeedsExit = false;
+      if (dist < 3.2) {
+        openPopup('geton/index.html');
+      }
+    }
+
+    function checkBookInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(book.position);
+      if (bookNeedsExit && dist < 4.2) return;
+      if (dist > 4.2) bookNeedsExit = false;
+      if (dist < 3) {
+        openPopup('bok/index.html');
+      }
+    }
+
+    function updateRiverSound(dt) {
+      if (!riverAudio) return;
+      if (audioInitiated && riverAudio.paused) {
+        riverAudio.play().catch(() => {});
+      }
+      const dist = camera.position.distanceTo(river.position);
+      const t = Math.max(0, 1 - dist / 70);
+      const target = 0.35 * t;
+      const lerp = Math.min(1, dt * 4);
+      riverAudio.volume += (target - riverAudio.volume) * lerp;
+    }
+
+    function renderMinimap() {
+      const w = minimapCanvas.width;
+      const h = minimapCanvas.height;
+      minimapCtx.clearRect(0, 0, w, h);
+      minimapCtx.fillStyle = '#5ca66a';
+      minimapCtx.fillRect(0, 0, w, h);
+      const positions = minimapMarkers.map(m => m.getPos());
+      const xs = positions.map(p => p.x);
+      const zs = positions.map(p => p.z);
+      const minX = Math.min(...xs) - 10;
+      const maxX = Math.max(...xs) + 10;
+      const minZ = Math.min(...zs) - 10;
+      const maxZ = Math.max(...zs) + 10;
+      const rangeX = maxX - minX || 1;
+      const rangeZ = maxZ - minZ || 1;
+      const margin = 18;
+      minimapCtx.fillStyle = '#7c6041';
+      const peaks = [
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 6 },
+        { x: margin + Math.random() * (w - margin * 2), y: h - margin + 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin - 2 },
+        { x: margin + Math.random() * (w - margin * 2), y: margin + 4 },
+        { x: margin + 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: margin + 10, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 4, y: margin + Math.random() * (h - margin * 2) },
+        { x: w - margin - 10, y: margin + Math.random() * (h - margin * 2) },
+      ];
+      peaks.forEach(p => {
+        const peakH = 10 + Math.random() * 8;
+        minimapCtx.beginPath();
+        minimapCtx.moveTo(p.x - 10, p.y);
+        minimapCtx.lineTo(p.x, p.y - peakH);
+        minimapCtx.lineTo(p.x + 10, p.y);
+        minimapCtx.closePath();
+        minimapCtx.fill();
+      });
+      function toMap(p) {
+        const x = ((p.x - minX) / rangeX) * (w - margin * 2) + margin;
+        const y = ((p.z - minZ) / rangeZ) * (h - margin * 2) + margin;
+        return {
+          x: Math.max(margin, Math.min(w - margin, x)),
+          y: Math.max(margin, Math.min(h - margin, y)),
+        };
+      }
+      const mapped = minimapMarkers.map(m => toMap(m.getPos()));
+      minimapCtx.setLineDash([4, 6]);
+      minimapCtx.strokeStyle = 'rgba(255,255,255,0.45)';
+      minimapCtx.lineWidth = 1.5;
+      minimapCtx.beginPath();
+      mapped.forEach((p, idx) => {
+        if (idx === 0) minimapCtx.moveTo(p.x, p.y);
+        else minimapCtx.lineTo(p.x, p.y);
+      });
+      minimapCtx.stroke();
+      minimapCtx.setLineDash([]);
+    minimapMarkers.forEach(m => {
+      const p = toMap(m.getPos());
+      minimapCtx.font = '15px system-ui, sans-serif';
+      minimapCtx.textAlign = 'center';
+      minimapCtx.textBaseline = 'middle';
+      minimapCtx.fillStyle = m.color;
+      minimapCtx.fillText(m.icon, p.x, p.y);
+    });
+
+    }
+
+    function checkBuffetInteraction() {
+      if (inFractal || popupOpen || popupCooldown > 0) return;
+      const dist = camera.position.distanceTo(buffetTable.position);
+      if (buffetNeedsExit && dist < 4.8) return;
+      if (dist > 4.8) buffetNeedsExit = false;
+      if (dist < 3.4) {
+        openPopup('Matarbod/index.html');
+      }
+    }
+
+    minimapToggle.addEventListener('click', () => {
+      minimapEl.classList.toggle('show');
+      if (minimapEl.classList.contains('show')) {
+        renderMinimap();
+      }
+    });
+
+    function animate() {
+      const now = performance.now();
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      popupCooldown = Math.max(0, popupCooldown - dt);
+
+      // Slembijarm af og til
+      if (bleatAudio && audioInitiated) {
+        bleatTimer -= dt;
+        if (bleatTimer <= 0) {
+          if (Math.random() < 0.2) {
+            bleatAudio.currentTime = 0;
+            bleatAudio.play().catch(() => {});
+          }
+          bleatTimer = 8 + Math.random() * 16;
+        }
+      }
+
+      if (!inFractal) {
+        updateMovement(dt);
+        updateClouds(dt);
+        updateBushes(dt);
+        updateSheep(dt);
+        updateBirds(dt);
+        updatePuffin(dt);
+        updateRiverSound(dt);
+        checkTarget();
+        checkComputerInteraction();
+        checkTowerInteraction();
+        checkFlowerInteraction();
+        checkPuffinInteraction();
+        checkBookInteraction();
+        checkBuffetInteraction();
+        if (pendingFractal) {
+          pendingTimer += dt;
+          yaw += dt * 1.8; // smá snúningur
+          camera.rotation.y = yaw;
+          camera.rotation.x = Math.sin(pendingTimer * 1.5) * 0.15; // vertical sway
+          if (pendingTimer >= 3) {
+            enterFractal();
+          }
+        }
+      } else {
+        updateMovement(dt * 0.5); // hægari í fraktal
+        updateFractal(dt);
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+<canvas data-engine="three.js r159" width="263" height="726" style="display: block; width: 263px; height: 726px;"></canvas></body></html>

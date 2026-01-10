@@ -1,0 +1,1548 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.8 e802775f",
+  "osm3s": {
+    "timestamp_osm_base": "2025-12-13T04:55:00Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 59861237,
+  "lat": 64.6561037,
+  "lon": -14.2862906,
+  "tags": {
+    "amenity": "fuel",
+    "check_date": "2025-03-06",
+    "check_date:opening_hours": "2025-03-06",
+    "compressed_air": "no",
+    "fuel:diesel": "yes",
+    "fuel:octane_95": "yes",
+    "name": "N1",
+    "opening_hours": "24/7",
+    "operator": "N1",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 300935807,
+  "lat": 64.5883741,
+  "lon": -14.1706225,
+  "tags": {
+    "amenity": "ferry_terminal",
+    "name": "Papey"
+  }
+},
+{
+  "type": "node",
+  "id": 331228131,
+  "lat": 64.6562704,
+  "lon": -14.2803192,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "seafood;pizza",
+    "diet:vegan": "no",
+    "diet:vegetarian": "yes",
+    "internet_access": "yes",
+    "name": "Hótel Framtíð",
+    "opening_hours": "PH,Mo-Su 08:00-09:30,12:00-14:00,18:00-20:30",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 331228148,
+  "lat": 64.6565704,
+  "lon": -14.3092919,
+  "tags": {
+    "check_date": "2024-10-07",
+    "information": "board",
+    "name": "Djúpivogur",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 458189716,
+  "lat": 64.6575735,
+  "lon": -14.2831706,
+  "tags": {
+    "fee": "no",
+    "name": "Langabúð",
+    "tourism": "museum"
+  }
+},
+{
+  "type": "node",
+  "id": 613895375,
+  "lat": 64.6554788,
+  "lon": -14.2762530,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "node",
+  "id": 819330266,
+  "lat": 64.6577453,
+  "lon": -14.2826896,
+  "tags": {
+    "amenity": "toilets",
+    "fee": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 819330269,
+  "lat": 64.6544148,
+  "lon": -14.2804349,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Heilsugæslustöðin Djúpavogi"
+  }
+},
+{
+  "type": "node",
+  "id": 819330290,
+  "lat": 64.6573022,
+  "lon": -14.2834706,
+  "tags": {
+    "board_type": "history",
+    "check_date": "2025-03-06",
+    "information": "board",
+    "name": "Langabúð",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 819330292,
+  "lat": 64.6560220,
+  "lon": -14.2858298,
+  "tags": {
+    "amenity": "post_office",
+    "branch": "Djúpivogur",
+    "email": "postur@postur.is",
+    "fax": "+354 580 1239",
+    "name": "Pósthús",
+    "opening_hours": "Mo-Fr 11:00-15:00",
+    "operator": "Íslandspóstur",
+    "operator:wikidata": "Q291809",
+    "phone": "+354 580 1000",
+    "website": "https://www.postur.is/"
+  }
+},
+{
+  "type": "node",
+  "id": 1820440152,
+  "lat": 64.6574581,
+  "lon": -14.2832136,
+  "tags": {
+    "amenity": "cafe",
+    "check_date": "2024-06-02",
+    "internet_access": "yes",
+    "name": "Langabúð",
+    "phone": "+354 478 8220"
+  }
+},
+{
+  "type": "node",
+  "id": 1822968197,
+  "lat": 64.6576272,
+  "lon": -14.2806280,
+  "tags": {
+    "amenity": "ferry_terminal",
+    "name": "Djúpivogur"
+  }
+},
+{
+  "type": "node",
+  "id": 1823055732,
+  "lat": 64.6610272,
+  "lon": -14.2952490,
+  "tags": {
+    "amenity": "recycling"
+  }
+},
+{
+  "type": "node",
+  "id": 1823286390,
+  "lat": 64.6987323,
+  "lon": -14.2552437,
+  "tags": {
+    "check_date": "2024-07-10",
+    "name": "Berunes",
+    "tourism": "hostel",
+    "website": "https://www.berunes.is/"
+  }
+},
+{
+  "type": "node",
+  "id": 2411876295,
+  "lat": 64.6724156,
+  "lon": -14.3379951,
+  "tags": {
+    "tourism": "picnic_site"
+  }
+},
+{
+  "type": "node",
+  "id": 2411876296,
+  "lat": 64.5993223,
+  "lon": -14.4502831,
+  "tags": {
+    "tourism": "picnic_site"
+  }
+},
+{
+  "type": "node",
+  "id": 2948435888,
+  "lat": 64.6724540,
+  "lon": -14.3381293,
+  "tags": {
+    "check_date": "2023-08-19",
+    "information": "board",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 2948435890,
+  "lat": 64.6568241,
+  "lon": -14.2862033,
+  "tags": {
+    "check_date": "2025-08-11",
+    "name": "Klif",
+    "tourism": "hostel"
+  }
+},
+{
+  "type": "node",
+  "id": 2948435895,
+  "lat": 64.6325888,
+  "lon": -14.4618739,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "node",
+  "id": 2948442712,
+  "lat": 64.6569198,
+  "lon": -14.2835600,
+  "tags": {
+    "information": "board",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 2948442713,
+  "lat": 64.6561678,
+  "lon": -14.2823991,
+  "tags": {
+    "tourism": "artwork"
+  }
+},
+{
+  "type": "node",
+  "id": 2948444097,
+  "lat": 64.6568022,
+  "lon": -14.2836753,
+  "tags": {
+    "addr:postcode": "765",
+    "addr:street": "Bakki",
+    "amenity": "police",
+    "name": "Lögreglan",
+    "source": "Kaart Ground Survey 2017"
+  }
+},
+{
+  "type": "node",
+  "id": 2948444098,
+  "lat": 64.6563194,
+  "lon": -14.2819521,
+  "tags": {
+    "tourism": "picnic_site"
+  }
+},
+{
+  "type": "node",
+  "id": 2948444099,
+  "lat": 64.6542518,
+  "lon": -14.2964224,
+  "tags": {
+    "amenity": "bench",
+    "backrest": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2948445254,
+  "lat": 64.6579292,
+  "lon": -14.4439996,
+  "tags": {
+    "covered": "no",
+    "leisure": "picnic_table",
+    "tourism": "picnic_site"
+  }
+},
+{
+  "type": "node",
+  "id": 2948445585,
+  "lat": 64.6586726,
+  "lon": -14.2746577,
+  "tags": {
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 2948445586,
+  "lat": 64.6566172,
+  "lon": -14.2845457,
+  "tags": {
+    "amenity": "bench",
+    "backrest": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 2964264951,
+  "lat": 64.6607890,
+  "lon": -14.2901200,
+  "tags": {
+    "name": "Bones and stones museum - gift shop",
+    "tourism": "attraction"
+  }
+},
+{
+  "type": "node",
+  "id": 3562350063,
+  "lat": 64.6619131,
+  "lon": -14.2951261,
+  "tags": {
+    "artwork_type": "sculpture",
+    "name": "Eggin í Gleðivík",
+    "tourism": "artwork",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4328386717,
+  "lat": 64.6959984,
+  "lon": -14.2280642,
+  "tags": {
+    "access": "customers",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "node",
+  "id": 4422125629,
+  "lat": 64.6549678,
+  "lon": -14.2798963,
+  "tags": {
+    "name": "Ibudir",
+    "tourism": "guest_house"
+  }
+},
+{
+  "type": "node",
+  "id": 4902383069,
+  "lat": 64.6564004,
+  "lon": -14.2833974,
+  "tags": {
+    "access": "customers",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "node",
+  "id": 4919243924,
+  "lat": 64.6468327,
+  "lon": -14.2749267,
+  "tags": {
+    "name:cs": "pozorovatelna ptáků",
+    "name:en": "birdwatching 'station'",
+    "tourism": "viewpoint"
+  }
+},
+{
+  "type": "node",
+  "id": 5037196889,
+  "lat": 64.6551935,
+  "lon": -14.2755814,
+  "tags": {
+    "tourism": "viewpoint"
+  }
+},
+{
+  "type": "node",
+  "id": 5641478322,
+  "lat": 64.6566990,
+  "lon": -14.2854358,
+  "tags": {
+    "check_date": "2024-10-07",
+    "fee": "yes",
+    "name": "Steinasafn Auðunns",
+    "name:de": "Steine und Kristalle Ausstellung",
+    "name:en": "Auðunn's Mineral Collection",
+    "tourism": "museum"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450560,
+  "lat": 64.6549497,
+  "lon": -14.2908299,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450569,
+  "lat": 64.6572418,
+  "lon": -14.2835020,
+  "tags": {
+    "amenity": "waste_basket",
+    "check_date": "2025-03-06"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450572,
+  "lat": 64.6561065,
+  "lon": -14.2813816,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450595,
+  "lat": 64.6549564,
+  "lon": -14.2793835,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450596,
+  "lat": 64.6553123,
+  "lon": -14.2795676,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450614,
+  "lat": 64.6556094,
+  "lon": -14.2811409,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5647450615,
+  "lat": 64.6570582,
+  "lon": -14.2860419,
+  "tags": {
+    "amenity": "waste_basket"
+  }
+},
+{
+  "type": "node",
+  "id": 5699728323,
+  "lat": 64.6537435,
+  "lon": -14.3152155,
+  "tags": {
+    "amenity": "waste_disposal"
+  }
+},
+{
+  "type": "node",
+  "id": 5927666999,
+  "lat": 64.6566939,
+  "lon": -14.2852752,
+  "tags": {
+    "amenity": "post_box",
+    "collection_times": "Mo-Fr 15:00; Sa,Su off",
+    "operator": "Pósturinn"
+  }
+},
+{
+  "type": "node",
+  "id": 6652729103,
+  "lat": 64.6724492,
+  "lon": -14.3380195,
+  "tags": {
+    "check_date": "2023-08-19",
+    "information": "board",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 6721193270,
+  "lat": 64.6565094,
+  "lon": -14.2834752,
+  "tags": {
+    "access": "permissive",
+    "amenity": "charging_station",
+    "brand": "ON",
+    "capacity": "2",
+    "charge": "DC: 69 ISK/kWh. AC: 27 ISK/kWh + 0.5 ISK/min",
+    "description": "Two 50 kW DC chargers. One of the stations has CCS, CHAdeMO and Type 2 connectors while the other one has just CCS and CHAdeMO. Each DC station can only charge one car at a time.",
+    "fee": "yes",
+    "name": "Djúpivogur",
+    "operator": "Orka náttúrunnar",
+    "operator:wikidata": "Q25051792",
+    "operator:wikipedia": "en:Orka náttúrunnar",
+    "payment:app": "yes",
+    "payment:rfid": "yes",
+    "socket:chademo": "2",
+    "socket:chademo:output": "50 kW",
+    "socket:type2": "1",
+    "socket:type2:output": "22 kW",
+    "socket:type2_combo": "2",
+    "socket:type2_combo:output": "50 kW"
+  }
+},
+{
+  "type": "node",
+  "id": 6783909550,
+  "lat": 64.6565604,
+  "lon": -14.3094379,
+  "tags": {
+    "amenity": "waste_basket",
+    "waste": "trash"
+  }
+},
+{
+  "type": "node",
+  "id": 7827731084,
+  "lat": 64.5945705,
+  "lon": -14.4937148,
+  "tags": {
+    "name": "Krákhamar Apartments",
+    "tourism": "apartment"
+  }
+},
+{
+  "type": "node",
+  "id": 8839623717,
+  "lat": 64.6724673,
+  "lon": -14.3383719,
+  "tags": {
+    "tourism": "viewpoint"
+  }
+},
+{
+  "type": "node",
+  "id": 9034439927,
+  "lat": 64.6578313,
+  "lon": -14.4441945,
+  "tags": {
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "street_side"
+  }
+},
+{
+  "type": "node",
+  "id": 9844814191,
+  "lat": 64.6570602,
+  "lon": -14.2830485,
+  "tags": {
+    "description": "Artwork treated by Siguréur Gudmundsson in honor of Hans Jonathan (born 1784, St. Croix, Danish West Indies,  died 1827 in Djúpivogur), an enslaved African-Caribbean who unshackled himself and became a respected merchant in Djúpivogur.",
+    "name": "Frelsi",
+    "tourism": "artwork"
+  }
+},
+{
+  "type": "node",
+  "id": 9866218520,
+  "lat": 64.6560026,
+  "lon": -14.3317675,
+  "tags": {
+    "tourism": "picnic_site"
+  }
+},
+{
+  "type": "node",
+  "id": 9883106322,
+  "lat": 64.6559844,
+  "lon": -14.2861260,
+  "tags": {
+    "amenity": "atm",
+    "cash_in": "no",
+    "check_date": "2025-03-06",
+    "indoor": "yes",
+    "operator": "Hraðbanki"
+  }
+},
+{
+  "type": "node",
+  "id": 9949254518,
+  "lat": 64.6577470,
+  "lon": -14.3279317,
+  "tags": {
+    "amenity": "theatre",
+    "name:en": "Forest Theatre"
+  }
+},
+{
+  "type": "node",
+  "id": 10971291105,
+  "lat": 64.6576598,
+  "lon": -14.2828418,
+  "tags": {
+    "amenity": "pub",
+    "description": "Brewpub and cafe",
+    "indoor_seating": "yes",
+    "microbrewery": "yes",
+    "name": "Faktor Brewery Djúpivogur",
+    "outdoor_seating": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 11879508885,
+  "lat": 64.7069181,
+  "lon": -14.3138268,
+  "tags": {
+    "board_type": "geology",
+    "information": "board",
+    "name": "Blábjörg",
+    "tourism": "information"
+  }
+},
+{
+  "type": "node",
+  "id": 11879714298,
+  "lat": 64.6981335,
+  "lon": -14.2535328,
+  "tags": {
+    "amenity": "recycling",
+    "covered": "no",
+    "indoor": "no",
+    "recycling:cans": "yes",
+    "recycling:glass": "yes",
+    "recycling:glass_bottles": "yes",
+    "recycling:paper": "yes",
+    "recycling:plastic": "yes",
+    "recycling:plastic_bottles": "yes",
+    "recycling:plastic_packaging": "yes",
+    "recycling_type": "container"
+  }
+},
+{
+  "type": "node",
+  "id": 11879714303,
+  "lat": 64.6981528,
+  "lon": -14.2536670,
+  "tags": {
+    "access": "customers",
+    "amenity": "toilets",
+    "changing_table": "no",
+    "fee": "no",
+    "portable": "no",
+    "toilets:disposal": "flush",
+    "toilets:handwashing": "yes",
+    "toilets:position": "seated",
+    "unisex": "yes",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 11881000342,
+  "lat": 64.6981746,
+  "lon": -14.2537201,
+  "tags": {
+    "amenity": "drinking_water",
+    "bottle": "yes",
+    "covered": "no",
+    "fee": "no",
+    "indoor": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 11966343469,
+  "lat": 64.6591190,
+  "lon": -14.3989085,
+  "tags": {
+    "tourism": "viewpoint"
+  }
+},
+{
+  "type": "node",
+  "id": 12089374638,
+  "lat": 64.6570416,
+  "lon": -14.2836927,
+  "tags": {
+    "amenity": "toilets",
+    "fee": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12231748999,
+  "lat": 64.6567868,
+  "lon": -14.2829920,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2024-10-07",
+    "contact:facebook": "https://www.facebook.com/@djupivogurfood/",
+    "cuisine": "seafood",
+    "diet:pescetarian": "yes",
+    "level": "0",
+    "name": "Hot Dogs",
+    "name:is": "Pylsur",
+    "outdoor_seating": "yes",
+    "payment:cash": "yes",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12231768802,
+  "lat": 64.7254934,
+  "lon": -14.3987398,
+  "tags": {
+    "amenity": "watering_place"
+  }
+},
+{
+  "type": "node",
+  "id": 12409378154,
+  "lat": 64.6563692,
+  "lon": -14.2828971,
+  "tags": {
+    "addr:housenumber": "2",
+    "addr:postcode": "765",
+    "addr:street": "Vogaland",
+    "amenity": "fast_food",
+    "contact:email": "hafid@hafsalt.is",
+    "contact:facebook": "https://www.facebook.com/profile.php?id=61557700806524",
+    "contact:mobile": "+3544781402",
+    "cuisine": "fish_and_chips;international;regional",
+    "diet:vegan": "yes",
+    "diet:vegetarian": "yes",
+    "email": "hafid@hafsalt.is",
+    "indoor_seating": "yes",
+    "level": "0",
+    "mobile": "+3544781402",
+    "name": "Hafið bistro",
+    "opening_hours": "Mo-Sa 10:00-20:00; Su 10:00-16:00",
+    "outdoor_seating": "no",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "takeaway": "yes",
+    "toilets": "yes",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 12962267098,
+  "lat": 64.6571187,
+  "lon": -14.2835415,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "node",
+  "id": 12962277274,
+  "lat": 64.6790150,
+  "lon": -14.3448967,
+  "tags": {
+    "amenity": "bench",
+    "capacity": "6",
+    "material": "wood"
+  }
+},
+{
+  "type": "node",
+  "id": 12962282222,
+  "lat": 64.6757427,
+  "lon": -14.3445223,
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "surface": "gravel"
+  }
+},
+{
+  "type": "node",
+  "id": 12962292001,
+  "lat": 64.6780699,
+  "lon": -14.3446312,
+  "tags": {
+    "amenity": "bench",
+    "capacity": "6",
+    "material": "wood"
+  }
+},
+{
+  "type": "node",
+  "id": 13114919102,
+  "lat": 64.6564391,
+  "lon": -14.2848563,
+  "tags": {
+    "amenity": "bench",
+    "backrest": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 13119201003,
+  "lat": 64.6589450,
+  "lon": -14.2841171,
+  "tags": {
+    "amenity": "bench",
+    "armrest": "no",
+    "backrest": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 13119201004,
+  "lat": 64.6585420,
+  "lon": -14.2865230,
+  "tags": {
+    "amenity": "bench",
+    "armrest": "no",
+    "backrest": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 13119208952,
+  "lat": 64.6561186,
+  "lon": -14.2822401,
+  "tags": {
+    "amenity": "bench",
+    "backrest": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 228756021,
+  "center": {
+    "lat": 64.6623212,
+    "lon": -14.2939497
+  },
+  "nodes": [
+    2374320470,
+    2374320473,
+    2374320475,
+    2374320477,
+    2374320478,
+    2374320479
+  ],
+  "tags": {
+    "name": "Eggin í Gleðivík",
+    "tourism": "artwork"
+  }
+},
+{
+  "type": "way",
+  "id": 411196882,
+  "center": {
+    "lat": 64.7069298,
+    "lon": -14.3135303
+  },
+  "nodes": [
+    4129119673,
+    4129119671,
+    4129119665,
+    4129119663,
+    4129119640,
+    4129119631,
+    4129119625,
+    5431948677,
+    5022496130,
+    5431948671,
+    59698502,
+    5431948678,
+    5431948672,
+    59683424,
+    5431948679,
+    5431948673,
+    5431948674,
+    5431948675,
+    5431948676,
+    4833461367,
+    5431948680,
+    4129119653,
+    59670073,
+    5431948682,
+    5431948683,
+    5431948681,
+    5431948684,
+    5431948685,
+    5431948686,
+    4129119669,
+    5431948687,
+    4129119672,
+    5431948667,
+    4129119700,
+    5431948691,
+    4129119697,
+    4129119694,
+    4129119692,
+    4129119688,
+    4129119683,
+    4129119680,
+    4129119678,
+    4129119676,
+    4129119675,
+    4129119673
+  ],
+  "tags": {
+    "boundary": "protected_area",
+    "leisure": "nature_reserve",
+    "name": "Blábjörg á Berufjarðarströnd",
+    "note:en": "Camping is not allowed",
+    "protect_class": "3",
+    "tourism": "attraction"
+  }
+},
+{
+  "type": "way",
+  "id": 434930448,
+  "center": {
+    "lat": 64.6961803,
+    "lon": -14.2276841
+  },
+  "nodes": [
+    4328389812,
+    4328389813,
+    4328389814,
+    5275242730,
+    5275242729,
+    4328389815,
+    4328389812
+  ],
+  "tags": {
+    "addr:city": "Djúpavogshreppur",
+    "addr:postcode": "766",
+    "addr:street": "Karlsstaðir",
+    "amenity": "cafe",
+    "building": "yes",
+    "diet:vegetarian": "yes",
+    "name": "Havarí",
+    "opening_hours": "11:00-21:00",
+    "website": "https://www.havari.is/about/"
+  }
+},
+{
+  "type": "way",
+  "id": 486518346,
+  "center": {
+    "lat": 64.6556677,
+    "lon": -14.2846424
+  },
+  "nodes": [
+    929513198,
+    6737189385,
+    6737180779,
+    4791223966,
+    4791223967,
+    4791223968,
+    4791223969,
+    4791223970,
+    6737180783,
+    6737180784,
+    4791223972,
+    6737180780,
+    6737180781,
+    6737180782,
+    6737189386,
+    929513198
+  ],
+  "tags": {
+    "addr:city": "Djúpivogur",
+    "addr:housenumber": "4",
+    "addr:postcode": "765",
+    "addr:street": "Vogaland",
+    "caravans": "yes",
+    "drinking_water": "yes",
+    "email": "framtid@simnet.is",
+    "fee": "yes",
+    "internet_access": "yes",
+    "internet_access:fee": "yes",
+    "name": "Djupivogur",
+    "phone": "+354 478 8887",
+    "power_supply": "yes",
+    "sanitary_dump_station": "yes",
+    "shower": "yes",
+    "tents": "yes",
+    "toilets": "yes",
+    "tourism": "camp_site",
+    "website": "https://www.hotelframtid.com/",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 495755151,
+  "center": {
+    "lat": 64.6568138,
+    "lon": -14.2835099
+  },
+  "nodes": [
+    4874888066,
+    4874888049,
+    4874888063,
+    4874888064,
+    4874888066
+  ],
+  "tags": {
+    "amenity": "parking",
+    "parking": "street_side"
+  }
+},
+{
+  "type": "way",
+  "id": 498897721,
+  "center": {
+    "lat": 64.6561732,
+    "lon": -14.2801205
+  },
+  "nodes": [
+    4902383061,
+    4902383062,
+    4902383063,
+    4902383066,
+    4902383068,
+    4902383064,
+    4902383067,
+    4902383065,
+    4902383061
+  ],
+  "tags": {
+    "addr:housename": "Framtíð",
+    "addr:housenumber": "4",
+    "addr:postcode": "765",
+    "addr:street": "Vogaland",
+    "building": "yes",
+    "name": "Hótel Framtíð",
+    "phone": "+354 478 8887",
+    "ref:HNITNUM": "10064156",
+    "source:addr": "Staðfangaskrá",
+    "tourism": "hotel",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "way",
+  "id": 506126813,
+  "center": {
+    "lat": 64.6557913,
+    "lon": -14.2870666
+  },
+  "nodes": [
+    6969771623,
+    6969771624,
+    4959049163,
+    4959049164,
+    4959049162,
+    4959049161,
+    6969771625,
+    6969771626,
+    6969771623
+  ],
+  "tags": {
+    "amenity": "place_of_worship",
+    "building": "church",
+    "check_date": "2024-06-02",
+    "denomination": "evangelical",
+    "name": "Djúpavogskirkja eldri",
+    "religion": "christian",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 506126830,
+  "center": {
+    "lat": 64.6547523,
+    "lon": -14.2902891
+  },
+  "nodes": [
+    4959049737,
+    4959049734,
+    4959049735,
+    4959049736,
+    4959049737
+  ],
+  "tags": {
+    "addr:housenumber": "3",
+    "addr:postcode": "765",
+    "addr:street": "Búland",
+    "amenity": "fire_station",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 506126837,
+  "center": {
+    "lat": 64.6534055,
+    "lon": -14.2988658
+  },
+  "nodes": [
+    4959049768,
+    4959049783,
+    4959049773,
+    4959049784,
+    4959049787,
+    4959049774,
+    4959049780,
+    4959049769,
+    4959049779,
+    4959049776,
+    4959049770,
+    4959049781,
+    4959049772,
+    4959049786,
+    4959049785,
+    4959049771,
+    4959049782,
+    4959049775,
+    4959049777,
+    4959049778,
+    4959049768
+  ],
+  "tags": {
+    "amenity": "place_of_worship",
+    "building": "church",
+    "name": "Djúpavogskirkja",
+    "religion": "christian"
+  }
+},
+{
+  "type": "way",
+  "id": 513958805,
+  "center": {
+    "lat": 64.6984762,
+    "lon": -14.2559240
+  },
+  "nodes": [
+    5022381756,
+    5022381755,
+    5022381754,
+    5022381753,
+    5022381752,
+    5022381751,
+    5022381750,
+    5022381749,
+    5022381756
+  ],
+  "tags": {
+    "addr:housename": "Beruneskirkja",
+    "addr:postcode": "766",
+    "addr:street": "Beruneskirkja",
+    "amenity": "place_of_worship",
+    "building": "church",
+    "check_date": "2023-08-29",
+    "name": "Beruneskirkja",
+    "ref:HNITNUM": "10063411",
+    "religion": "christian",
+    "source": "http://www.kirkjukort.net/kirkjur/beruneskirkja_053.html",
+    "source:addr": "Staðfangaskrá"
+  }
+},
+{
+  "type": "way",
+  "id": 523780136,
+  "center": {
+    "lat": 64.5901049,
+    "lon": -14.1633336
+  },
+  "nodes": [
+    5098391544,
+    5098391541,
+    5098391542,
+    5098391543,
+    5098391544
+  ],
+  "tags": {
+    "amenity": "place_of_worship",
+    "architect": "Lúðvík Jónsson & Magnús Jónsson",
+    "building": "church",
+    "name": "Papeyjarkirkja",
+    "religion": "christian",
+    "start_date": "1904"
+  }
+},
+{
+  "type": "way",
+  "id": 563699881,
+  "center": {
+    "lat": 64.7071215,
+    "lon": -14.3142348
+  },
+  "nodes": [
+    5431948655,
+    5431948654,
+    5431948653,
+    5431948652,
+    5431948651,
+    5431948650,
+    5431948646,
+    5431948649,
+    5431948648,
+    5431948655
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "name:en": "Green Rock Parking Area",
+    "parking": "surface",
+    "surface": "ground"
+  }
+},
+{
+  "type": "way",
+  "id": 658284740,
+  "center": {
+    "lat": 64.6538691,
+    "lon": -14.3416266
+  },
+  "nodes": [
+    6164628597,
+    6164628598,
+    6164628599,
+    6164628600,
+    6164628601,
+    6164628602,
+    6164628597
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 658286703,
+  "center": {
+    "lat": 64.6584221,
+    "lon": -14.3258511
+  },
+  "nodes": [
+    2590197049,
+    6164649810,
+    6164649811,
+    6164649814,
+    6164649812,
+    6164649813,
+    2590197049
+  ],
+  "tags": {
+    "amenity": "parking"
+  }
+},
+{
+  "type": "way",
+  "id": 658286718,
+  "center": {
+    "lat": 64.6572694,
+    "lon": -14.3440615
+  },
+  "nodes": [
+    6164649801,
+    6164649874,
+    6164649875,
+    6164649876,
+    6164649877,
+    6164649801
+  ],
+  "tags": {
+    "amenity": "parking"
+  }
+},
+{
+  "type": "way",
+  "id": 720033033,
+  "center": {
+    "lat": 64.6591602,
+    "lon": -14.3987895
+  },
+  "nodes": [
+    6758003347,
+    6758003348,
+    6758003349,
+    6758003350,
+    6758003351,
+    6758003352,
+    6758003347
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 727317598,
+  "center": {
+    "lat": 64.6544770,
+    "lon": -14.2807409
+  },
+  "nodes": [
+    6816074993,
+    6816074994,
+    6816074995,
+    6816074996,
+    6816074993
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 727317600,
+  "center": {
+    "lat": 64.6536665,
+    "lon": -14.2984162
+  },
+  "nodes": [
+    6816074998,
+    6816074999,
+    6816075000,
+    6816075001,
+    6816074998
+  ],
+  "tags": {
+    "amenity": "parking"
+  }
+},
+{
+  "type": "way",
+  "id": 1033822192,
+  "center": {
+    "lat": 64.6562018,
+    "lon": -14.2807099
+  },
+  "nodes": [
+    9524267012,
+    9524267013,
+    9524267014,
+    9524267015,
+    9524267012
+  ],
+  "tags": {
+    "access": "customers",
+    "amenity": "parking",
+    "capacity": "4",
+    "capacity:disabled": "1",
+    "fee": "no",
+    "parking": "surface",
+    "surface": "asphalt"
+  }
+},
+{
+  "type": "way",
+  "id": 1279750714,
+  "center": {
+    "lat": 64.6976705,
+    "lon": -14.2541126
+  },
+  "nodes": [
+    11879714300,
+    11881000337,
+    11879714297,
+    11881000335,
+    11881000338,
+    11879714307,
+    1925882614,
+    11880886317,
+    11879714301,
+    11879714304,
+    11879714300
+  ],
+  "tags": {
+    "caravans": "yes",
+    "dog": "yes",
+    "drinking_water": "yes",
+    "email": "berunes@hostel.is",
+    "fee": "yes",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Camping Berunes",
+    "opening_hours": "Apr 1 - Oct 1",
+    "phone": "+354 478 8988",
+    "picnic_table": "yes",
+    "power_supply": "yes",
+    "shower": "yes",
+    "static_caravans": "yes",
+    "tents": "yes",
+    "toilets": "yes",
+    "tourism": "camp_site",
+    "website": "https://berunes.is/"
+  }
+},
+{
+  "type": "way",
+  "id": 1360310598,
+  "center": {
+    "lat": 64.6724000,
+    "lon": -14.3381228
+  },
+  "nodes": [
+    2960267953,
+    12592683991,
+    12592683992,
+    12592683993,
+    12592683994,
+    12592683995,
+    12592683996,
+    2960267953
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface",
+    "surface": "gravel"
+  }
+},
+{
+  "type": "way",
+  "id": 1360310733,
+  "center": {
+    "lat": 64.5992696,
+    "lon": -14.4501684
+  },
+  "nodes": [
+    6652697163,
+    12592613854,
+    12592613855,
+    12592613856,
+    12592613857,
+    12592613858,
+    12592613859,
+    12592613860,
+    12592613861,
+    12592613862,
+    6652697163
+  ],
+  "tags": {
+    "access": "yes",
+    "amenity": "parking",
+    "fee": "no",
+    "parking": "surface"
+  }
+},
+{
+  "type": "way",
+  "id": 1367651055,
+  "center": {
+    "lat": 64.6569220,
+    "lon": -14.2828107
+  },
+  "nodes": [
+    12666537316,
+    12666537315
+  ],
+  "tags": {
+    "barrier": "wall",
+    "tourism": "artwork"
+  }
+},
+{
+  "type": "way",
+  "id": 1367652661,
+  "center": {
+    "lat": 64.6573335,
+    "lon": -14.2825917
+  },
+  "nodes": [
+    12666545676,
+    12666545675,
+    12666545674,
+    12666545673,
+    12666545672,
+    12666545676
+  ],
+  "tags": {
+    "amenity": "parking",
+    "parking": "street_side"
+  }
+},
+{
+  "type": "relation",
+  "id": 17013084,
+  "center": {
+    "lat": 64.6529715,
+    "lon": -14.2805884
+  },
+  "members": [
+    {
+      "type": "way",
+      "ref": 1238825674,
+      "role": "outer"
+    },
+    {
+      "type": "way",
+      "ref": 1238825673,
+      "role": "outer"
+    }
+  ],
+  "tags": {
+    "addr:city": "Djúpivogur",
+    "addr:housenumber": "15B",
+    "addr:postcode": "765",
+    "addr:street": "Hammersminni",
+    "amenity": "kindergarten",
+    "name": "Leikskólinn Bjarkatún",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

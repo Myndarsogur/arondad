@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ást & bylting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    /* Þetta er fyrir matseðilinn sem við sækjum */
+    #menu {
+      margin: 0;
+      padding: 0;
+    }
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #000;
+      margin: 0 5px;
+    }
+    a:hover {
+      text-decoration: none;
+      font-weight: bolder;
+    }
+    .menu-container {
+      margin-top: 20px;
+    }
+    .main-content {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hér mun matseðillinn birtast -->
+  <div id="menu"></div>
+
+  
+
+
+
+  <!-- Aðalefni síðunnar (hér getur þú sett hvað sem er) -->
+  <div class="main-content">
+    <<h2>Að teikna</h2>
+    <p>
+        Svo er það að teikna. Það eru teikn á lofti. Eins og í Sistínsku kapellunni. Heill heimur sem er hægt að draga fram á marga vegu á marga hluti.
+    </p>
+    <p>
+        Hvað viltu? Þetta skiptir ekki öllu. Hvað ertu með? Hvað kanntu? Þetta eru allt spurningar sem er mikilvægt að setja fram til þess að átta sig á því hvar þú stendur hverju sinni.
+    </p>
+    <p>
+        Þitt hlutverk í verkefninu getur aðeins verið það sem þú hefur að gefa og það sem þú hefur áhuga á að stefna að. Það þarf að innihalda metnaðinn þinn til þess að það sé virði í verkefninu. Virði fyrir þig og virði fyrir verkefnið, annars hrynur allt.
+    </p>
+    <p>
+        Hrynur. Það er gott að vinna í hrinum. Leyfa sér að hrynja inn í þær með stöðugum hrynjanda. Það hvernig eitthvað byggist upp, hvernig myndirnar raðast ofan á hvor aðra. Hvað það gerir, hvernig það lætur þér líða, hvað sagan segir.
+    </p>
+    <p>
+        Þess vegna teiknum við. Til þess að gera það. Ef það væri fyrir eitthvað annað þá væri það til einskis. En við erum ekki að þessu til einskis. Við erum að þessu til eilífðar, af því það er það sem við viljum gera.
+    </p>
+    <p>
+        Hvað er teiknað? Það sem við sjáum, það sem við viljum sjá, það sem við viljum að sjáist og það sem við viljum hylja. Við teiknum upp sannleika sögunnar, til þess að hylja það sem er ósatt, það sem á ekki við af því það er ekki sagan.
+    </p>
+    <p>
+        Hvað sem sagan er, en þá þekkjum við alltaf söguna, allar lengdir hennar og form.
+    </p>
+    
+
+
+  </div>
+    <!-- JavaScript kóði til að sækja menu.html og stinga honum inn í #menu -->
+    <script>
+      // Sækir 'menu.html' (verður að vera í sömu möppu eða réttum stíg)
+      fetch('menu.html')
+        .then(response => response.text())
+        .then(data => {
+          // Setur textainnihaldið (HTML) inn í #menu
+          document.getElementById('menu').innerHTML = data;
+        })
+        .catch(error => console.error('Villa við að sækja menu.html:', error));
+    </script>
+  
+  </body>
+  </html>
+</body>
+</html>

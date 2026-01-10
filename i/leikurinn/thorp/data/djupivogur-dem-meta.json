@@ -1,0 +1,15 @@
+{
+  "source": "https://s3.amazonaws.com/elevation-tiles-prod/terrarium",
+  "zoom": 14,
+  "x_range": [
+    7539,
+    7543
+  ],
+  "y_range": [
+    4298,
+    4302
+  ],
+  "tile_size": 256,
+  "min_elev_m": -26.015625,
+  "max_elev_m": 1081.453125
+}

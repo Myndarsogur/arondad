@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Djúpivogur – 2D loftkort og gögn</title>
+  <meta name="description" content="Gagnvirkt 2D loftkort af Djúpavogi byggt á OSM og Terrarium DEM gögnum með vega-, bygginga- og áhugapunktalitum." />
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+    body {
+      margin: 0;
+      background: #0b0d13;
+      color: #e9edf4;
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      padding: 10px 16px;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20,24,32,0.82);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      z-index: 2;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    #map-wrap {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    canvas#map {
+      max-width: 100%;
+      max-height: calc(100vh - 70px);
+      background: #0b0d13;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    #legend {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(10,12,18,0.8);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    #legend div { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    #legend span.color { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Djúpivogur – 2D loftkort og gögn</h1>
+    <div style="font-size:13px;color:#9fb1c8">Gögn: OSM &amp; Terrarium DEM</div>
+  </header>
+  <div id="map-wrap">
+    <canvas id="map" width="1400" height="1200"></canvas>
+    <div id="legend">
+      <div><span class="color" style="background:#0f6ba8"></span> Sjór</div>
+      <div><span class="color" style="background:#3b8f5a"></span> Land</div>
+      <div><span class="color" style="background:#111"></span> Vegir</div>
+      <div><span class="color" style="background:#bfc7d0"></span> Byggingar</div>
+      <div><span class="color" style="background:#f06292"></span> POI (veitingar o.fl.)</div>
+    </div>
+  </div>
+
+  <script type="module">
+    const canvas = document.getElementById('map');
+    const ctx = canvas.getContext('2d');
+    const dataBase = '../thorp/data-new/';
+
+    // BBOX fyrir miðsvæði Djúpavogs (miðja þorpið)
+    const bounds = { minLat: 64.642, maxLat: 64.676, minLon: -14.333, maxLon: -14.245 };
+    const R = 6378137;
+    const mercX = lon => R * (lon * Math.PI / 180);
+    const mercY = lat => R * Math.log(Math.tan(Math.PI / 4 + (lat * Math.PI / 180) / 2));
+    const xMin = mercX(bounds.minLon), xMax = mercX(bounds.maxLon);
+    const yMin = mercY(bounds.minLat), yMax = mercY(bounds.maxLat);
+
+    function llToXY(lat, lon) {
+      const x = (mercX(lon) - xMin) / (xMax - xMin);
+      const y = 1 - (mercY(lat) - yMin) / (yMax - yMin);
+      return { x, y };
+    }
+
+    const roadStyle = {
+      motorway: { w: 14, c: '#f4a261' },
+      trunk: { w: 12, c: '#f4a261' },
+      primary: { w: 11, c: '#f2c14e' },
+      secondary: { w: 10, c: '#f6d55c' },
+      tertiary: { w: 8, c: '#e5e7eb' },
+      residential: { w: 7, c: '#e5e7eb' },
+      service: { w: 6, c: '#cbd2dc' },
+      track: { w: 4, c: '#9aa4b3' },
+      path: { w: 3, c: '#8b93a1' },
+      footway: { w: 2.6, c: '#8b93a1' },
+      default: { w: 6, c: '#dcdcdc' },
+    };
+
+    const poiColors = {
+      restaurant: '#ff7043',
+      cafe: '#ffb74d',
+      fast_food: '#ff8a65',
+      pub: '#f06292',
+      bar: '#f06292',
+      fuel: '#ffa000',
+      hotel: '#ba68c8',
+      hostel: '#ba68c8',
+      guest_house: '#ba68c8',
+      camp_site: '#81c784',
+      museum: '#90a4ae',
+      viewpoint: '#64b5f6',
+      attraction: '#64b5f6',
+      information: '#4db6ac',
+      post_office: '#ffca28',
+      police: '#42a5f5',
+      fire_station: '#ef5350',
+      hospital: '#e53935',
+      clinic: '#e53935',
+      place_of_worship: '#9575cd',
+      theatre: '#ce93d8',
+      kindergarten: '#aed581',
+      school: '#aed581',
+      charging_station: '#26c6da',
+      parking: '#90a4ae',
+      ferry_terminal: '#4fc3f7',
+      default: '#f06292'
+    };
+
+    let demImg = null;
+    async function loadImage(src) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    }
+
+    async function loadData() {
+      const [osmRes, poiRes, dem] = await Promise.all([
+        fetch(dataBase + 'djupivogur-osm.json').then(r => r.json()),
+        fetch(dataBase + 'djupivogur-poi.json').then(r => r.json()),
+        loadImage(dataBase + 'djupivogur-dem.png')
+      ]);
+      demImg = dem;
+      return { osm: osmRes, poi: poiRes };
+    }
+
+    function drawDEM() {
+      if (!demImg) return;
+      const tmp = document.createElement('canvas');
+      tmp.width = canvas.width;
+      tmp.height = canvas.height;
+      const tctx = tmp.getContext('2d');
+      tctx.drawImage(demImg, 0, 0, tmp.width, tmp.height);
+      const img = tctx.getImageData(0, 0, tmp.width, tmp.height);
+      const data = img.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const v = data[i]; // greyscale
+        const elevNorm = v / 255;
+        let r, g, b;
+        if (elevNorm < 0.45) {
+          // sjór
+          r = 15; g = 107; b = 168;
+        } else {
+          // land
+          const t = (elevNorm - 0.45) / 0.55;
+          r = 30 + 80 * t;
+          g = 110 + 90 * t;
+          b = 70 + 30 * t;
+        }
+        data[i] = r; data[i+1] = g; data[i+2] = b; data[i+3] = 255;
+      }
+      ctx.putImageData(img, 0, 0);
+    }
+
+    function drawRoads(ways) {
+      ways.filter(w => w.tags?.highway && w.geometry?.length > 1).forEach(w => {
+        const style = roadStyle[w.tags.highway] || roadStyle.default;
+        // undirstrik/hali fyrir skýrleika
+        ctx.lineWidth = style.w + 4;
+        ctx.strokeStyle = 'rgba(0,0,0,0.75)';
+        ctx.beginPath();
+        w.geometry.forEach((p, i) => {
+          const pos = llToXY(p.lat, p.lon);
+          const x = pos.x * canvas.width;
+          const y = pos.y * canvas.height;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        ctx.lineWidth = style.w;
+        ctx.strokeStyle = style.c;
+        ctx.stroke();
+      });
+    }
+
+    function drawBuildings(ways) {
+      ctx.fillStyle = '#bfc7d0';
+      ctx.strokeStyle = 'rgba(17,17,17,0.25)';
+      ctx.lineWidth = 1;
+      ways.filter(w => w.tags?.building && w.geometry?.length >= 3).forEach(w => {
+        ctx.beginPath();
+        w.geometry.forEach((p, i) => {
+          const pos = llToXY(p.lat, p.lon);
+          const x = pos.x * canvas.width;
+          const y = pos.y * canvas.height;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      });
+    }
+
+    function drawPois(pois) {
+      const allowed = new Set([
+        'ferry_terminal','fuel','restaurant','cafe','fast_food','pub','bar','hotel','hostel','guest_house','camp_site',
+        'museum','viewpoint','attraction','information','post_office','police','fire_station','hospital','clinic',
+        'place_of_worship','theatre','kindergarten','school','charging_station','parking'
+      ]);
+      ctx.font = '18px system-ui, sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.textAlign = 'left';
+      ctx.lineWidth = 2;
+      pois.forEach(p => {
+        const tags = p.tags || {};
+        const type = tags.amenity || tags.tourism;
+        if (!allowed.has(type)) return;
+        const name = tags.name || type;
+        const lat = p.lat ?? p.center?.lat ?? p.geometry?.[0]?.lat;
+        const lon = p.lon ?? p.center?.lon ?? p.geometry?.[0]?.lon;
+        if (lat === undefined || lon === undefined) return;
+        const pos = llToXY(lat, lon);
+        const x = pos.x * canvas.width;
+        const y = pos.y * canvas.height;
+        const c = poiColors[type] || poiColors.default;
+        ctx.fillStyle = c;
+        ctx.strokeStyle = '#0b0d13';
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#e9edf4';
+        ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+        ctx.lineWidth = 3;
+        ctx.strokeText(name, x + 12, y);
+        ctx.fillText(name, x + 12, y);
+      });
+    }
+
+    function resizeCanvas() {
+      const maxW = window.innerWidth - 20;
+      const maxH = window.innerHeight - 90;
+      const aspect = canvas.width / canvas.height;
+      let w = maxW;
+      let h = w / aspect;
+      if (h > maxH) {
+        h = maxH;
+        w = h * aspect;
+      }
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
+    }
+
+    async function init() {
+      resizeCanvas();
+      const { osm, poi } = await loadData();
+      drawDEM();
+      const ways = osm.elements?.filter?.(e => e.type === 'way') || [];
+      drawBuildings(ways);
+      drawRoads(ways);
+      const pois = poi.elements || [];
+      drawPois(pois);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    init().catch(err => console.error(err));
+  </script>
+</body>
+</html>

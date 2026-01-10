@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ást & bylting</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    /* Þetta er fyrir matseðilinn sem við sækjum */
+    #menu {
+      margin: 0;
+      padding: 0;
+    }
+    pre {
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: #000;
+      margin: 0 5px;
+    }
+    a:hover {
+      text-decoration: none;
+      font-weight: bolder;
+    }
+    .menu-container {
+      margin-top: 20px;
+    }
+    .main-content {
+      margin: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hér mun matseðillinn birtast -->
+  <div id="menu"></div>
+
+  <!-- Aðalefni síðunnar -->
+  <div class="main-content">
+    <h2>Hugmyndavinna</h2>
+    <p>
+        Við fjöllum um hugmyndavinnu: hvaðan hugmyndir koma, hvað hugmyndir eru, og hvernig þær eru ekkert nema 
+hugarburður þar til að þær eru settar fram. Við skoðum hvernig þær eru settar fram og af hverju setur þær í annað 
+samhengi.
+    </p>
+    <p>
+        Hvaða samhengi viljum við að þær búi í? Hvaða metnað höfum við persónulega og hvaða metnað hafa aðrir sem geta nýst okkur til þess að ná markmiðinu?
+    </p>
+    <p>
+        Hvað langar okkur að gera? Hvers vegna langar okkur að gera það? Hvern er það fyrir? Á endanum verður það að vera fyrir þig. Hvort sem það er ferlið eða afurðin. En við búum í samfélagi eins og skáldið sagði.
+    </p>
+
+    <h2>Skoðanir og gagnrýni</h2>
+    <p>
+        Við höfum verið að horfa og höfum skoðanir. Aðrir hafa horft og hafa skoðanir. Sumar eru góðar, aðrar erfiðar og stundum eru þær svo úti á þekju að það er næstum sorglegt. En það er leikurinn. Að taka á móti skoðunum af öllum tegundum og formum og svo framkvæma eitthvað sem verður að því sem við þurfum.
+    </p>
+
+    <h2>Internethefti</h2>
+    <p>
+        Í þessu hefti, internethefti, heftað á netið, heftum við ekki neitt. Við erum óheft. Leyfum okkur að fara þangað sem við trúum að verkefnið geti farið. Þangað sem það kannski átti ekki að fara, eða mátti ekki fara. Við förum þangað sem enginn hefur farið áður. Enginn.
+    </p>
+  </div>
+
+  <!-- JavaScript kóði til að sækja menu.html og stinga honum inn í #menu -->
+  <script>
+    // Sækir 'menu.html' (verður að vera í sömu möppu eða réttum stíg)
+    fetch('menu.html')
+      .then(response => response.text())
+      .then(data => {
+        // Setur textainnihaldið (HTML) inn í #menu
+        document.getElementById('menu').innerHTML = data;
+      })
+      .catch(error => console.error('Villa við að sækja menu.html:', error));
+  </script>
+
+</body>
+</html>

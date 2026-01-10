@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="is">
+<head>
+  <meta charset="UTF-8">
+  <title>Myndband — exhibition cut</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --bg: #06060a;
+      --panel: rgba(14,14,22,0.72);
+      --accent: #9bf0ff;
+      --text: #f2f7ff;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 20%, #0e1224, #06060a 60%), #06060a;
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+    }
+    .wrap {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 14px;
+      padding: 16px;
+      height: 100%;
+    }
+    .stage {
+      position: relative;
+      background: var(--panel);
+      border-radius: 14px;
+      box-shadow: 0 14px 48px rgba(0,0,0,0.45);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+    }
+    .stage img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .panel {
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+    }
+    .panel h1 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.01em;
+    }
+    .panel .meta {
+      font-size: 13px;
+      color: rgba(242,247,255,0.75);
+    }
+    .panel button {
+      appearance: none;
+      border: 1px solid rgba(155,240,255,0.65);
+      background: linear-gradient(135deg, rgba(155,240,255,0.2), rgba(155,240,255,0.05));
+      color: var(--text);
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+    .panel button:hover { border-color: rgba(155,240,255,0.9); }
+    .panel button:active { transform: translateY(1px); }
+    @media (max-width: 960px) {
+      .wrap { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+      .stage { min-height: 45vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="background"></div>
+  <div id="floating-frame"></div>
+  <div id="fixed-frame"></div>
+  <audio id="player" autoplay loop></audio>
+  <img id="image" src="Bakgrunnsmyndir/mynd1.avif" alt="mynd">
+
+  <div class="click-zone left-zone" onclick="previousImage()"></div>
+  <div class="click-zone right-zone" onclick="nextImage()"></div>
+
+  <script>
+    const totalImages = 899;
+    let currentImage = 1;
+
+    // Skilgreindu hópana og lögin
+    const songGroups = [
+    { start: 1, end: 188, song: "Login/lag1.mp3" },
+      { start: 189, end: 259, song: "Login/lag2.mp3" },
+      { start: 260, end: 416, song: "Login/lag3.mp3" },
+      { start: 417, end: 480, song: "Login/lag4.mp3" },
+      { start: 481, end: 578, song: "Login/lag5.mp3" },
+      { start: 579, end: 728, song: "Login/lag6.mp3" },
+      { start: 729, end: 788, song: "Login/lag7.mp3" },
+      { start: 789, end: 899, song: "Login/lag8.mp3" },
+    ];
+
+    const player = document.getElementById('player');
+    const image = document.getElementById('image');
+    const background = document.getElementById('background');
+    const floatingFrame = document.getElementById('floating-frame');
+    const fixedFrame = document.getElementById('fixed-frame');
+    let currentGroup = null;
+    let canPlay = false;
+    let autoTimer = null;
+
+    function updateImage() {
+      image.src = `Bakgrunnsmyndir/mynd${currentImage}.avif`;
+      updateAudio();
+    }
+
+    function updateAudio() {
+      const group = songGroups.find(g => currentImage >= g.start && currentImage <= g.end);
+      if (group !== currentGroup) {
+        currentGroup = group;
+        player.src = group.song;
+      }
+      if (canPlay) {
+        player.play().catch(() => {});
+      } else {
+        player.pause();
+      }
+    }
+
+    function resetAuto() {
+      if (autoTimer) clearInterval(autoTimer);
+      autoTimer = setInterval(() => nextImage(true), 5000);
+    }
+
+    function nextImage(fromAuto = false) {
+      if (currentImage < totalImages) {
+        currentImage++;
+        updateImage();
+        if (!fromAuto) resetAuto();
+      }
+    }
+
+    function previousImage() {
+      if (currentImage > 1) {
+        currentImage--;
+        updateImage();
+        resetAuto();
+      }
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'Enter') {
+        nextImage();
+      } else if (event.key === 'ArrowLeft' || event.key === 'Backspace') {
+        previousImage();
+      }
+    });
+
+    // Cycle background images every 3 seconds
+    const totalBackgrounds = 899; // Assume Bakgrunnsmyndir group has 75 images
+    let currentBackground = 1;
+
+    function preloadImage(src, callback) {
+      const img = new Image();
+      img.onload = callback;
+      img.src = src;
+    }
+
+    function updateBackground() {
+      const nextBackgroundSrc = `Bakgrunnsmyndir/mynd${currentBackground}.avif`;
+      preloadImage(nextBackgroundSrc, () => {
+        background.style.backgroundImage = `url('${nextBackgroundSrc}')`;
+        background.classList.add('loaded'); // Apply fade-in effect
+      });
+      background.classList.remove('loaded'); // Prepare for next fade
+      currentBackground = currentBackground < totalBackgrounds ? currentBackground + 1 : 1;
+    }
+
+    setInterval(updateBackground, 100);
+
+    // Initialize the first background
+    updateBackground();
+
+    // Floating frame logic
+    let currentFloatingImage = 1;
+
+    function updateFloatingFrame() {
+      floatingFrame.style.backgroundImage = `url('Bakgrunnsmyndir/mynd${currentFloatingImage}.avif')`;
+      currentFloatingImage = currentFloatingImage < totalBackgrounds ? currentFloatingImage + 1 : 1;
+
+      // Randomize position
+      const x = Math.random() * (window.innerWidth - 150);
+      const y = Math.random() * (window.innerHeight - 150);
+      floatingFrame.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    setInterval(updateFloatingFrame, 3000);
+
+    // Initialize the floating frame
+    updateFloatingFrame();
+
+    // Fixed frame logic
+    let currentFixedImage = 1;
+
+    function updateFixedFrame() {
+      fixedFrame.style.backgroundImage = `url('Bakgrunnsmyndir/mynd${currentFixedImage}.avif')`;
+      currentFixedImage = currentFixedImage < totalBackgrounds ? currentFixedImage + 1 : 1;
+    }
+
+    // Cycle images in the fixed frame every 3 seconds
+    setInterval(updateFixedFrame, 3000);
+
+    // Initialize the fixed frame
+    updateFixedFrame();
+
+    // Byrja með fyrstu mynd og lag
+    updateImage();
+    resetAuto();
+
+    // Unlock audio once, then honor start/stop messages
+    const unlock = () => {
+      if (canPlay) return;
+      canPlay = true;
+      updateAudio();
+    };
+    ['click','touchstart','pointerdown','keydown'].forEach(evt => {
+      window.addEventListener(evt, unlock, { once: true, capture: true });
+    });
+
+    // Respond to parent messages for start/stop
+    window.addEventListener('message', (event) => {
+      if (!event.data || !event.data.type) return;
+      if (event.data.type === 'start-music') {
+        canPlay = true;
+        updateAudio();
+        resetAuto();
+      } else if (event.data.type === 'stop-music') {
+        canPlay = false;
+        player.pause();
+        if (autoTimer) clearInterval(autoTimer);
+      }
+    });
+
+    // Fallback: pause when iframe/tab loses focus
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        canPlay = false;
+        player.pause();
+        if (autoTimer) clearInterval(autoTimer);
+      }
+    });
+    window.addEventListener('blur', () => {
+      canPlay = false;
+      player.pause();
+      if (autoTimer) clearInterval(autoTimer);
+    });
+  </script>
+
+</body>
+</html>
