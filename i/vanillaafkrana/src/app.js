@@ -123,7 +123,7 @@ function updateActiveChapter() {
     if (completionColor) row.style.setProperty("--completed-color", completionColor);
     row.querySelector("i").textContent = active && !audio.paused ? "Ⅱ" : "▶";
   });
-  $("#play-toggle").textContent = audio.paused ? "▶" : "Ⅱ";
+  $("#play-toggle").classList.toggle("is-playing", !audio.paused);
   $("#play-toggle").setAttribute("aria-label", audio.paused ? "Spila" : "Gera hlé");
   $("#player").classList.toggle("is-playing", !audio.paused);
 }

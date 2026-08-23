@@ -210,8 +210,8 @@ $("#contents-close").addEventListener("click", closeContents);
 $("#seek").addEventListener("input", (event) => { if (audio.duration) { setFollowing(true); audio.currentTime=Number(event.target.value)/100*audio.duration; syncPageToAudio(); } });
 
 audio.addEventListener("loadedmetadata", () => { $("#duration").textContent=formatTime(audio.duration); $(".flow-audio-bar").classList.remove("is-loading"); if (pendingPlayback) { pendingPlayback=false; audio.play().catch(()=>{}); } });
-audio.addEventListener("play", () => { $("#play").textContent="Ⅱ"; $("#play").setAttribute("aria-label","Gera hlé"); $(".flow-audio-bar").classList.add("is-playing"); });
-audio.addEventListener("pause", () => { $("#play").textContent="▶"; $("#play").setAttribute("aria-label","Spila"); $(".flow-audio-bar").classList.remove("is-playing"); });
+audio.addEventListener("play", () => { $("#play").classList.add("is-playing"); $("#play").setAttribute("aria-label","Gera hlé"); $(".flow-audio-bar").classList.add("is-playing"); });
+audio.addEventListener("pause", () => { $("#play").classList.remove("is-playing"); $("#play").setAttribute("aria-label","Spila"); $(".flow-audio-bar").classList.remove("is-playing"); });
 audio.addEventListener("timeupdate", () => { $("#elapsed").textContent=formatTime(audio.currentTime); $("#seek").value=audio.duration ? String(audio.currentTime/audio.duration*100) : "0"; syncPageToAudio(); });
 audio.addEventListener("ended", () => {
   const current = pages[pageIndex];

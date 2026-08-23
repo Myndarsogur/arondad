@@ -156,8 +156,8 @@ audio.addEventListener("loadedmetadata", () => {
   if (pendingSeek) { audio.currentTime = pageStart(pendingSeek, audio.duration); pendingSeek = null; }
   $("#duration").textContent = formatTime(audio.duration);
 });
-audio.addEventListener("play", () => { $("#play").textContent = "Ⅱ"; $("#play").setAttribute("aria-label", "Gera hlé"); });
-audio.addEventListener("pause", () => { $("#play").textContent = "▶"; $("#play").setAttribute("aria-label", "Spila"); });
+audio.addEventListener("play", () => { $("#play").classList.add("is-playing"); $("#play").setAttribute("aria-label", "Gera hlé"); });
+audio.addEventListener("pause", () => { $("#play").classList.remove("is-playing"); $("#play").setAttribute("aria-label", "Spila"); });
 audio.addEventListener("timeupdate", () => {
   $("#elapsed").textContent = formatTime(audio.currentTime);
   $("#seek").value = audio.duration ? String(audio.currentTime / audio.duration * 100) : "0";
