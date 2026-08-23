@@ -7,12 +7,12 @@
     <meta name="description" content="Vanilla af krana — einfaldur texta- og hljóðspilari." />
     <title>Vanilla af krana — einföld útgáfa</title>
     <link rel="stylesheet" href="./book.css?v=20260823-play-icon" />
-    <link rel="stylesheet" href="./flow.css?v=20260823-play-icon" />
+    <link rel="stylesheet" href="./flow.css?v=20260823-horizontal-scroll-2" />
     <link rel="stylesheet" href="./einfalt.css?v=20260823-simple" />
   </head>
-  <body class="simple-ui">
+  <body class="simple-ui scroll-ui">
     <header class="book-header">
-      <a href="./einfalt.html" class="book-title">Vanilla af krana</a>
+      <a href="./index.html" class="book-title">Vanilla af krana</a>
       <button id="contents-button" class="text-button" type="button" aria-expanded="false" aria-controls="contents">Efnisyfirlit</button>
     </header>
 
@@ -22,17 +22,9 @@
     </aside>
 
     <main class="reader flow-reader" id="reader">
-      <article class="page flow-page" id="page" aria-live="polite">
-        <div class="page-running-head"><span id="page-book"></span><span id="page-file"></span></div>
-        <div class="page-copy" id="page-copy">
-          <p class="chapter-label" id="chapter-label"></p>
-          <h1 id="chapter-title"></h1>
-          <div id="page-text" class="page-text"></div>
-        </div>
-        <footer class="page-footer"><span id="track-progress"></span><span id="page-number"></span></footer>
-        <button id="previous-page" class="flow-page-edge flow-page-edge-left" type="button" aria-label="Fyrri síða"><span aria-hidden="true">‹</span></button>
-        <button id="next-page" class="flow-page-edge flow-page-edge-right" type="button" aria-label="Næsta síða"><span aria-hidden="true">›</span></button>
-      </article>
+      <div class="page-strip" id="page-strip" aria-live="polite" aria-label="Textasíður"></div>
+      <button id="previous-page" class="flow-page-edge flow-page-edge-left" type="button" aria-label="Fyrri síða"><span aria-hidden="true">‹</span></button>
+      <button id="next-page" class="flow-page-edge flow-page-edge-right" type="button" aria-label="Næsta síða"><span aria-hidden="true">›</span></button>
     </main>
 
     <footer class="audio-bar flow-audio-bar" aria-label="Hljóðspilari">
@@ -45,6 +37,6 @@
     </footer>
 
     <audio id="audio" preload="metadata"></audio>
-    <script type="module" src="./src/flow-player.js?v=20260823-simple"></script>
+    <script type="module" src="./src/flow-player.js?v=20260823-horizontal-scroll"></script>
   </body>
 </html>

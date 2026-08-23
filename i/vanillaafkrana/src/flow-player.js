@@ -5,8 +5,10 @@ import { durationFor, formatDuration } from "./durations.js";
 const $ = (selector) => document.querySelector(selector);
 const audio = $("#audio");
 const pageElement = $("#page");
+const pageStrip = $("#page-strip");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 const simpleMode = document.body.classList.contains("simple-ui");
+const scrollMode = document.body.classList.contains("scroll-ui") && pageStrip;
 const FLOW_PAGE_WORDS = Math.min(DEFAULT_PAGE_WORDS, 150);
 
 let manuscript = {};
@@ -17,6 +19,8 @@ let loadedTrack = null;
 let pendingPlayback = false;
 let followAudio = true;
 let turning = false;
+let scrollTargetIndex = null;
+let scrollTargetTimer = null;
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>'"]/g, (character) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", "'":"&#39;", '"':"&quot;" }[character]));
@@ -106,9 +110,64 @@ function isPoetry(text) {
   return shortLines / lines.length >= .65;
 }
 
-function renderPage(nextIndex, direction = 0, { manual = false, keepPlaying = false } = {}) {
+function buildScrollPages() {
+  if (!scrollMode) return;
+  pageStrip.innerHTML = pages.map((page) => {
+    const title = page.kind === "title";
+    const poetry = !title && isPoetry(page.text);
+    return `<article class="scroll-page${title ? " is-title" : ""}${poetry ? " is-poetry" : ""}" data-page-index="${page.globalIndex}" aria-label="Síða ${page.globalIndex + 1}">
+      <div class="page-running-head"><span>${escapeHtml(page.book.title)}</span><span>${escapeHtml(page.title)}</span></div>
+      <div class="page-copy">${title ? `<h1>${escapeHtml(page.title)}</h1>` : `<div class="page-text">${paragraphHtml(page.text)}</div>`}</div>
+      <footer class="page-footer"><span>${title ? "" : `${page.pageInTrack} / ${page.contentCount}`}</span><span>${page.globalIndex + 1}</span></footer>
+    </article>`;
+  }).join("");
+
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries.filter((entry) => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) return;
+    const index = Number(visible.target.dataset.pageIndex);
+    if (scrollTargetIndex !== null) {
+      if (index === scrollTargetIndex) scrollTargetIndex = null;
+      return;
+    }
+    if (index !== pageIndex) renderPage(index, index > pageIndex ? 1 : -1, { manual:true, fromScroll:true });
+  }, { root:pageStrip, threshold:[.6,.75] });
+  pageStrip.querySelectorAll(".scroll-page").forEach((page) => observer.observe(page));
+}
+
+function renderScrollPage(nextIndex, direction, { manual = false, keepPlaying = false, fromScroll = false } = {}) {
+  const oldPage = pages[pageIndex];
+  const nextPage = pages[nextIndex];
+  const trackChanged = !oldPage || oldPage.key !== nextPage.key || loadedTrack !== nextPage.key;
+  const wasPlaying = !audio.paused || keepPlaying;
+  pageIndex = nextIndex;
+  if (manual) setFollowing(false);
+
+  $("#track-file").textContent = nextPage.book.title.toUpperCase();
+  $("#track-title").textContent = nextPage.title;
+  $("#previous-page").disabled = pageIndex === 0;
+  $("#next-page").disabled = pageIndex === pages.length - 1;
+  if (trackChanged) loadAudio(nextPage, wasPlaying);
+
+  if (!fromScroll) {
+    const panel = pageStrip.querySelector(`[data-page-index="${nextIndex}"]`);
+    if (panel) {
+      scrollTargetIndex = nextIndex;
+      clearTimeout(scrollTargetTimer);
+      const left = panel.offsetLeft - (pageStrip.clientWidth - panel.clientWidth) / 2;
+      pageStrip.scrollTo({ left, behavior:direction && !reducedMotion.matches ? "smooth" : "auto" });
+      scrollTargetTimer = setTimeout(() => { scrollTargetIndex = null; }, 600);
+    }
+  }
+}
+
+function renderPage(nextIndex, direction = 0, { manual = false, keepPlaying = false, fromScroll = false } = {}) {
   if (!pages.length || turning) return;
   nextIndex = Math.min(Math.max(nextIndex, 0), pages.length - 1);
+  if (scrollMode) {
+    renderScrollPage(nextIndex, direction, { manual, keepPlaying, fromScroll });
+    return;
+  }
   const oldPage = pages[pageIndex];
   const nextPage = pages[nextIndex];
   const trackChanged = !oldPage || oldPage.key !== nextPage.key || loadedTrack !== nextPage.key;
@@ -223,8 +282,10 @@ audio.addEventListener("ended", () => {
 audio.addEventListener("error", showAudioError);
 
 let pointerStart = null;
-pageElement.addEventListener("pointerdown", (event) => { if (event.target.closest("button")) return; pointerStart=event.clientX; });
-pageElement.addEventListener("pointerup", (event) => { if (pointerStart===null) return; const distance=event.clientX-pointerStart; pointerStart=null; if (Math.abs(distance)>40) turn(distance<0?1:-1); });
+if (pageElement) {
+  pageElement.addEventListener("pointerdown", (event) => { if (event.target.closest("button")) return; pointerStart=event.clientX; });
+  pageElement.addEventListener("pointerup", (event) => { if (pointerStart===null) return; const distance=event.clientX-pointerStart; pointerStart=null; if (Math.abs(distance)>40) turn(distance<0?1:-1); });
+}
 document.addEventListener("keydown", (event) => {
   if (event.key==="ArrowLeft") { event.preventDefault(); turn(-1); }
   if (event.key==="ArrowRight") { event.preventDefault(); turn(1); }
@@ -235,6 +296,7 @@ document.addEventListener("keydown", (event) => {
 async function initialise() {
   manuscript=await loadManuscript("./content/manuscript.txt");
   pages=buildPages();
+  buildScrollPages();
   renderContents();
   renderPage(0);
 }

@@ -25,6 +25,34 @@
 .flow-audio-bar.is-loading .play { opacity: .55; }
 .flow-audio-bar.is-playing .play { background: #000; }
 
+/* Samfelld lárétt röð af textasíðum á aðalsíðunni. */
+.scroll-ui { -webkit-tap-highlight-color: transparent; }
+.scroll-ui .flow-reader { display: block; padding: 0; perspective: none; }
+.page-strip { width: 100%; height: 100%; display: flex; gap: clamp(1rem,4vw,3.5rem); overflow-x: auto; overflow-y: hidden; padding: 0 max(1rem,calc((100vw - 720px) / 2)); scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #c8c7c1 transparent; }
+.scroll-page { position: relative; flex: 0 0 min(720px,calc(100vw - 2rem)); height: 100%; overflow: hidden; color: var(--ink); background: var(--paper); scroll-snap-align: center; content-visibility: auto; contain-intrinsic-size: 520px 730px; }
+.scroll-page .page-copy { position: absolute; inset: 16% 10% 9%; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.scroll-page .page-text { width: 100%; max-height: 100%; overflow: hidden; font-size: clamp(.76rem,1.75vh,1rem); line-height: 1.48; }
+.scroll-page .page-text p { margin: 0 0 .8em; white-space: pre-line; }
+.scroll-page .page-text p:first-child::first-letter { float: none; margin: 0; font-size: inherit; line-height: inherit; }
+.scroll-page:not(.is-poetry) .page-text { text-align: justify; }
+.scroll-page.is-poetry .page-text { text-align: left; line-height: 1.58; }
+.scroll-page.is-title .page-copy { align-items: center; inset: 13% 10%; text-align: center; }
+.scroll-page.is-title .page-running-head,.scroll-page.is-title .page-footer { visibility: hidden; }
+.scroll-page.is-title h1 { max-width: 9em; margin: 0; font-size: clamp(2rem,6.2vh,4.2rem); font-weight: 500; line-height: .98; letter-spacing: -.045em; text-wrap: balance; }
+.scroll-ui .flow-page-edge { position: fixed; top: 54px; bottom: 88px; width: max(48px,calc((100vw - 720px) / 2)); -webkit-tap-highlight-color: transparent; }
+.scroll-ui .flow-page-edge:focus:not(:focus-visible) { outline: none; }
+
+@media (max-width: 680px) {
+  .page-strip { gap: 0; padding: 0; scrollbar-width: none; }
+  .page-strip::-webkit-scrollbar { display: none; }
+  .scroll-page { flex-basis: 100vw; }
+  .scroll-page .page-copy { inset: 12% 8.5% 9%; }
+  .scroll-page .page-running-head { left: 8%; right: 8%; }
+  .scroll-page .page-text { font-size: clamp(.74rem,3.35vw,.94rem); line-height: 1.45; }
+  .scroll-page.is-title h1 { font-size: clamp(2rem,11vw,3.5rem); }
+  .scroll-ui .flow-page-edge { display: none; }
+}
+
 @media (max-width: 680px) {
   .flow-reader { grid-template-columns: 1fr; }
   .flow-page { grid-column: 1; }
