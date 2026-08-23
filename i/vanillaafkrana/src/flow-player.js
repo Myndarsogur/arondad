@@ -6,6 +6,7 @@ const $ = (selector) => document.querySelector(selector);
 const audio = $("#audio");
 const pageElement = $("#page");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+const simpleMode = document.body.classList.contains("simple-ui");
 const FLOW_PAGE_WORDS = Math.min(DEFAULT_PAGE_WORDS, 150);
 
 let manuscript = {};
@@ -133,7 +134,8 @@ function renderPage(nextIndex, direction = 0, { manual = false, keepPlaying = fa
 
   if (trackChanged) loadAudio(nextPage, wasPlaying);
   turning = true;
-  setTimeout(() => { pageElement.classList.remove("turn-next", "turn-previous"); turning = false; }, reducedMotion.matches ? 0 : 380);
+  const turnDuration = reducedMotion.matches ? 0 : simpleMode ? 140 : 380;
+  setTimeout(() => { pageElement.classList.remove("turn-next", "turn-previous"); turning = false; }, turnDuration);
 }
 
 function loadAudio(page, shouldPlay) {
