@@ -1,0 +1,41 @@
+.flow-reader { grid-template-columns: 1fr minmax(260px, min(72vh * .709, 520px)) 1fr; }
+.flow-page { grid-column: 2; user-select: text; }
+.flow-page.is-title .page-copy { display: flex; flex-direction: column; align-items: center; justify-content: center; inset: 13% 10%; text-align: center; }
+.flow-page.is-title .chapter-label,.flow-page.is-title .page-running-head,.flow-page.is-title .page-footer { visibility: hidden; }
+.flow-page.is-title h1 { max-width: 9em; margin: 0; font-size: clamp(2rem, 6.2vh, 4.2rem); font-weight: 500; line-height: .98; letter-spacing: -.045em; text-wrap: balance; }
+.flow-page.is-title .page-text { display: none; }
+.flow-page:not(.is-title) .page-text p:first-child::first-letter { float: none; margin: 0; font-size: inherit; line-height: inherit; }
+.flow-page:not(.is-title) .page-copy { inset: 16% 10% 9%; display: flex; flex-direction: column; justify-content: center; }
+.flow-page:not(.is-title) .chapter-label { display: none; }
+.flow-page:not(.is-title) h1 { display: none; }
+.flow-page:not(.is-title) .page-text { width: 100%; max-height: 100%; overflow: hidden; }
+.flow-page:not(.is-title) .page-text p { white-space: pre-line; }
+.flow-page.is-poetry .page-text { text-align: left; line-height: 1.58; }
+.flow-page:not(.is-poetry):not(.is-title) .page-text { text-align: justify; }
+
+.flow-page-edge { position: absolute; z-index: 4; top: 0; bottom: 0; width: 25%; padding: 0; border: 0; color: transparent; background: transparent; cursor: pointer; user-select: none; }
+.flow-page-edge-left { left: 0; text-align: left; }.flow-page-edge-right { right: 0; text-align: right; }
+.flow-page-edge span { position: absolute; top: 50%; width: 28px; height: 48px; display: grid; place-items: center; transform: translateY(-50%); color: transparent; background: transparent; font-size: 2rem; transition: color .2s, background .2s; }
+.flow-page-edge-left span { left: 5px; }.flow-page-edge-right span { right: 5px; }
+.flow-page-edge:hover span,.flow-page-edge:focus-visible span { color: #777; background: rgba(0,0,0,.035); }
+.flow-page-edge:disabled { visibility: hidden; }
+
+.follow { width: auto !important; min-width: 112px; padding: 0 .35rem !important; color: var(--muted) !important; font-size: .58rem; white-space: nowrap; }
+.follow span { font-size: .85rem; }.follow.is-active { color: var(--ink) !important; }.follow.is-active span { color: #16805a; }
+.flow-audio-bar.is-loading .play { opacity: .55; }
+.flow-audio-bar.is-playing .play { background: #000; }
+
+@media (max-width: 680px) {
+  .flow-reader { grid-template-columns: 1fr; }
+  .flow-page { grid-column: 1; }
+  .flow-page-edge { width: 34%; opacity: 1; }
+  .flow-page-edge span { display: none; }
+  .flow-page.is-title h1 { font-size: clamp(2rem, 11vw, 3.5rem); }
+  .flow-audio-bar { grid-template-columns: minmax(0,1fr) auto auto auto auto; }
+  .flow-audio-bar .track-title { grid-column: 1; grid-row: 2; }
+  .flow-audio-bar #audio-previous { grid-column: 2; grid-row: 2; }
+  .flow-audio-bar .play { grid-column: 3; grid-row: 2; }
+  .flow-audio-bar #audio-next { grid-column: 4; grid-row: 2; }
+  .flow-audio-bar .follow { grid-column: 5; grid-row: 2; min-width: 42px; width: 42px !important; overflow: hidden; font-size: 0; }
+  .flow-audio-bar .follow span { font-size: 1rem; }
+}

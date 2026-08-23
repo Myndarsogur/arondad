@@ -1,0 +1,2323 @@
+# VANILLA AF KRANA — HRÁTT HANDRIT
+#
+# Ein blokk samsvarar einni hljóðskrá.
+# Setjið textann undir @@title.
+# Notið @@page fyrir föst síðuskil.
+# Notið t.d. @@page 01:24.5 ef síðan á að birtast eftir 1 mínútu og 24,5 sekúndur.
+# Ef engin @@page-merki eru notuð skiptir lesarinn textanum sjálfkrafa.
+#
+# Dæmi:
+# @@track Ker 3.m4a
+# @@title Heiti kaflans
+# @@page 00:00
+# Texti fyrstu síðu.
+# @@page 00:42
+# Texti annarrar síðu.
+#
+@@track Ker 3.m4a
+@@title Vanilla af krana 
+@@page 00:00
+Góðan dag,
+
+Þú ert nú að lesa nýjasta skjalið í handriti í stöðugri þróun.  
+
+Það hefur verið skrifað áður.  Ég var búinn að gleyma því.  Ég skrifaði það um daginn, en bara á annan hátt.  Hef ekki alveg geta komið þessu frá mér.
+
+Gæti verið búinn að skrifa það þrjúhundruð sinnum á þessum tímapunkti á einn eða annan hátt.  Virðist svo oft birtast þegar ég hef farið af stað.  Bæði hefur þetta tímabil ofsótt mig og komið ítrekað til mín og í gegnum mig á margvíslega vegu.  
+
+Með því að hitta kunningja og samferðalanga löngu seinna og fá að heyra hvernig þau höfðu séð hlutina á annan hátt. Það olli algjörum endurskrifum oft því sagan varð svo miklu meira virði.  Mín sýn á hlutina var oft svo bjöguð en bjöguð sjónarhorn sameina listinua ef þú veist hvað ég meina.  Með því hvað við sáum öll rangt sáum við öll það rétta á sama tíma.
+
+Erfitt að útskýra, þú kannski lest bara bókina.  
+Ég hef eiginlega ekki tíma til að skrifa meira.
+mig langar að skrifa eitthvað annað
+
+
+@@track Ker 4.m4a
+@@title Efnisyfirlit
+
+Í LEIT AÐ REGNBOGUM	5
+LEITIN ER HAFIN	5
+Það sem orðin eru	5
+Uppskrift nr 1 - Hafragrautur	5
+Það búa sniglar í hafinu	6
+Hefur ekki áhuga á vísindum	6
+Er með flotta tösku	6
+Er ekki bara að hlusta	7
+Hún vill sjá ljósið	7
+Þráir að sigla út	7
+Máfurinn bítur af henni einn fingur	8
+Hvað er regnbogi	8
+LEITAÐI AÐ ÞVÍ	8
+Það sem orðin eru	8
+Uppskrift nr 2 - Pasta	8
+Þetta eru fallegustu sniglar sem þú hefur nokkru sinni séð	9
+Langar bara að eiga svona líf	9
+Er alltaf að senda símskeyti á kærastann sinn	10
+Er líka að tala við hvalina	10
+Hún þráir ljósið	11
+Vill sigla alla leið	11
+Kokkurinn setur hann óvart í súpuna	12
+Fyrstu ummerki um erfiðleika	13
+Hvernig á að skrifa góða umsókn	13
+LEITIN ER LEITIN AÐ LEITINNI	13
+Það sem orðin eru	14
+Uppskrift nr 3 - Bananabrauð	14
+Þú vildir óska þess þú gætir bjargað þeim öllum	15
+Langar bara að eiga svona líf	15
+Væri til í að vera að fá skilaboð til baka	16
+Er viss um að við getum skilið hvort annað	16
+Leitast eftir því hvernig sem hún getur	16
+Svífa seglum þöndum	17
+Sniglakonan hugsar um hana sem hliðstæðu sína	17
+Allir setja sig í stöður til að reyna að finna lausn á vandanum	18
+Hvað er olíufélagið	18
+HAFMEYJAN RÍS	18
+UPP Á YFIRBORÐIÐ	18
+Kranamaðurinn hífði hana upp	18
+Það sem orðin eru	18
+Uppskrift nr 4 - Lauksúpa	19
+Þeir eru staðsettir á beinni línu þar sem botnvörpurnar munu fara í gegn	19
+Vera til og hafa það einfalt	21
+En hann er eins og kúkurinn í lauginni	21
+Þetta er bara tímaspursmál	21
+Til þess að sjá það betur en nokkur hefur gert	22
+Svífa burt frá ströndum	22
+Hver er byggðin?	22
+EÐA UNDIR BORÐIÐ	23
+Það sem orðin eru	23
+Uppskrift nr 5 – Lambakjöt	24
+Rífa upp allan botninn og þá með	24
+Með einhverjum sem er áhugaverður	25
+Honum berst aldrei bréf	26
+Hún heldur að vandamálið sé ekki að hún sé ekki að tala rétt	26
+Hvernig sem hún gerir það	27
+Fyrir stafni er haf og himininn	27
+Kóralmaðurinn gæti varla haft minni áhuga á henni	27
+Hvað er samba?	27
+HVAÐ SEM	28
+Það sem orðin eru	28
+Uppskrift nr 6 - Súkkulaðikaka	29
+Til þess að bjarga þeim þá þurfum við að færa þá	29
+Einhver sem getur fyllt lífið af lit	30
+Svo gerist það einn daginn, það barst bréf	30
+Hún heldur að þeir hafi bara ekki áhuga á að hlusta	30
+Með öllum mögulegum ráðum	31
+Beggja skauta byr	31
+Kóra	31
+Hvalakonan hugsar um hvað hún myndi segja við hana	31
+Afhverju ekki bara að gefast upp	32
+LJÓSIÐ	33
+SEM LÝSIR	33
+Það sem orðin eru	33
+Uppskrift nr 7 - Fiskurinn	34
+Færa þá alla einn og einn	34
+Ekki algerlega litlaus	34
+Það kom með bát sem sigldi með það	35
+Viti það að tala við hana muni hafa neikvæð áhrif	35
+Afþví ljósið á skilið að sjást	35
+Bruna þú nú bátur minn	36
+Rannsóknarmaðurinn verður ástfangin af henni	36
+Allt sett á fullt	36
+LÝSANDI FYRIR	37
+Það sem orðin eru	37
+Uppskrift nr 8  - Ís	38
+Í stórkostlega flotta dansatriðinu á bakvið hvalina	38
+Vill hífa sig upp og vantar það	40
+Það las “ OK “	40
+Fær engin skilaboð og er leið en gerir sér grein fyrir því að hún þarf að hlusta á sjálfa sig	41
+Og við eigum öll skilið ljósið	41
+Kafteinninn er sannfærður um að hún boði ekki gott	41
+Öll von virðist vera úti	41
+Eitthvað ótrúlegt gerist	41
+NÚ LÝST MÉR Á	42
+Fer ofan í hafið og þar er hvalasinfónía	42
+Leiðangurinn og markmið hans	42
+Einhverskonar lausn sem kemst á vandmálið	42
+Allir eru á sama dekkinu	42
+Samantekt á ferðalaginu og markmiðum þess	43
+Ástin sykrar allt	43
+Uppskrift að vináttu	43
+Uppruninn	44
+Bermúda þríhyrningurinn er ekki fyrirbrigði sem er fast.	45
+Plottið hjá olíufélaginu	46
+
+
+
+@@track Ker 5.m4a
+@@title Kynning á öllum persónum
+
+
+Það eru nokkrir einstaklingar í þessari ferð. Eins og í Öllum góðum vísindaferðum.
+
+Það var,
+Rannsóknarmaðurinn
+Skipstjórinn
+Kranamaðurinn
+Sniglalitakonan
+Hvalatalarinn
+Kokkurinn
+Máfurinn
+og börnin
+
+
+@@track Ker 6.m4a
+@@title Kvikmyndin
+Frábært.
+
+Þá erum við að framleiða kvikmynd.
+
+Þetta er kvikmynd um þennan hóp.
+
+Þetta er hópurinn sem fer af stað í þennan leiðangur.
+
+Kvikmyndin þarf að innihalda nokkur lykilatriði.
+
+
+Við erum með sett á svipaðann hátt eins og við höfum Ljós heimsins eftir Ragnar Kjartansson
+
+Nema það er allt á setti.  Setti sem að er gert til að vera eins og bátur.
+
+
+Þannig að.  Við erum að skapa mynd, eins og í King Kong
+
+Kvikmyndin sem við erum að búa til er gerð af litlu en mjög hæfu teymi.
+
+Það var allt fengið vegna þess það hafði færni til þess að ná fram þeim skotum sem við sóttumst eftir.
+
+VIð skoðuðum allar kvikmyndir sem höfðu komið út upp á síðkastið, köfuðum í tæknina og fengum einstaklinga sem að gátu kallað þetta fram. Ákveðið verkteymi, eða myndsmiði.
+
+Þeir smíðuðu með ljósi og litum í lífinu senurnar sem okkur langaði að kalla fram.
+
+Það var yndislegt að horfa á þá vinna.  En þeir voru að fjalla um leiðangurinn sem við fórum í seinast.
+
+Núna vorum við í nýjum leiðangri
+
+
+@@track Ker 7.m4a
+@@title Leitin er hafin
+Það sem orðin eru
+
+
+
+Máfurinn kemur inn um eldhúsgluggann á skipinu.  Gullni hringurinn rammar hann inn,
+Með hafið blátt og himininn blárri á bakvið og nokkur hvít ský í fjarska.
+Uppvaskið var allt í vaskinum. Og ungur kokkur var að taka upp myndband af eldamennsku.
+Myndbandið fjallaði um að gera hamborgara.
+
+Máfurinn laumaði sér á bakvið myndbandið. Var samt í skotinu í bakgrunninum.
+Kom sér að ísskápnum og byrjaði að rúlla hlutum út.  og í átt að litlum köfllóttum klút sekk með priki sem var á borðinu.
+
+Heyrðu nú mig.  Hvað helduru að þú sért að gera?
+
+Hann snýr sér að máfinum meðan myndavélin er ennþá að taka upp.  Máfurinn reynir að binda upp klútinn
+og vipp honum upp á stöngina en kokkurinn grípur stöngina og rífur hana af honum og hann rekur sig í saltstauk sem dettur á jörðina.  
+
+Eldabuskan kallar úr fjarska
+“Ég var búin að segja þér að þú brýtur ekki meira í mínu eldhúsi. Ef þetta gerist einu sinni enn þá ertu farinn útúr þessu eldhúsi.  Þetta er þín seinasta viðvörun.
+
+Kokkurinn reynir að ná fyrir sig orði
+“ já en það er má…”
+
+Eldabuskan
+“Ég vil ekki heyra fleiri afsakanir.  Fylgstu bara með hvað þú ert að gera. “
+
+Máfurinn starir í augun á honum og byrjar að kasta hlutum niður.
+
+———
+
+
+Kokkurinn neyðist til að byrja a grípa þá alla og er kominn fljótlega með umtalsverðan stafla
+af munum sem að hann er að halda uppi til að þeir brotni ekki,  þetta endar á að verða of mikið
+og kokkurinn fer að sligast undan þunganum
+ þá fer máfurinn og flýgur upp á hrúguna.  sprautar rjóma og setur eitt kirsuber
+og þá hrynur allt niður.
+
+Fuglinn tekur prikið með sekknum og heldur af stað út
+Eldabuskan er bandbrjáluð
+
+
+
+@@track Ker 8.m4a
+@@title Uppskrift nr 1 - Hafragrautur
+Haframjöl
+
+Vatn 
+
+Salt
+
+
+
+Heitt eða kalt vatn
+
+1 á móti þremur
+
+smá salt til að bæta
+
+sjóðið í 3-5 mínútur
+
+
+@@track Ker 9.m4a
+@@title Leiðangurinn og markmið hans
+Leiðangurinn fer fram í skipi sem lenti í því að sending af fágætum dýrum var sleppt úr haldi um borð í skipinu.  Það hefur reynst erfiðara en talið var að fanga allar tegundirnar sem að sluppu svo þær hafa fengið að lifa frjálsar um borð í skipinu.  Skipið sjálft hefur ekki komið nær landi í mörg ár vegna allra dýranna má það ekki fara í land.  
+
+Það þýðir að allar vistir og allir einstaklingar eru bornir hingað með árabátum eða litlum bátum.
+Þannig hentaði þetta fyrirkomulag öllum aðilum.
+
+Vísindarannsóknarskip sem mátti ekki nota í neitt sem tengdist dýrum.
+ Leiðangur sem fjallaði algjörlega um það markmið að fanga ljós.
+Ódýrt verð.  Góð ferð.  Þekki ekkert betra.
+
+
+
+@@track Ker 10.m4a
+@@title Það búa sniglar í hafinu
+Hún elskaði að synda í hafinu
+Hún elskaði sniglana
+Hún elskaði að synda í hafinu með sniglana
+Sniglarnir sem léku á veröldina með litum sínum
+Og sköpuðu ljóðin og lífið í henni
+Hún horfði á þá ferðast, hún horfði á þá fæðast
+Lifa og deyja litrík að dansa að eilífu í hafinu.
+
+Lifandi á þara.
+
+
+@@track Ker 11.m4a
+@@title Hefur ekki áhuga á vísindum
+Er að spila við sniglapíuna með pakka af spilum
+innihélt allskonar litrík dýr
+humra og snigla og marglyttur og rostunga og regnhlífar
+tertur og drottningar
+
+
+@@track Ker 12.m4a
+@@title Er með flotta tösku
+Kóralmaðurinn var með mjög flotta tösku
+eins og hún væri í öllum litunum blönduðum saman
+á smekklegan hátt
+virtist eldri
+virtist halda vel
+og lifa lengi
+eins og töskur eiga að gera
+
+
+@@track Ker 13.m4a
+@@title Er ekki bara að hlusta
+Finn lyktina af skipinu
+heyri hljóðin í vélinni
+áferðina á heyrnartólunum
+hitastigið hérna inni
+hitastigið þarna niðri
+ég finn þetta allt
+en mig langar bara að heyra í þeim
+kannski er ég ekki að hlusta
+
+Vildi að ég væri með svona ofurkrafta 
+gæti heyrt mest eða. séð með hljóði
+en til þess erum við með þessa tækni og þessi kerfi
+til að herma eftir ofurkröftum
+
+eini ofurkrafturinn sem ég hef er bara að hlusta
+hlusta og heyra það sem er
+þeir eru þarna
+ég finn það
+þó það sé ekkert í gangi
+ég veit þeir eru þarna
+bara ekkert alltaf þegar ég þarf það
+
+Hún er með leiðsögukött
+hann leiðbeinir henni
+
+er með upphleyptan tölvuskjá
+
+til að lesa af
+
+
+@@track Ker 14.m4a
+@@title Hún vill sjá ljósið
+Þetta snýst ekki um að það sé eitthvað auðvelt að vera vísindamaður
+Þetta snýst um að stefna í áttina að því sem þú veist að skiptir máli
+treysta innsæinu og fylgja því eftir.  Kanna ótroðnar slóðir.
+
+
+Meria ljós meira ljós
+
+ég vil bara meira og meira
+
+því meria sem ég kemst nær
+
+því nær sem ég nálgast
+því nær langar mig til að vera
+
+
+
+@@track Ker 15.m4a
+@@title Þráir að sigla út
+Sjóræninginn.  Hann hafði líklega rænt eitthvað.  Ef ekki þessu skipi þá því sem að rak það.
+
+Á eftirlaunum sagði hann.  Að stýra þessu skipi var það sem hann gerði í lífinu sínu.  Þetta var ekki lengur vinna.  Skipið rak sig sjálft og safnaði upp pening fyrir elliheimilinu í framtíðinni.  En líklegar
+að það yrði hafið sem tæki á móti.
+
+
+@@track Ker 16.m4a
+@@title Máfurinn bítur af henni einn fingur
+Í miðjuna á fiskveiðiherberginu/ aðgerðarstofunni
+eins og á bekknum í líkhúsi
+lá hafmeyjan.
+öll út í plasti
+eins og gerð úr plasti
+girnilegu girlilegu plasti
+máfurinn fékk sér bita af fingrinum hennar
+og tekur hann með sér og hleypur út
+
+
+@@track Ker 17.m4a
+@@title Hvað er regnbogi
+Þetta er regnbogi
+
+@@track Ker 18.m4a
+@@title Leitaði að því
+Það sem orðin eru
+
+Máfurinn er að reyna að gleypa fisk sem er í karinu fyrir framan eldhúsið en hann er of stór
+reynir samt að borða hann. En endar á að vera. bara að kafna á honum.
+
+Kafnar og kadstar honum upp sem fer í stýrið sem beinir skipinu í átt að stormasvæði
+framundan
+
+Rétt nær andanum og langar svo aftur að borða fiskinn sem hann sér á jörðinni
+rekur upp stór augu þegar hann byrjar að kafna aftur
+
+
+@@track Ker 20.m4a
+@@title Uppskrift nr 2 - Pasta
+Þú gerir deigið
+þetta eru egg með hveiti
+
+Fínar plötur af steiktu deigi
+hversdagsmatur
+
+deig úr hveitimjöli
+safanum úr krömdu káli
+kryddað með kryddum og djúpsteikt í olíu
+
+Það voru márar sem komu með pastað
+ekki markó póló 
+verslun á þrettándu öld
+
+fjöll af parmesan osti og ofan af því rúlla
+makkarónur og ravíólí 
+
+ertu með réttindi á þessa pastaverksmiðju
+
+Pennete Rigate
+Penne ( integrale )
+Fusilli ( 5 Cereali )
+Rigatoni
+Maccheroni
+Farfalle
+spaghetti
+Gnocchi
+Papperdelle
+Lasagna Doppia Riccia
+Conchiglioni
+
+og þessi helstu
+
+
+Svo setjum við að sjálfsögðu fisk ofan á pastað
+svo jógúrt smjör og hvítlauk
+
+ofan á þræði guðs handgerða af 
+þremur ótrúkegum meyjum sem aðeins gera þetta
+pasta
+einu sinni á ári
+
+
+
+@@track Ker 21.m4a
+@@title Þetta eru fallegustu sniglar sem þú hefur nokkru sinni séð
+Allir litir sem þú  mögulega gast ímyndað þér.
+
+Græn laufblauð fjólublá í toppinn siluðust hjá í hafgjólunni
+Stafrænir broddgeltir að senda okkur gögn á þúsund metrum
+
+Sendandi okkur myndir af mynstrum sem gefa til kenna hvernig má umbreyta eitri
+Í enn meira eitur
+Kenna okkur stafróf sjálfsvarnarinnar
+Innbyrða það
+Móttaka það 
+Meðtaka það
+Keyra veröldina áfram með nýrri vitneskju
+Um mynstrin
+Sem búa til lyfin
+Og kálið í garðinum
+
+Ég elska sæsnigilinn sem er eins og bleikt sápustykki með hvítri rönd og gulan eyðimerkurstöngul að koma upp úr endanum
+
+Eða tron gul með sægrænum munstrum
+
+
+@@track Ker 22.m4a
+@@title Langar bara að eiga svona líf
+Að tryggja það að áhugaverðar hugmyndir lifi af
+
+Bertálknar voru undirtegund snigla
+en eru núna með sérstakan ættbálk.
+
+eru samt oft ekkert með tálkn heldur
+anda bara inn um húðina
+ef þeir hafa kuðung er hann mjög lítill
+
+skrautlegar og litríkar
+
+sjóhéri og sjófiðrildi
+
+fjögur þúsund tegund
+
+hljómar allt mjög áhugavert
+
+hún er mjög áhugaverð
+
+
+@@track Ker 23.m4a
+@@title Er alltaf að senda símskeyti á kærastann sinn
+Á skipinu var ein leið til að koma skilaboðum frá sem var símskeytastöðin.
+Þar var safnað öllu upp yfir tíma og svo staðsetning valin eftir viku til þess að senda svo loksins skilaboðin
+
+Skilaboðin voru oft um margt
+býflugur
+fjölskyldur
+skyldustörf
+og annað stúss í lífinu
+
+framkvæma allt út frá ótta
+einhverskonar viðtal við sjálfið
+í gegnum símskeytastöð til þín
+
+dansa í kringum hana
+eins og atriði út broadway
+
+
+@@track Ker 24.m4a
+@@title Er líka að tala við hvalina
+Þurfum að athuga hvað það er sem við viljum segja
+
+viljum við segja halló
+
+hver erum við?
+
+erum við formleg og fáguð
+
+erum við trúðar
+
+erum við stríðsmenn óttans
+
+erum við eitthvað fyrir þeim núþegar
+
+hvað getum við sagt
+
+hvað höfum við að segja
+
+hvað viljum við segja?
+
+Við erum að tala inn í nýtt samfélag
+nýja veröld
+sem við skiljum ekki
+og höfum ekki skilið í milljónir ára
+einhverntíman töluðum við öll sama tungumálið
+
+í babelsturninum við og hvalirnir og mýsnar og kýrnar
+refirnir og ljón og bjórar og kanínur
+
+einhverntíman á krítartímabilinu
+
+
+@@track Ker 25.m4a
+@@title Hún þráir ljósið
+Lkósið er í augunum,
+
+Það býr í augunum á öllum þeim sem dansa
+sem dansa um veröldina og þrá að vera með öðrum
+í algjöru ljósi
+
+Það að vera í algjöru ljósi,
+
+Þar viltu sitja.
+
+í algjöru hljóði
+að hlusta á veröldina
+skína gegnum sig sjálfa
+og kastast um allt
+og verða að okkur
+
+
+@@track Ker 26.m4a
+@@title Vill sigla alla leið
+Mikil ábyrgðartenging.  Langar bara að standa sig vel.
+
+Það er gott að sinna skipinu.  Skipinu langar að vera á ákveðinn hátt.
+Hafið þarf að fá að berja á því.  Meðan það ber okkur um.
+
+Verðum alltaf að mæta á vettvang.
+
+Sjá hvað er þar.  
+
+Það er ekkert annað en umhverfið sem stýrir aðgerðinni.
+Sama hvað þú planar.  Sama hvað þú skipuleggur.
+Þarft að vinna með öllum gröllurum götunnar.
+Hreyfast hratt um öldur hennar. Allt skrifað
+á staðnum.  Þar sem leikararnir fá línur meðan þeir vakna.
+Er krefjandi fyrir þá.  En hjálpar leikstjórum að átta sig á einkennum
+og stíl leikarannna.  Sem veldur því að myndavélin getur elt
+leikarann á hans eigin forsendum.
+
+Djassstjórinn.  
+
+í Stuði fyrir ást.
+
+15 mánuðir af ást.
+
+Það er það eina sem að dregur þig að.
+Ástin sem er aldrei tjáð.
+Allt svo yfirvegað
+Allt meira en við þurftum
+eins og höggmynd sem tíminn fellur af
+og skilur eftir líkneski sitt í hljóði ljósi og myndum
+minningar um lykt eða snertingu
+búa þarna
+bíða eftir að vakna
+
+
+Að mæta á tónlistarhátíð
+með leikara og setja þá í aðstæður
+sem að skapast náttúrulega
+
+sköpun ljós og náttúra
+
+skrifar það ekki niður
+
+þarft að vera þarna úti
+að bíða eftir að veröldin birti sig
+
+
+@@track Ker 27.m4a
+@@title Fyrstu ummerki um erfiðleika
+Svo var ein sem bættist við
+Ein sem kom um borð
+Þegar við hífðum hana upp
+Þessi sem að fór að setja allskonar skrýtnar atubrðarrásir af stað
+
+
+@@track Ker 28.m4a
+@@title Hvernig á að skrifa góða umsókn
+Góð umsókln fer fram með ákveðnu móti.
+
+Við finnum á okkur.  Hvað við höfum og getum.
+
+Setjum það í eitthvað mót og leggjum okkur í það.
+
+Fyllum út með allskonar leiðum vitum hvað við viljum
+hvað við erum og hvað við getum.
+
+Þess vegna æðum við áfram.  Afþví við trúum á það sem við viljum gera.
+
+VIð þurfum ekki á því að halda að einhver annar haldi á þessu fyrir okkur.
+
+Þetta liggur allt skýrt fyrir.  Það eru til ferlar.  Þeir hafa verið fullreyndir.
+VIð getum framkvæmt eftir þeim.  
+Og umbreytt öllu í að vera það sem það þarf að vera.
+
+Það sem þarf að gerast til þess að þekking geti skapast.
+Verðmæt þekking.
+
+Á ljósinu sjálfu.
+
+Á litunum sem eru.
+
+Með tækifæri til hverru einustu nota sem mögulegt eru.
+
+Ljósið nýtist í allt.  Með því að auka þekkingu okkar vorum við að auka
+þekkingu mannkynsins á veröldinni sjálfri.  Sér og öllu meðtöldu,
+
+Allt þetta bjó í ljósinu og það var okkar að sjá það.
+
+Við gátum leitast eftir því.
+
+Við gátum leitt það í ljós
+
+í almyrkvi
+
+
+@@track Ker 29.m4a
+@@title Leitin er leitin að leitinni
+# Límið texta fyrir Ker 29.m4a hér.
+
+@@track Ker 30.m4a
+@@title Það sem orðin eru
+
+
+Fólk heldur að það sé oft að stefna að því að verða eitthvað
+en moskítóflugur eru bara matur fyrir eitthvað annað kremur
+eldabuskan moskítófluguna á enninu sínu.
+
+Máfurinn finnur ilminn af kássunni sem er á hellunni og kemur inn heillaður
+eftir gufunni og lyktinni.  Þetta er áður í upphafi ferðarinnar.  
+
+Það er meira sakleysi á milli kokksins og máfsins.  Kokkurinn sér að máfurinn meiddi sig.
+vill gera að honum með brunasmyrsli og fer í sjúkrakassann
+
+
+svo syngur kokkurinn lag um hvað máfurinn er flottur
+mýsnar í fylgsininu sínu spila með á skottin sín
+máfurinn trommar á potta og pönnur
+
+eldabuskan kemur inn og er alveg brjáluð
+hvað er hann að gera hérna inni!
+
+Viltu koma honum út eða það er mér að mæta!
+
+
+@@track Ker 31.m4a
+@@title Uppskrift nr 3 - Bananabrauð
+Eins og þegar þú bakar eitthvað fyrir einhvern
+sem vill ekki bakstuurinn þinn
+sama hvað þú gerir
+þegar þú reynir að rétta fram hjálparhönd
+þetta litla
+sem þú býður
+það er alllt sem þú hefur
+
+2 stórir þroskaðir bananar
+
+smjör af einni matskeið
+
+2 egg
+
+2 dl sykur
+
+3 dl hveiti
+
+1/2 dl mjólk
+
+2 tsk lyftiduft
+
+2 tsk vanillusykur
+
+1 tsk kanill
+
+
+
+@@track Ker 32.m4a
+@@title Þú vildir óska þess þú gætir bjargað þeim öllum
+VIð vorum öll hérna gerð úr vanillusykri
+
+Beint í ofninn 180 gráður
+
+egg og sykur létt og ljóst
+
+smjörið bráðið og bananar stappaðir
+
+þurrefnin öll út í eggin og sykurinn
+blandað saman
+smjör og bananar með mjólk bætt við
+
+svo kannski smá haframjöl
+
+
+það er enginn að banna þér að setja súkkulaðibita út í
+
+
+Það er allt í myndinni þarna á hafsbotninum 
+þar sem hafmeyjan bjó
+þar synda þeir allir
+sniglarnir
+
+sem skriðu um
+talsettir af öllum helstu gamanleikurum hafsins
+sáu eitthvað í hversdeginum sem litaði hann betur
+það er svo gaman að borga skatta
+það er svo gaman að vera til
+
+spila á píanó
+með þverflautur
+og glockenspiel
+bassasaxafóna
+
+ég er með líf í æðunum
+
+dansar um með hvíta hárkollu
+í gulum bol með hvítum punkti
+
+
+@@track Ker 33.m4a
+@@title Langar bara að eiga svona líf
+Að tryggja það að áhugaverðar hugmyndir lifi af
+
+Bertálknar voru undirtegund snigla
+en eru núna með sérstakan ættbálk.
+
+eru samt oft ekkert með tálkn heldur
+anda bara inn um húðina
+ef þeir hafa kuðung er hann mjög lítill
+
+skrautlegar og litríkar
+
+sjóhéri og sjófiðrildi
+
+fjögur þúsund tegund
+
+hljómar allt mjög áhugavert
+
+hún er mjög áhugaverð
+
+
+@@track Ker 34.m4a
+@@title Væri til í að vera að fá skilaboð til baka
+líkurnar á því að fá símskeyti til baka voru hverfandi
+
+hann var búinn að senda nokkur það var ekki svar við neinu þeirra
+þess vegna urðu skilaboðin alltaf stærri go stærri
+þau voru næstum farin að taka upp alla flaugina
+varla pláss fyrir rannsóknir með ölll þessi skilaboð
+frá kóralmanninum
+
+en það barst aldrei neitt til baka
+eins og straumurinn. næði ekki hingað
+
+
+@@track Ker 35.m4a
+@@title Er viss um að við getum skilið hvort annað
+Venjulega kenningin var að menn væru þeir einu sem hefðu tungumál
+og þess vegna væri það að læra tungumál svona hálfgert einkamál tegundarinnar
+en það var byggt á miklum misskilningi og vanþekkingu á tilgangi tungumálsins 
+og því hvað það var
+
+að vernda svæðið sitt með söng og merkja það
+afmarka svæðið með söngnum sem ómar um hverfið
+að láta hinar býflugurnar í búinu vita hvernig hlutir eru
+dansa með rassinum
+og skapa kort
+
+tungumál getur bara verið skilið í gegnum tungumál
+
+orð eru ekki bara orð
+þetta eru farartæki gríðarstórra kerfa
+flókinna samskiptakerfa sem ná út fyrir okkar eigin skilning
+sem við eigum í forðanum
+og getum komið frá okkur í samhengi
+til að setja okkur í samhengi við eitthvað annað
+og alltof lengi höfum við sett okkur úr samhengi
+við umhverfið okkar
+
+
+@@track Ker 36.m4a
+@@title Leitast eftir því hvernig sem hún getur
+#Það eru til margar leiðir í átt að ljósinu
+
+Þær geta verið varðaðar þungum hlöðum
+óhlöðnum og völdum vöðlum til að vöknva þer um augun
+ég vil vera í þér og ég vil að þetta endi
+
+ég vil aldrei að það hætti ekki að byrja upp á nýtt
+ég elska þig uop á nýtt á hverjum degi
+alla daga upp á nýtt á annan hátt
+
+
+@@track Ker 37.m4a
+@@title Svífa seglum þöndum
+Allar sögurnar sem að við trúðum í gamla daga.
+
+Segja okkur svo mikið um hvernig við sjáum heiminn í dag.
+
+Heiti heimurinn og kaldi heimurinn
+hvar þeir mætast og veröldin á milli
+
+skrímslafólkið með höfuð og munna í brjóstinu
+Hundhöfðamenn sem að tjá sig með að gelta
+Einfættir menn sem hoppa um og nota stóra fótinn sem sólhlíf
+og fólkið með engan munn sem lifði bara á því að þefa af hlutum
+
+
+Auðvelt að breyta öðrum í skrímsli
+þegar þeir eru nógu langt í burtu
+
+Sólarparadísin falin á norðurpólnum. 
+
+Haf brjálæðissins.
+
+Veggur sem heldur fólki frá því að kanna lengra
+
+endir veraldarinnar
+
+Skip sem ferðast í púkki saman eins og eyjur í hafi
+sameinast reglulega en sigla í sitthvoru lagi fyrir öryggið
+
+
+@@track Ker 38.m4a
+@@title Sniglakonan hugsar um hana sem hliðstæðu sína
+Það er svo erfitt að horfa á sjálfan sig
+og sjá sig í samhengi
+hvað er verðmætasta menningarfasteign í heiminum
+
+verðum að kalla fram framtíðina
+sem að býr í umhverfinu okkar
+
+persóna finnur á endanum það sem hefur vantað í líifð
+það er mannkynið sem að býr í okkur
+og það eru verðlaunin
+að fá að sjá mannkyninið í okkur
+og að fá að njóta þess
+
+skemmtu þér
+þetta er raunverulegt
+við vorum búin að ræða það
+þetta er allt raunverulegt
+
+
+@@track Ker 39.m4a
+@@title Allir setja sig í stöður til að reyna að finna lausn á vandanum
+Völdin virðast alltaf vilja að færri og færri haldi þeim í sínum höndum
+og við að sér allskonar auð til að gera það.
+
+Tækifæri fyrir fólk til að bæta aðstæðurnar sínar.
+Þroska og þróa hegðunina sína til að verða það sem þau vilja vera.
+
+Eru farin að stjórna
+gegnum það að eiga
+eins og það gefi þeim öll völdin
+spillingin sem þau skiptu út
+var bara spillingin sem þau settu inn
+fólkið sem að er við völd
+ætti að hafa hagsmuni okkar í huga
+og ættu ekki að haga áhyggjur að missa völdin
+því völdin eru fyrst og fremst ábyrgð í átt að okkar sameiginlegu markmiðum
+
+við gerum ekki grín af fólki sem þráir breytingarnar 
+fólkið sem að hlustar ekki og hagnast samt
+er fólkið sem verður fyrst að fara
+ 
+
+
+@@track Ker 40.m4a
+@@title Hvað er olíufélagið
+Öll skuldin er við olíufélagið
+
+@@track Ker 41.m4a
+@@title Upp á yfirborðið
+Kranamaðurinn hífði hana upp
+
+
+Meðan hún hékk þarna og hafið draup af henni var eins og það væri ennþá líf í henni
+eins og sama hvað þá væri aldrei hægt að ná lífinu alveg útúr henni.
+
+
+Ekki meðan hafið hafði hana ennþá
+
+
+Það sem orðin eru
+
+
+
+Kokkurinn er að hlaupa á eftir máfinu með kökukefli
+en máfurinn snýr sér við og sýnir honum plaggat með heitri píu
+Augun hans ætla næstum útúr hausnum á honum þegar máfurinn sér að mastur er
+að stefna á hausinn á honum að fara að afhausa hann.
+en hann færir myndina neðar til að seglið fari yfir hann og framhjá honum.
+
+kokkurinn hristir hausinn rankar við sér og eltir máfinn
+sem flýgur inn um hurð og lokar á eftir sér og kokkurinn
+flest út á hurðinni eins og pönnukaka
+
+kokkurinn eiginlega algjörlega uppgefinn leggst í hengirúmið
+máfurinn rekst utan í bliindu konuna sem er bogfimimeistari
+og snýr henni örlítið svo hún fer með örina sína í ljósgeisla af
+kristalnum sem að kveikir í örinni hennar sem hún svo skýtur á 
+hengirúmið
+
+Kokkurinn stekkur upp úr því meðan það er í ljósum logum
+
+
+@@track Ker 42.m4a
+@@title Uppskrift nr 4 - Lauksúpa
+Þeta er lauksúpan hennar ömmu
+
+þú setur bara lauk og olíu í pott og leyfir því aðeins að malla
+hrærir í því solldið leyfir því að brúnast svo geturu sett timjan
+og grænmetiskraft og tómatpúrru svo geturu s ett smá vatn
+þetta fer að verða lauksúpa hjá þér 
+
+
+@@track Ker 43.m4a
+@@title Þeir eru staðsettir á beinni línu þar sem botnvörpurnar munu fara í gegn
+Botnvörpurnar liggja á jörðinni afþví þær voru sendar þangað
+af mönnum sem virkilega trúðu á þær
+hvað þær væru frábærar 
+í að draga upp það sem skipti máli
+
+ Sniglar og slöggur
+
+Bertálknar eru án kuðungs en hafa óeiginleg tálkn á bakinu
+serrötur eru framlenging af meltingarkerfinu
+
+Dóríður eru með pilsfalda eða í flottu poncho
+þær synda stundum
+eins og prúðuleikararnir
+að reyna að taka þátt í atriði
+um að hafa gaman
+
+Rínófórur grípa merki í vatninu
+
+augun þeirra sökka
+
+sjá bara myrkur og ljós
+
+eins og litblindur starfsmaður í skittles verksmiðju
+
+Rassgatið fyrir skreytt af tálknunum
+Dóríðurnar anda rétt hjá rassgatinu
+
+
+Börnin þeirra eru alveg eins og sniglar og eru með skel
+og sum hafa perkúlum
+litla hurð fyrir rassgatið þeirra
+
+þróunarfræðilega
+lögðust á jörðina og snéru rassgatinu fyrir ofan höfuðið+
+eins og jógastaða frá helvíti
+geirvarta af ketti
+
+
+dýr sem líta út eins og plöntur
+borða allt og hvað sem er
+eru alætur
+borða jafnvel aðrar núdibrönkur
+
+Regnboganúdibranka
+að borða anímónu sæfífil
+
+engin skel skapa bara nýjar aðferðir
+fela sig í plastflösku
+eru oft skreytt í dulargerfi umhverfissins
+
+
+eru næstum gegnsæ eru svo góð að fela sig 
+það versta er hvað inniflyn sjást vel en blandast
+vel með umhverfinu þar sem allt flýtur í kring
+
+
+Eiturefnin eru sett í útlimina
+ógnvænlegi trúðurinn
+
+en blue bottle manowar
+manatosysts
+núdibrönkur
+nýta þetta eitur
+til þess að nota í sín eigin kerfi
+skjóta því út eins og leiser
+
+handaband sem kitlar
+
+önnur borðar plöntur
+
+
+ein er eins og pinulítil kind
+sem er gerð úr grasi
+að borða laufblað
+
+sumar elta slím hvor annarar
+
+kynfærin eru við höfuðið hægra megin
+að sjálfsögðu
+
+Þurfa því að staðsetja báðar hægri hliðarnar saman
+svo þær passi saman
+eins og hæ fæv með engar hendur
+og fjögur kynfæri
+
+hermafródítar
+með píku og typpi
+
+typpi stundum í eigin píku
+eins og til að geyma það
+eru ekki að reyna að sjálffrjóvga sig
+bara með heilbrigða forvitni
+
+er ekki viss ef þú getur séð það
+en það er smá gaddavír inni í typpinu
+stundum geta þær bara látið typpið deta af
+og nýtt vex í staðin
+
+eftir mökun þá fara eggin frjóvguð
+í strengjum og rósettum sem skreyta
+sjávarbotninn
+þúsundir eggja sem verða að þúsundum barna
+og hringrás lífsins heldur áfram
+
+
+
+@@track Ker 44.m4a
+@@title Vera til og hafa það einfalt
+ef ég á að vera alveg hreinskilinn þá langar mig bara að vera með þér
+mig langar bara að þú sért hluti af lífinu mínu og ég fái að deila þínu með þér
+mig langar til þess að stíga inn í djúpa vináttu
+vináttu sem varir að eilífu
+með því að tvinna veröldinni saman
+eins og lítilli heklaðri núdibrönku
+
+
+@@track Ker 45.m4a
+@@title En hann er eins og kúkurinn í lauginni
+Það að fá aldrei bréf
+eins og ég sé bara stór kúkur
+spila bara á harmónikku
+faxtækið fer í hringi
+bréfið frá mér 
+kemur aftur til mín
+
+
+@@track Ker 46.m4a
+@@title Þetta er bara tímaspursmál
+Það eru margar leiðir til þess að tala við hvali.
+
+Fyrst og fremst þarftu bara að sýna skilning.
+
+Sýna að þú berir virðingu fyrir aðstæðunum.
+Að þú gerir þér grein fyrir samskiptunum
+hvernig þau hafa verið og hvað er í boði
+
+Svo fer þetta allt saman
+
+í eitthvað nýtt, nýjan farveg
+þar sem við tölum saman
+
+
+
+@@track Ker 47.m4a
+@@title Til þess að sjá það betur en nokkur hefur gert
+Krefjandi lög sem kveða að
+þjarma að og þjaka
+vildir komast í kringum en þarft að fara í gegnum
+
+Baráttan við mig.  Minn stærsta óvin
+
+ÉG er han,  ´kvjnh’+++++++++++
+
+
+
+@@track Ker 48.m4a
+@@title Svífa burt frá ströndum
+Hver er tilbúinn til að fara og hver er tilbúinn til að borga fyrir það
+
+Það kostar að vera til.  En kostnaðurinn er aldrei meiri í einu eða öðru
+Þetta snýst bara um hvað þig langar til þess að trúa á og hvað þig langar
+til þess að standa fyrir.
+
+Snákagildrur
+til að ná snákunum
+setjum mýs í búrin
+
+Rafmagnið fer af oft bara útaf snákunum
+þeir nudda sér að raflínunum 
+og koma á skammhlaupi
+enginn veit afhverju snákarnir elska rafstöðvarnar svona mikið
+
+Börnin eru að læra um hafið
+með því að dansa ólíkar hreyfingar
+og segja orðin sem þau standa fyrir
+
+
+@@track Ker 49.m4a
+@@title Eða undir borðið
+
+Það sem orðin eru
+
+
+Hvernig er það með ´þessa máfa segjir ráðskonan
+ertu búinn að ná einhverjum tökum á þessu
+
+nei ég hef reyndar 
+
+nei einmitt
+án mín geturu ekki gert neitt rétt
+
+það er rétt, þú ert alltaf með þetta
+
+ertu með einhverja lausn á þessu?
+
+já taktu bara sjóðandi vatn og skvettu á hann
+
+þá þorir hann ekkert að láta sjá sig aftur
+
+svona hérna er pottur taktu hann og skvettu á máfinn
+
+Kokkurinn tekur pottinn og fer út til að gera það
+
+
+Máfurinn er uppi í seglinu að gæða sér á oststykki
+
+Hann kastar vatninu upp en það dreifist bara útum allt
+og fer eiginlega bara til baka og setur hann í gufubað
+
+hann horfir á máfinn áhyggjulausann með oststykkið
+ákveður að kannski hann ætti að eitra fyrir honum
+setur hláturgas í föstu formi inn í ostapuff og ætlar
+að fara að gefa honum
+
+banvænt fuglum og mynd af x ofan á fugl að deyja úr hlátri
+
+ó máfur…..
+
+kokkurinn hleypur á eftir honum og togar í spotta semdettur
+svo á hann ætlar að klifra upp seglið sem svo rifnar bara
+
+hann kallar til hans og máfurinn flýgur niður og grípur ostapuffstykkið
+
+er uppi á seglstönginni að virða það fyrir sér
+
+kokkurinn er glaður og kasta upp ostapuffi úr pokanum til að fagna
+ætlar að grípa það með munninum.
+Máfurinn sér að þetta er eitthvað grunsamlegt
+og kastar því niður.
+upp í munninn á kokkinum
+sem að svo fær það 
+á meðan hitt ostapuffið sem hann kastaði sjálfur flýgur framhjá
+
+hann byrjar að hlæja óstjórnlega
+og máfurinn fe rað borða ostapuffin hans meðan hann liggur
+á jörðinni í hláturskasti og horfir upp á fuglinn borða meira
+
+
+@@track Ker 50.m4a
+@@title Hver er byggðin?
+byggðin er byggð inn
+
+við vorum byggð til að byggja upp
+
+byggðum saman
+
+bjuggum vel
+
+bjó til
+
+nú
+
+
+@@track Ker 51.m4a
+@@title Uppskrift nr 5 – Lambakjöt
+Fyrst byrjaru uppi á heiðinni
+þú ert lítið lamb
+þú elskar mömmu þína
+og náttúruna
+þú elskar blómin og sólina
+þú elskar hvernig mamma þín elskar þig
+þó hún sé kannski ekki alvöru mamma þín
+eins og hin segja
+en stundum er það sem skiptir máli
+hvernig þið farið yfir veginn saman
+
+svo endaru hér
+
+á bakka með smjöri
+og jurtum
+og í ofninum með salti
+hérna ferðu
+hérna ertu
+að hitna og stikna
+að fá á þig áferð
+sem að geymir bragð
+og gæði
+gefur af sér
+
+
+@@track Ker 52.m4a
+@@title Rífa upp allan botninn og þá með
+
+Hvernig þróumst við til þess að hafa liti og geta varið okkur með eitri
+með því að borða eitur og umbreyta því
+best að borða eitraðar verur og melta eitrið
+í eitthvað
+
+Eins og hvalir sem að gengu á landi
+dró sig eftir landi en átti auðvelt með
+að vera í ám og vötnum
+og gat elt hvaða bráð sem er
+
+eins og hvalkrókódíll
+
+óskyld samt
+
+Skyldari flóðhestum svínum og dádýrum
+
+Indohyus eiernabein sem heitir involucrum
+sem að var fundið astragalus bein í hnénu
+sem að ardíadaktílar hafa ambulocetus
+ferðin frá landi yfir á vatn
+afhverju myndi dádýrseitthvað tileinka lífi sínu hafinu
+Kannski voru
+landmatur í sjávarfang
+
+
+Hvenær breyttust tennur í skíði
+
+fóru niður í hafið fyrir 52 milljón árum
+38 milljón árum síðan  urðu allskonar flokkar
+
+skíðishvalir stærstus verur á jörðinni
+
+mystesítar komu fyrir 40 milljón árum
+en skíðin hafa ekki verið sýnileg fyrr en
+fyrir 11 milljón árum
+
+skíði eru ekki tennur
+heldur keratín eins og í hári
+og nöglum
+dettur úr munninum og er ekki sýnilegt á steingervingum
+
+mystacodon
+er með leifar af vísbendingum um hvernig hann át
+fór reglulega niður í sand eða mold og skar á tennurnar
+
+ná í mat og að sjúga fæðuna af sjávarbotninum
+
+krabbætuselir með æfintýralegar tennur
+
+
+@@track Ker 53.m4a
+@@title Með einhverjum sem er áhugaverður
+Mér finnst bara hvernig þú gerir hlutina kúl
+ég fíla að hafa þig í kringum mig
+það sem þú gerir og hvernig þú nálgast það
+það er næs
+mig langar ekki að eyðileggja það
+eða móta á nokkurn hátt
+bara að fá að vera með
+og njóta
+
+
+@@track Ker 54.m4a
+@@title Honum berst aldrei bréf
+Að alast upp í litlum bæ þar sem presturinn sagði þér hvernig veruleikinn var
+Að fara í stórborgina þar sem menn á götunni segja þér hvernig veruleikinn er
+Hérna úti á sjó að hlusta á menn segja þér hvað veruleikinn verður
+
+
+@@track Ker 55.m4a
+@@title Hún heldur að vandamálið sé ekki að hún sé ekki að tala rétt
+Þetta er bara venjulegi 
+TIl að mæta þeim þarf ég að koma með mína eigin rödd
+hún þarf að koma frá sjálfinu
+ég þarf að læra tungumálið og geta tjáð það
+frá mér persónulega hvaðan það kemur
+
+
+Hvalatungumálið er mjög sambærilegt kínversku
+
+Hvalasamskipti eru flóknari en öll samskipti sem við höfum séð
+að einni tegund undantekinni okkar.
+
+Hvalahljóð eru ekki einföld köll eða mors kóði
+
+líkt flóknustu tungumálunum okkar
+
+ekki allir hvalir tala eins
+búrhvalir tala
+með kódum
+
+syngja í gegnum 
+hýdrófónana
+að skoða rófin sem hljóðð er á
+og að vita að 
+þeir búi í mæðraveldi
+alltaf saman
+að veiða
+og hugsa um börnin
+og vera einskonar klan
+
+sem hefur hreim
+útaf fyrir sig
+
+einskonar þjóðsöngur
+og læra að herma eftir hvort öðru
+
+hvalasamskipti eru ekki meðfædd
+heldur menningarleg
+og læra með því að fylgjast með því sem er í kringum þau
+
+hljóðfræðilega starfrófið
+
+þetta er satt tungumál
+
+sem við getum farið að þreifa fyrir okkur
+á heimssýn hvala
+
+loksins tæknin til að tala
+getum sýnt þeim dank memes
+
+
+@@track Ker 56.m4a
+@@title Hvernig sem hún gerir það
+Þetta er eina leiðin
+
+Þetta er eina leiðin
+
+Það var aldrei nein önnur leið
+
+þessi leiðangur
+
+þetta var leiðangurinn
+
+þar sem við gátum mögulega
+komist næst því að sjá ljósið á jörðu niðri
+
+
+VIð vorum næst ljósinu
+við vorum svo nálægt sólinni
+að það birtust aðrir litir
+
+
+@@track Ker 57.m4a
+@@title Fyrir stafni er haf og himininn
+Við erum að gera heimildarmynd
+Um griðarstað í hafinu
+námugröftur og uppbygging bönnuð
+Fylgjast með á svæðinu
+og láta vita ef þeir sjá eitthvað áhugavert
+
+
+Hafverðir að vernda friðuðu eyjarnar
+
+100-200 egg sem má ekki halla
+til að halda loftinu á toppnum
+
+leyfa venjulega ekki myndatökur
+af öllum þessum eggjum
+
+<
+
+
+@@track Ker 58.m4a
+@@title Kóralmaðurinn gæti varla haft minni áhuga á henni
+Hafði áður unnið við það að kafa til að byggja brúnna yfir ánna í borginni
+áin var full af líkum og öðrum óþverra svo það þurfti einhver að kafa til þess að ná
+þessum lögnum af 
+
+
+@@track Ker 59.m4a
+@@title Hvað er samba?
+Dr viku jjjojjj jojojjjjj jjiiojojjjoj jijoijoijoijo jjiojiiiiojiiijo jiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiojiiii kjjlevel jojiiiijjojjjojjijlevel iijjá iijá oioo iijii Oh jojijijiijijijiijiijijiiiiijoiojojiojoojiojiiojiiojojoiiiijoiiiijoiijoooojojiojoojojiojojojiiojiojoiojioojoiiiiijoiojijooojiojiiijoiiiiiojooiiiijooojiiiojiiiojojiiijoojiiijoiiijoiiiiiiijiiiiiiiiiijooijoiiiiiiiiiiiiiiiiiiiiiiiiioiiooiiiioiijiiijojiiiijoiooiiiiioiiiioioiioiiooiiiiiijoioioiojiojiioioiojoijoiiiiojioiiojoojiojiioiiiiiiioiiiiiiiioioioiijiiojiiiioiooiiiiioiioioiioiiojiiiiiiioiiiiojoiiiijooioijiiiiojoioiiiojiijijiiiioiiooijoiiioiijiooiiijoioiojiooiojoiijoiooiioioojoiiooooioojiiioiooojoiiojioojiioojoiooojiooooooooioojiioiioooooioojoiiioiiiioiooooijoiojoiiojoiooooooooojiojiooooiioioooooioojiojoiooojioiioooojoiioooooiiooooojoioooioiojijoiooijoioijiooooojoiojioooijioioiijoiijooiiioiooijoioiioijioioiioiooiiojioiioojiojiooiooiojoiiojoojoiooojijooiiiiijoioiooioiooojijoioiooooooojoioooiooioiooooiooooojoioiioijoioioojiiooooooiooijiioooiooojoijoijiojioojoioooooiooooooiojoijoiooojoiooiooojioioooooioooooojoiooijoiojoioojioooooooiooojiooojoiojiiooojioijoijioojoiooooooojiijijioooojioooojiooojoioooooojioooooooooojoioooooooojiooooooooojioooojiiojioooooojioiooojiojioooooiooojoijioojoiooiooijiiiooojoioooooojoijoiooojijoiojoiiiioooojijijiojijiojoiioioojioojioojoiojiooooooooojoiooooooojioooojiooooioooooooooojiooooooooojoioojoiooojiooooijoiojijoiojijoiijiooooooooojoiijiojioooojoiioojoiooojiiiooooojoiojiojoiiooojioojiooojoiooojoioooojioooooioooooooooooooijoiiioiooojoiiiojoiioojoiooooooooojoijoijiijiojoiiojoijoijoioooooojoiijoiooooooooooojoiooojoioojoiioojoiijiooioooooojoiijoiojoioojoioojoiooooojoiijiooooioojoijoijoiooojoiiooooooojoioooooojoioojoiooooooojiojoiioooooooooojoiiiiojoioooojijoioojioojioooooooojoiooooooooojiioojoiioooojoijoiijoijiojoioooojiiojiojiooojoiooooooooooooooojiiojoioojioooooooojioooojoiojijoiooojioooooojoiojoijoiiooojiooooojijiiojoiojoiooooooojiojoiojoioojioooooojoiiooojijoiioojijoijiojioooojiooooooojiooooooooooooooooojoiojijoiioojoijijoioojiiojoioojiiooooooojoioooojoioooojiooojiooojioooooooojiooojioooooooooooooojoioooooooooooooojiooojioojioooooojoioojiiojiooooooooooojiojioojoioojijijioooojijiojioojoioooooooojijiijiooooooojioooooojoiijiooojijoiojijiojiooooojijiiiooojioojoiojiojoiojioooooooooojiooooojiojiojioojoioooojoioooojoiiiojoijoioojijoijijoijiooooojioooojoiojijoiijoiiijioojijioooojiojiooooojiojioojoiojioooojiiioojoioooooojoiooooojijoioooojioooooooooooojoioooooojiiooojoiijiooooojioojiojoiioojioojoiiojiojoioooojiooojiooojiooooooojoiooooooooojijiojoioooooojijoioooojioojoioooojijoiojioooooooooooojiiojoiooojoiooojiiooojioooojoioojoiiooooooooooooiooooooooooooojoioojijoiojioooojioojiojoiooojiooooojoijiooojiiojoiooooooojoiooooooojijoiooojoijioooiooooooooooojioojiojioojoiooooooojijioojoioooojiooooooooojoijioojioooojiojijijijijoijiojoijioojoiooojojiioojoiiooojiiooooojoooooooooooooojijoioooooooojoiooojoiooooojoijoioojoiojoiiooojoiijoioojoiiojoiojoijoiijijoiijoijiijoijoiojoiooooooojoijoiijoiojoioooooojoiiijoiojoiioojoijiiooojoijoiooojoiojoijoiiojoiooooooojoiiojiooooooooooojoioooojoioooojoiooooooojoijoioooiojoiioooooooioooioooojoiojoiooooiiojoiiiooojoioojiojiooooooooooooiooooooojoiojoiioooooojoiijijoijijoiooooooojoioioooojoiiooojiiooojiojoiooojoijiijoioojijiojiojiiooojoiojiooooooojoiojoijoiooooojijoiojioooooojioooooojioojoioooooojiooooooojoijijoioooooooojiooojoioooojioojoioooooiojoiioooojioooooojoiojiooojiooooojioooojijiiiooooooojoiooooooojioooooojoioooooojoioojiooooooojijiooojoioooiojijiiooojiioooooojiojoioooojoiooojiooojiioooojiioooooooooojioooooojoioooooojiiojoiojioiojoioojiiiooooooooooooojoiioojoijoiiojoijijioooooojoioooooooooojioojioooojioojioojoioojoiiojoiiijoiooooooooioooioojoioooooooiooooooooooojiiooooooojoiiooooioooooooiooooojoiooojiooooojoioioojiooojijiooojioooioojiojoiioooooiooojoiooojioojiooooooojiiiioooojoijoiooojioojiojiojoioojioooooooojioooooojoiooojioooooijoiooooooooooooooooooiiooojoijijioooooioooooooiooojiioooooooooooojioojioojiojoijijoioooooojioojoiojoioojiooioooooooooooojoiojiooooooojijioioojoiooooojiojoiiooooojioojoiooojioojoiooooooooooooojoiooiooojiiijoiooojiioojooioojijoiioojioojoiojoiojoioojiojoiooooooojoiojoijoiooojijijoioojiiooooooooooooooooijoioooojoiooooooooojoioioojoiioooooojiooooooooooooooooojioojijoiojiooooooooooooojioooojiooooojijoiojiooooooojoiojioooojiooojoioooiooooooooooooooojiooooooooooooojiiojiooooooooooojiojijiooojiooooojoioojoioojoijiooooooooooojijioojijioooooojiooooooojoioooojoioojiojijijioooojoiooooooojiojiooojiooooooooooojijoiooooooooooooooooojoiioojiojiojiooooojioojiooojiojijijijoj kjút
+
+@@track Ker 60.m4a
+@@title Hvað sem
+
+Það sem orðin eru
+
+
+
+
+Þú ert eins og kvenkyns raspútín
+Allt sem þú hefur gert
+heldur að þú sért sæt
+allt sem þú hefur gert
+ég er búinn að því
+
+Kokkurinn liggur á bekknum hjá kóralmanninum sem
+er líka sálfræðingur
+þannig það sem ég er að heyra
+er 
+að þú
+sért
+eins og þú ert
+að gera það sem þú ert að gera
+og það er allskonar
+
+Já og ég er búinn að teikna mynd af því hérna
+
+Þetta er kú að éta gras
+en ekkert gras því kúin át það
+og engin kú af því það var ekkert gras
+
+eflfelturininn í róm
+
+það er ekkert þarna
+þetta er bara teiknimynd
+Er með svona höfuðskanna
+get skoðað hvað er í gangi þarna inni
+og það er bara teiknimhynd
+
+Ert þú ekki bókmenntalegur holdgervingur 
+þess að vera ekki sigra
+dauðann í ólsen
+viltu hafa máfinn
+máfurinn að tala við dauðann
+máfurinn að gera útaf við dauðann
+dauðinn leikinn af kokkinum
+
+algjör uppgjöf
+
+
+@@track Ker 61.m4a
+@@title Uppskrift nr 6 - Súkkulaðikaka
+Aðaluppistaðan í súkkulaðiköku er súkkulaði
+restin fer svo bara eftir stemningu
+hverju þarf að ná fram
+
+
+@@track Ker 62.m4a
+@@title Til þess að bjarga þeim þá þurfum við að færa þá
+Saga hvala sýgur
+
+Maiabalaena 
+með engar tennur
+með kjálka með mikið af vöðvum
+sjúga fæðuna 
+tennur óþarfar
+gen fyrir tennur eru enn til staðar
+en eru óvirk
+í nútímahvölum
+
+fóru frá því að sjúga í að sía
+
+betra að sía en sjúga því það er svo mikið framboð af mat
+
+tóku á móti breytingum í hafinu með því að finna fjölbreytni
+oft erfitt að fylgja með erfðabreytingum
+en það er magnað að fylgjast með skrýtnu sögunni
+af jörðinni okkar og það að lifa á henni
+
+þeir koma með skilaboð úr fortíðinni
+
+
+
+@@track Ker 63.m4a
+@@title Einhver sem getur fyllt lífið af lit
+ég sé litina sem búa í þér
+eins og þú hafir innbyrgt eitur veraldarinnar yfir heila æfi
+dregið hana í þig úr svömpum 
+og það sé allt að spretta út úr þér í litum
+litum af eitrinu sem þú innbyrgðir
+og þú dansar með makkann
+sem litar upp sjávarbotninn
+
+
+@@track Ker 64.m4a
+@@title Svo gerist það einn daginn, það barst bréf
+enda engin ástæða til að svara
+
+Lítill póstbátur kemur með litlum póstmanni
+
+hann réttir kóralmanninum lítið bréf
+
+kóralmaðurinn tekur á móti bréfinu
+
+Það barst bréf
+
+
+@@track Ker 65.m4a
+@@title Hún heldur að þeir hafi bara ekki áhuga á að hlusta
+Mállýskan hvallýska
+
+árið 1850 í norður kyrrahafi
+þá minnkaði hlutfall þess að veiðimenn gætu veitt steypireyði
+þeir breyttu hegðuninni sinni
+
+voru vanir að fara í hringi utan um varnarlausu eisntaklingana sína
+þegar t.d. drápshvalir komu
+
+en steypireyðirnir sem voru farnir að þekkja skipin.  fóru niður í hraða strauma
+og deila aðferðum um að forðast veiðimennina á milli hópa
+
+bara afþví það er risastór olíupollur í höfðinu okkar
+
+getum kafað niður á 1200m dýpi þar sem að ekkert sólarljós nær
+
+þar notum við bara hljóðið til þess að geta ferðast
+
+hljóðgervilskerfið okkar fer í gegnum
+olíuna í höfðinu
+og fer sem hljóðgeisli
+sem að kastar aftur hljóðbylgjunum sem að koma af
+hlutunum sem þær lenda á
+og þannig getum við séð stóra smokkfiska
+í 300m fjarlægð
+
+og þeir verða einskis varir
+því þeir heyra ekkert
+getum borðað tonn af þeim á dag
+þeir reyna oft að verja sig og það skilur eftir för
+
+
+@@track Ker 66.m4a
+@@title Með öllum mögulegum ráðum
+Það er fegurðin
+Viltu að ég tali um það
+viltu að ég segji þér hvernig það er gert
+að ég geti leitt þig áfram inn í þín eigin æfintýri
+en ég þekki þau ekki
+ég veit bara að þau kalla á þig
+og þú verður að hlusta
+ekki hlusta með því sem meikar sens
+heldur því sem það þarf að vera
+veröldin tekur alltaf á móti þér
+hana langar til þess að taka á móti þér
+
+
+@@track Ker 67.m4a
+@@title Beggja skauta byr
+
+
+@@track Ker 68.m4a
+@@title Kóra
+Þetta snýst um að vera góður við fólk
+og vægðarlaus við kerfi
+
+
+@@track Ker 69.m4a
+@@title Hvalakonan hugsar um hvað hún myndi segja við hana
+
+Eins og hún myndi króa hana af vandræðalega ofan í hafinu
+hæ hæ sorrý sorrý
+ég vildi bara segja
+ég vildi bara að þú vissir
+að ég elska þig
+og mig langar að vera þú
+og ég vildi að ég gæti gert allt betra fyrir þig
+en það eru bara ekki allir alveg sammála um hver þú ert eða hvað þú ert
+ef þú skilur hvað ég meina
+afþví þú ert hér
+og þú ert raunveruleg
+en þú virkar samt bara svo mikið eins og þú sért gerð úr plasti
+og ég veit ekki hvort það er okkur að kenna
+eða hvort það er bara eins og það hefur alltaf verið
+þá langar mig allavega að gera það einhvern vegin öðruvísi
+
+
+@@track Ker 70.m4a
+@@title Afhverju ekki bara að gefast upp
+Skrýtnar ákvarðanir þegar þú ert 9 ára
+
+Viljum muna í gegnum fólk
+
+ég er ekki maðurinn sem þú átt að tala við um fisk
+
+ég sat þarna eitt kvöldið að gera það að persónuleikanum mínum  að spila á gítar
+þá kom hún til mín og sagði hey ég er pönk og sýndi mér fullt af því
+
+Dansgólfið er pólitískt
+en á svo lélegan hátt
+
+Blævængir eru góðir
+
+her af gellugellum
+
+Tónlistin er algjört aukaatriði.  Við erum bara hér til að vera með vinum okkar.
+Það er bara tilviljun að það er hægt að hafa gaman með þessu.
+
+Sveppakonan fengin með þyrlu á eyjuna
+sveppaneyðartilfelli
+eini sveppafræðingurinn á landinu
+
+Sniglar eru með þetta
+eru með bæði kynfæri
+eru oft að ríða hvor öðrum í bæði
+eða sjálfum sér
+
+Þegar þú ferð á djammið og sérð aðrar hliðar af sjálfum þér
+sérð hvað þú vilt ekki vera
+
+Nonstick pans that last forever
+
+if ai was any good it would have come up with one of those
+
+gat ekki skrifað í stílabókina
+allt í hljóðbrotum
+engar teikningar bara
+brot af veröldinni
+afþví hún var í plastinu
+gátum ekki séð hana
+eða opnað hana
+
+VIð vorum í kapphlaupi við samfélagið og hörmungar
+Vorum á milli þess. að vera upptekinn og restinni er stuttur
+sparar tíma
+Heróín
+
+Þetta er stórkostlegt
+Ein undursamleg vika
+svo algjört helvíti
+
+Barone rosso
+the bees knees
+
+Öll tónlist er bönnuð
+þú gætir spilað eitthvað með höfundarrétt
+og þú þarft að borga til að spila það
+Bara það að reyna að borga er að kosta þig
+
+Svo ef þú ert ekki greiðandi þá máttu ekki spila tónlist
+
+eins og hugmyndfræðilegur réttar, fars og - lagasmiður
+
+
+@@track Ker 71.m4a
+@@title Sem lýsir 
+Það sem orðin eru
+
+
+Máfurinn er á hlaupum eftir skipinu
+
+Sílamáfur ( Larus fuscus )
+
+
+
+Hleypur á hraða vindsins um öll dekkin meðan
+
+Kokkurinn ( Homo ennþá meiri fúskhaus )
+
+
+Horfir á hann þjóta alsltaðar
+og ætlar að ná honum,  er að reyna að grípa hann en endar á að
+verða alltaf undir máfinum
+aftur og aftur
+
+leggja músagildur sem að hann hleypur niður
+og þekja hann svo hann hoppar af sársauka
+reynir að fljúga upp í masatrið til að ná fuglinum með einhverskonar seglútbúnaði
+
+reynir að höggva seglstöngina svo hún lendi á hinum
+hún hrynur niður en ekki á máfinn og tekur hin seglin með
+hann setur sprengiefni en sprengir sjálfan sig inn í vegginn á eldhúsinu
+
+eldabuskan hrópar á hann!
+
+
+@@track Ker 72.m4a
+@@title Uppskrift nr 7 - Fiskurinn
+Harðfiskur
+
+Góður harðfiskur er oftast
+vel tilbarinn
+
+Þurrkaðu hann
+eins vel og þú getur
+
+leyfðu honum að halda í sér 
+því sem hann er
+
+settu svo á hann smjör
+og það er allt sem þú gætir viljað
+
+
+@@track Ker 73.m4a
+@@title Færa þá alla einn og einn
+
+Stekkur niður í hafið og kafað niður á botninn
+grípa þær eina og eina og fær þær upp á kletta í kring eða úr leið fyrir botnvörpuna
+
+en þær eru svo margar
+þarf að fara hraðar og hraðar
+eins og óð manneskja
+er loksins þakin í þeim öllum
+drekkur í sig eitriði og litina frá þeim öllum
+og verður eins og litríkasta núdibranka hafsins
+hún eltir uppi botnvörpuna og setur liti í hana sem losar
+upp netið 
+
+lögreglukafarar syngja í kór í kring að litirnir séu ekki
+leyfilegir
+þeir leysi allt upp og geri óskunda
+í veröld sem að þurfi að slaka á
+
+
+@@track Ker 74.m4a
+@@title Ekki algerlega litlaus
+Elskaði kerfi
+að skapa kerfi sem virkuðu
+þurfti alltaf að skapa ný kerfi
+ekkert kerfi var föst eining
+öll voru með svo mörgum breytum og viðbótum
+en með því að vita nóg um grunninn
+þá var hægt að grípa inní á hvaða hátt sem er
+kraninn var appelsínugulur
+og hann var til í þetta
+
+
+@@track Ker 75.m4a
+@@title Það kom með bát sem sigldi með það
+Póstmaðurinn er að fá sér kakó
+segjir þeim frá því hvernig hann hafi aldrei drukkið kaffi
+finnst það ekki gott
+
+
+
+
+@@track Ker 76.m4a
+@@title Allir eru í kring að stússast á einn eða annan hátt
+
+Það var sprengja í einum pakkanum
+var sem kokkurinn pantaði fyrir máfinn
+en eldabuskan opnaði það
+sprakk framan í hana
+
+@@track Ker 77.m4a
+@@title Viti það að tala við hana muni hafa neikvæð áhrif
+Hver ættbálkur er með sínar kódur
+ungviðin læra af ættbálknum með að babbla og bulla
+þangað til að ungviðið lærir tal hópsins
+sem við skiljum ekki enn
+þurfum líka að læra að babbla
+og tileinka okkur tungumál hópsins
+
+Þess vegna viljum við fá þessi börn með í þennan rannsóknarleiðangur
+okkur langar að þau hlusti á tungumálið
+því að börn eru svo móttækileg fyrir tungumálinu
+
+eins og besta tækið sem völ er á
+börn sem náttúrulega vilja læra og vera með
+og taka þátt og leika
+það er tungumálið sem síast í gegnum þau
+eins og fæðan í gegnum hvalina
+
+börnin taka á móti kódunum
+
+
+@@track Ker 78.m4a
+@@title Afþví ljósið á skilið að sjást
+Sjáum ekki það sem við getum ekki séð
+Vitum ekki að við séum að missa af því
+Meðan það er þarna beint fyrir framan okkur
+
+ 
+Það eru nokkrar leiðir til þess að fanga veröldina
+VIð erum að notast við aðferð til þess að fanga öll
+ljósgögnin sem að berast án nokkurs skorts af upplýsingum
+
+
+Þetta eru plötur af efni sem að gleypa inn ljósið
+linsan sem dregur það inn er bara kristalskúla sem
+umvarpar myndinni 
+
+
+@@track Ker 79.m4a
+@@title Bruna þú nú bátur minn
+Beint í átt að landi
+stefna inn í hafrannsóknarráðstefnuna
+og fleygja prófessornum beint upp á svið
+
+Hvað sem það er hvað sem við sáum
+þetta er ljósið sem þarf að berast
+við erum eins og vitinn fyrir allt annað
+þess vegna stefnum við beint í land
+án allrar málamiðlunar
+
+Mamman og kálfurinn synda saman
+svo er ammar unglingur fyrir aftan
+
+bökin undan vatninu
+fleiri fjölskyldur
+að horfa á fjölskyldur
+vera fjölskyldur
+
+Vernda hvort annað
+Halda utan um hvert annað
+Siðirnir okkar, lífsmáti
+og leiðir til að lifa
+liggja allar þessa leið.
+
+
+@@track Ker 80.m4a
+@@title Rannsóknarmaðurinn verður ástfangin af henni
+Viltu koma og elska mig
+ég vil bara elska þig
+þú mátt vera með og elska mig
+ég vil bara elska þig
+
+
+@@track Ker 81.m4a
+@@title Allt sett á fullt
+VIð keyrum allt í gang.
+
+Ístran er úti.  Æfintýrin að baki, 
+við stefnum beina leið í land og beint 
+inn í partýið. VIð ætlum að hitta frænkurnar
+sem eiga skilið að berja okkur í harðfisk
+fyrir hvað við erum miklir hálfvitar.
+En það er fallegt að vera til
+og það er fallegt að fara áfram.
+Það er fallegt að stefna að 
+og það er fallegt að það komi fram.
+Hvernig við keyrum þetta í gang
+
+
+@@track Ker 82.m4a
+@@title Lýsandi fyrir
+Það sem orðin eru
+
+
+Það var allt í molum
+einhverskonar auðn þarna á skipinu
+allt að hrynja allt að brenna
+lokaorrustan
+maður á móti máfi
+
+
+Hann kastar spjóti sem rétt lendir við máfinn og stöngin hristist
+hann  er fúll
+en heldur áfram.
+kokkurinn grípur um stöngina en hristist allur líka
+og hárið hans skiptir um hárgreiðslu
+
+
+Titilskjár og lag
+Hann með fugl á stöng að rista hann á báli
+
+Gamall skriðdreki situr þarna
+flaututónlist
+hann stekkur afatan að máfinum og reynir að kirkja hann
+ætlar að kasta handsprengju að honum
+en sprengir af sér hendina
+en hann var með tréhendi sem hann kastar svo frá sér
+tekur hríðskotabyssu og skýtur máfinn í tætlur
+en kippist aftur af byssunni og kraminn af henni meðan hún skýtur
+
+eldflaugin sem er að fara með póstinn skilaboðin um leiðangurinn
+og hvað allt er
+hann sest á hana og ferðast í átt að máfinunum
+nær honum loksins
+þeir fara í átt að gervihnetti sem áluktar að það sé verið að gera árást 
+og sendir geislana sína á jörðina til að sprengja upp 
+eldflaugina um allt hafið
+
+Þeir falla af himnum
+
+hertæki ofan á herstæki fellur niður
+og atómsprengja springur ofan á öllu
+
+þeir sitha einir eftir á fleka
+máfurinn og kokkurinn
+kokkurinn slær á höfuðið á máfinum
+og annað augað hans dettur út
+þeir hlæja báðir
+
+
+@@track Ker 83.m4a
+@@title Kafteinninn er sannfærður um að hún boði ekki gott
+Það eru allskonar lög sem að ráða för
+en mestu lögin af þeim öllum eru svo smá
+að þau búa í öllu og öllum
+örlögin
+sem við þurfum öll að hlýða
+
+
+@@track Ker 84.m4a
+@@title Uppskrift nr 8  - Ís
+
+Banani
+
+Af trjánum með öpunum
+
+Jarðarberja ís 
+
+Af runnunum með hestunum
+
+Vanilla
+
+Úr blómunum með býflugunum
+
+Súkkulaði af trjánum 
+ristað með baunum í hjúp
+sem er eins og leikandi um
+
+sósan eins og hjúpurinn 
+kemur og heldur utan um allt
+meðan rjómin sest á topinn
+með lítið ber kirsuber
+
+til að deyja fyrir
+
+
+@@track Ker 85.m4a
+@@title Í stórkostlega flotta dansatriðinu á bakvið hvalina
+
+Tertur á sumardegi
+freistandi
+
+en við spilum bara við kisu
+
+hlaupum svo út
+
+tökum kanínur upp á eyrunum
+
+klöppum kisum í trjánum
+
+tínum blómin á akrinum
+fáum okkur sæti í laut
+og lesum smá
+eða leggjum okkur
+
+Hvalirnir kalla til okkar
+þeir vilja fá okkur með í dansinn
+
+Geng á eftir þeim eins og í svefni
+í átt að söngnum þeirra
+
+inn um hellismunnann
+þar sem anímónur og kórallar þöktu hellinn
+og allt lífið dansaði í söng hvalanna
+
+grét í hafið af gleði svo það varð saltara
+
+Dódó fuglar
+og hákarlar sem leiða veginn
+marglyttur og selir og þorskar
+
+ég vildi að kisa væri hér
+en fuglarnir vilja ekki hlusta
+
+hvalirnir 
+
+
+gamall aldraður sæsnigill á stærðarinnar kóralbita
+sagði
+
+Vöðvarnir á mér
+eru allir gefnir
+í tilvistina hér
+og veröldin hefnir
+
+eldabuskurnar með barnið
+þeirra á því
+en barnið var bara svín
+
+hvert á ég að fara
+hvert ertu að fara
+ég veit það ekki
+þá skiptir það ekki miklu máli
+
+í garði kolkrabbans
+þar sem allt lék í lyndi
+og fögnuðurinn var mikill
+
+Spilin vökvuðu blómin
+en þau voru hvít en ekki rauð
+kolkrabbinn vildi af með hausinn
+allir dönsuðu um hann
+
+komdu hér og farðu þaerna
+allir að stýra mér
+og griffinninn kemur mér
+að skjaldbökunni
+sem dreymir ekkert heitar en súpu
+
+var með skólameistara sem 
+við kölluðum flatbaka
+því hann sagði allt flatt út
+
+lærði hjá honum lemstrur og skrimt
+og ólíku greinar stærðfræðinnar
+metnað, truflun, ljótleikun og niðrun
+
+ 
+
+Ég hef aldrei heyrt um ljótleikun?
+
+Aldrei. Þú veist hvað fegrun er
+þetta er bara það sama.
+
+hvað varstu þarna margar stundir á dag
+ 
+mig minnir
+10 stundir fyrsta daginn
+9 þann næsta 
+og svo framvegis
+þess vegna eru þetta kallað að hafa minni
+því það verður alltaf minna og minna
+
+hefuru séð humra dansa ?
+en rostunga
+með regnhlífar
+og humrana í röndóttum buxum
+dansa við alla gestina
+fjögur saman í mynstrum
+
+Hver stal tertum drottningarinanr
+
+eldabuskan kemur og ber vitni
+þar er aðallega pipar
+
+þú ert næsta vitnið
+en ég veit ekkert um neitt
+þið eruð bara pakki af spilum
+
+
+@@track Ker 86.m4a
+@@title Vill hífa sig upp og vantar það
+Sá meme á netinu.
+Er að gera upphífingar þegar að nornin kemur
+og býðst til að gera tarotlestur fyrir hann
+
+mynd af manni furðulíkur honum
+í loftbelg að rekast á rafmagnslínur
+
+er þetta gott?
+
+Þarf að hífa sig upp enginn loftbelgur á leiðinni
+Og ekkert rafmagn í gangi
+
+
+@@track Ker 87.m4a
+@@title Það las “ OK “
+Hann opnaði bréfið
+og í því stóð
+
+OK
+
+
+@@track Ker 88.m4a
+@@title Fær engin skilaboð og er leið en gerir sér grein fyrir því að hún þarf að hlusta á sjálfa sig
+Börnin babbla á kódunum
+engin samskipti komin inn
+heilt söng og dansatriði frá hvölum
+sem ég vissi ekki af
+
+
+Kannski þarf ég að hlusta betur
+
+
+@@track Ker 89.m4a
+@@title Eitthvað ótrúlegt gerist
+
+stundum eru peningarnir bara sendir með skeyti
+allt sem þig vantaði að vita.  Berst þér og þú færð að heyra
+að öllum þínum bænum hefur verið svarað.
+
+Það er ekki vegna þess að þú baðst um þaö.  Heldur vegna þess
+að þvi var ætlað til þín.
+
+Það er rist í þennan refil hérna 
+um þessa goðsögn
+af skipinu og hafinu
+og kristalskúlunni
+og regnboganum
+sem náði alla leið í gegn
+fór í gegnum veröldina og
+yfir í þá næstu.  Hafði allt það í sér
+og þau gátu kallað það fram
+
+@@track Ker 90.m4a
+@@title Lýst uppáhalds
+
+
+@@track Ker 91.m4a
+@@title Fer ofan í hafið og þar er hvalasinfónía
+
+þarf sjálfur að kafa niður til þess að ná að leysa flækju á krananum
+í kóralnum
+
+með stóru vinnuljósin
+
+fer niður og sér dansinn
+sér allan sönginn
+verður hugfanginn
+meðan hún dansar um
+
+búin að þróast
+komin með litina sína
+og allt fær að flakka
+og flæða 
+komin á næsta stig
+
+
+@@track Ker 92.m4a
+@@title Einhverskonar lausn sem kemst á vandmálið
+Þetta er bara venjulegi tekstinn.  Hann er svona
+ 
+
+Allir eru á sama dekkinu
+
+Þetta er allt suður ameríka fyrir mér
+
+Sunnan við mig
+
+umbreyttum aðstæðum okkur í hag
+
+eins og við trúðum á að það gerðist
+
+notuðum til þess tól og tæki
+
+þarft ekki að trúa á neina sérstaka trú til þess
+
+þarft bara að trúa á eitthvað
+
+
+@@track Ker 93.m4a
+@@title Samantekt á ferðalaginu og markmiðum þess
+Einhverskonar upplifun
+í leit að sannleikanum
+en hver hann var bjó þarna niðri
+en var ekki þarna úti eins og við héldum
+
+liturinn var í henni
+
+við vorum í henni
+við vorum á henni
+það var gaman hjá okkur
+við vorum að skemmta okkur
+við vorum saman og það var gaman
+
+veit stundum ekki afhverju ég geri ekki meira af því.
+
+
+@@track Ker 94.m4a
+@@title Ástin sykrar allt
+Að sitja
+og gráta
+og taka á móti litum
+og þakklæti
+og geispa
+og gráta
+
+mér finnst svo mikið
+
+
+@@track Ker 95.m4a
+@@title Uppskrift að vináttu
+einn bolli af eldheitu te
+smá sprauturjómi
+með súkkulaðiköku
+og borið fram í hlýju teppi
+undir sófanum á eilífðinni
+að horfa á bannaða mynd
+afþví það er einhver í henni
+sem er frekar fyndinn
+
+Fjöllin eru svo falleg
+
+Þau eru svo stór
+og himininn í lögum
+og svo bleikur
+þau svo blá
+svo mikið blá
+reyni að komast nær
+en óhreinka bara rúðuna
+
+
+
+
+
+
+@@track Ker 96.m4a
+@@title Laggott
+gott að hlusta eftir því sem er
+
+@@track Ker 97.m4a
+@@title Uppruninn
+kvöld eftir kvöld eftir kvöld sat ég og horfði á myndbönd á netinu
+
+ég gerði ekkert annað en að horfa á myndbönd á netinu
+
+þau runnu framhjá eitt af öðru um allt og annað 
+
+ég var gjörsamlega hugfangin
+
+mig langaði ekkert annað
+
+ég þurfti ekkert annað
+
+þangað til það gerðist
+
+ég fann myndbandið sem að breytti öllu
+
+þetta virtist eins og öll hin
+
+bara einhverjar upplýsingar, 
+
+einhver húmor
+
+en það var eitthvað meira í því
+
+það kveikti upp í einhverju í mér sem hefur ekki slokknað síðan
+
+það var um regnboga og hvernig þeir eru ekki bogar heldur heilir hringir
+
+hvernig þeir fara ofan í jörðina og við sjáum bara helminginn af þeim
+
+Og þá sá ég hann
+
+útum gluggann 
+
+yfir hafinu
+
+og ég sá hvernig hann stakk sér ofan í hafið
+
+birtingarmynd ljóssins
+
+sólin sjálf að sýna sig
+
+og allt sem hún hefur
+
+ég varð að vita meira
+
+
+@@track Ker 98.m4a
+@@title Bermúda þríhyrningurinn er ekki fyrirbrigði sem er fast.
+Við búum við efnahag í dag þar sem ekkert er ókannað
+öll lönd eru fundin
+það er engin brasilía sem að liggur úti við norðurhafið að bíða eftir að vera snert
+
+það eru engir auðkýfingar að vænta þess að geta flutt krydd á milli 
+eða eignast ný lönd
+það eru bara tvær leiðir eftir
+uppá við
+út í geiminn
+eða innávið
+inn í þekkinguna sjálfa
+
+og eina leiðin til að vita meira er að nýta alla þá tækni sem við höfum
+og taka alla þá þekkingu sem við höfum 
+og fara lengra
+
+
+þess vegna þurfum við fjárfesta
+
+Það er það sem þetta er 
+
+skjal sem við sendum til fjárfesta til þess að óska eftir fjármagni fyrir rannsóknina okkar
+
+meðfylgjandi eru upplýsingar um áhöfnina tilgang ferðarinnar og fyrri reynslu okkar
+
+V
+
+
+@@track Ker 99.m4a
+@@title Vega er á himninum
+
+sumrið er á enda
+
+Örninn með lýruna flýgur framhjá
+Yfir árþusundin á himninum
+
+fyrir 14 þúsund árum var hún pólstjarnarn
+og hún verður það aftur eftir 13 þúsund ár
+
+Fyrsta stjarnan til að láta mynda allt ljósrófið sitt
+
+Eftir 280 þúsund ár verður hún bjartasta stjarnan á himninum
+
+Hún er vinur minn
+
+Skipið heitir Vega
+eins og stjarnan
+Fallandi
+
+Við erum öll fallandi
+eins og himininn
+yfir hundruði ´þúsunda
+og við mikið fyrr en það
+
+
+Það sem leiðir okkur inn í framtíðina
+
+@@track Ker 100.m4a
+@@title Plottið hjá olíufélaginu
+Þԍᴉʁ ԍʁn wԍð bԍᴉuᴉმuɑuɑ oმ ʌᴉɼᒉɑ nbbმoϝʌɑ uλᒉɑʁ ɼԍᴉðᴉʁ ϝᴉɼ ɑð μʁԍᴉuƨɑ ɑɼɼϝ nʁ ʌoĸʌɑ ϝᴉɼ ɑð ƨĸɑbɑ ƨԍw wԍƨϝɑ ԍɼqƨuԍλϝᴉð·  ᘓɼԍλbɑ oʁĸnuɑ ɑɼმᒉoʁɼԍმɑ·  Γᴉĸϝ oმ þɑð ƨԍw ʌɑʁ ᴉ pԍuƨᴉuᴉˋ μʁԍᴉuƨɑ ɻʁɑ oɑԍƨĸᴉɼԍმ ԍɻuᴉˋ ɻɑ μʁԍᴉuɑu pʁnuɑ·  Hʁԍᴉuƨnu·  þɑð ʌɑʁ þɑð ƨԍw oɼᴉnwoმoɼɑʁuᴉʁ ʌᴉɼqn·  Þԍᴉʁ ʌᴉɼqn μʁԍᴉuƨɑ μɑuɑ ɑɼɼɑ·  ꓕIɼ ɑð μnu λʁðᴉ wԍᴉʁɑ ʌᴉʁðᴉ·  Eu μʌɑð þɑð ɻoɼ ᴉ ƨԍʁ ʌɑʁ ĸɑuuƨĸᴉ wᴉuuɑ ʌᴉʁðᴉ ԍu þɑð ƨԍw ʌԍʁnɼԍᴉĸᴉuu oĸĸɑʁ ʌɑʁ owԍuმɑðnʁ ɑɻ μʁԍᴉuƨnuᴉuuᴉ·

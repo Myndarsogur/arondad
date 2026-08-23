@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="is">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8f7f2" />
+    <meta name="description" content="Vanilla af krana — lestrar- og hljóðbókarútgáfa." />
+    <title>Vanilla af krana — lestrarútgáfa</title>
+    <link rel="stylesheet" href="./book.css" />
+  </head>
+  <body>
+    <header class="book-header">
+      <a href="./book.html" class="book-title">Vanilla af krana</a>
+      <button id="contents-button" class="text-button" type="button" aria-expanded="false" aria-controls="contents">Efnisyfirlit</button>
+    </header>
+
+    <aside id="contents" class="contents" aria-label="Efnisyfirlit" aria-hidden="true" inert>
+      <header><strong>Efnisyfirlit</strong><button id="contents-close" type="button" aria-label="Loka efnisyfirliti">×</button></header>
+      <div id="contents-list" class="contents-list"></div>
+    </aside>
+
+    <main class="reader" id="reader">
+      <button id="previous-page" class="page-edge page-edge-left" type="button" aria-label="Fyrri síða"><span>‹</span></button>
+
+      <article class="page" id="page" aria-live="polite">
+        <div class="page-running-head"><span id="page-book">Bók 1</span><span id="page-file">Ker 3.m4a</span></div>
+        <div class="page-copy" id="page-copy">
+          <p class="chapter-label" id="chapter-label">Kafli 01</p>
+          <h1 id="chapter-title">Kafli 01</h1>
+          <div id="page-text" class="page-text"></div>
+        </div>
+        <footer class="page-footer"><span id="page-progress">1 / 1</span><span id="page-number">1</span></footer>
+      </article>
+
+      <button id="next-page" class="page-edge page-edge-right" type="button" aria-label="Næsta síða"><span>›</span></button>
+    </main>
+
+    <footer class="audio-bar" aria-label="Hljóðspilari">
+      <div class="track-title"><small id="track-book">BÓK 1</small><strong id="track-title">Kafli 01</strong></div>
+      <button id="audio-previous" type="button" aria-label="Fyrri síða">↤</button>
+      <button id="play" class="play" type="button" aria-label="Spila">▶</button>
+      <button id="audio-next" type="button" aria-label="Næsta síða">↦</button>
+      <div class="timeline"><span id="elapsed">00:00</span><input id="seek" type="range" min="0" max="100" step="0.1" value="0" aria-label="Staðsetning í hljóðskrá" /><span id="duration">00:00</span></div>
+      <label class="continuous"><input id="continuous" type="checkbox" checked /> <span>Spila áfram</span></label>
+    </footer>
+
+    <audio id="audio" preload="metadata"></audio>
+    <script type="module" src="./src/book-reader.js"></script>
+  </body>
+</html>
