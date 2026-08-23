@@ -3,7 +3,7 @@
  * Breyttu `title` til að endurnefna bók eða kafla án þess að breyta hljóðskránni.
  * Breyttu `file` ef skrárnar eru síðar færðar eða endurnefndar.
  */
-const AUDIO_FOLDER = "../Vanilla af krana ( Hljóðbók drög )";
+const AUDIO_FOLDER = "../hljod";
 
 function chapters(firstFile, lastFile) {
   return Array.from({ length: lastFile - firstFile + 1 }, (_, index) => {
